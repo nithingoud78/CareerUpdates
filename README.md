@@ -25,7 +25,7 @@
 
 Experience the platform live:
 
-**[Live Demo]([https://your-domain.com](https://careerupdates.vercel.app/))**
+**[Live Demo]([https://careerupdates.vercel.app/])**
 
 ---
 
