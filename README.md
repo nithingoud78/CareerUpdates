@@ -164,6 +164,7 @@ To run this project locally, you will need to add the following environment vari
 | `SUPABASE_URL` | Private URL for the Supabase project (used by server) |
 | `SUPABASE_PUBLISHABLE_KEY` | Private API key for Supabase (used by server) |
 | `OPENAI_API_KEY` | Your OpenAI API key for data extraction and cleaning |
+| `AI_GATEWAY_API_KEY` | API key for the AI Gateway provider (if using the default provider) |
 
 ---
 

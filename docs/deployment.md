@@ -40,6 +40,7 @@ SUPABASE_SERVICE_KEY=your_supabase_service_role_key
 
 # AI Keys
 OPENAI_API_KEY=your_openai_api_key
+AI_GATEWAY_API_KEY=your_ai_gateway_api_key
 
 # App config
 NODE_ENV=production

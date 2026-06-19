@@ -11,6 +11,8 @@ async function assertAdmin(ctx: { supabase: any; userId: string }) {
   if (error || !data) throw new Error("Forbidden");
 }
 
+const DEFAULT_AI_GATEWAY_URL = process.env.DEFAULT_AI_GATEWAY_URL || "https://ai.gateway.lovable.dev/v1";
+
 async function getActiveProvider(supabase: any): Promise<{
   provider: string;
   model: string;
@@ -25,13 +27,13 @@ async function getActiveProvider(supabase: any): Promise<{
     .limit(1)
     .maybeSingle();
 
-  if (!data || data.provider === "lovable") {
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("LOVABLE_API_KEY missing");
+  if (!data || data.provider === "lovable" || data.provider === "default") {
+    const key = process.env.AI_GATEWAY_API_KEY;
+    if (!key) throw new Error("AI_GATEWAY_API_KEY missing");
     return {
-      provider: "lovable",
+      provider: data?.provider || "default",
       model: data?.model || "google/gemini-3-flash-preview",
-      baseUrl: "https://ai.gateway.lovable.dev/v1",
+      baseUrl: DEFAULT_AI_GATEWAY_URL,
       headers: { "Content-Type": "application/json", "Lovable-API-Key": key },
     };
   }

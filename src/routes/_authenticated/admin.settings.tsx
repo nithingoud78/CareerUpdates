@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_authenticated/admin/settings")({
 });
 
 const PROVIDERS = [
-  { value: "lovable", label: "Lovable AI Gateway (recommended, no key needed)" },
+  { value: "default", label: "Default Provider (recommended, no key needed)" },
   { value: "gemini", label: "Google Gemini (OpenAI-compatible)" },
   { value: "openrouter", label: "OpenRouter" },
   { value: "openai", label: "OpenAI" },
@@ -17,7 +17,7 @@ const PROVIDERS = [
 ];
 
 const DEFAULT_URLS: Record<string, string> = {
-  lovable: "https://ai.gateway.lovable.dev/v1",
+  default: "",
   gemini: "https://generativelanguage.googleapis.com/v1beta/openai",
   openrouter: "https://openrouter.ai/api/v1",
   openai: "https://api.openai.com/v1",
@@ -32,9 +32,9 @@ function Settings() {
   const { data } = useQuery({ queryKey: ["ai-settings"], queryFn: () => get() });
 
   const [form, setForm] = useState({
-    provider: "lovable",
+    provider: "default",
     model: "google/gemini-3-flash-preview",
-    base_url: "https://ai.gateway.lovable.dev/v1",
+    base_url: "",
     api_key: "",
   });
 
@@ -67,7 +67,7 @@ function Settings() {
       <header>
         <h1 className="text-2xl font-bold">AI Provider Settings</h1>
         <p className="text-sm text-muted-foreground">
-          Switch between Lovable AI Gateway, Gemini, OpenRouter, and any OpenAI-compatible API.
+          Configure the AI provider used for extraction, summarization, and content processing.
         </p>
       </header>
 
@@ -105,7 +105,7 @@ function Settings() {
           />
         </div>
 
-        {form.provider !== "lovable" && (
+        {form.provider !== "default" && (
           <div>
             <label className="text-xs font-medium text-muted-foreground">API Key</label>
             <input
