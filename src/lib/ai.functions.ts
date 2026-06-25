@@ -19,6 +19,7 @@ async function getActiveProvider(supabase: any): Promise<{
   baseUrl: string;
   headers: Record<string, string>;
 }> {
+  console.log("[Execution] getActiveProvider started");
   const { data } = await supabase
     .from("ai_settings")
     .select("*")
@@ -26,6 +27,8 @@ async function getActiveProvider(supabase: any): Promise<{
     .order("updated_at", { ascending: false })
     .limit(1)
     .maybeSingle();
+
+  console.log(`[Trace] Selected provider from database: ${data?.provider || "None (fallback to default)"}`);
 
   if (!data || data.provider === "lovable" || data.provider === "default") {
     const key = process.env.AI_GATEWAY_API_KEY;
@@ -63,6 +66,11 @@ async function chat(supabase: any, system: string, user: string, json = false) {
     throw err;
   }
 
+  console.log(`[Trace] Provider actually used: ${cfg.provider}`);
+  console.log(`[Trace] Endpoint URL: ${cfg.baseUrl}`);
+  console.log(`[Trace] Model name: ${cfg.model}`);
+  console.log(`[Trace] Authorization header exists: ${!!cfg.headers.Authorization || !!cfg.headers["Lovable-API-Key"]}`);
+
   const isGemini =
     cfg.provider === "gemini" ||
     cfg.baseUrl.includes("generativelanguage.googleapis.com");
@@ -88,14 +96,22 @@ async function chat(supabase: any, system: string, user: string, json = false) {
 
   const attemptRequest = async (attempt: number) => {
     try {
-      const res = await fetch(`${cfg.baseUrl}/chat/completions`, {
+      console.log(`[Chat] Sending fetch request to AI Provider (${cfg.provider})...`);
+      const requestUrl = `${cfg.baseUrl}/chat/completions`;
+      console.log(`[Trace] HTTP request URL: ${requestUrl}`);
+      console.log(`[Trace] Timeout: 30000ms`);
+
+      const res = await fetch(requestUrl, {
         method: "POST",
         headers: cfg.headers,
         body: JSON.stringify(body),
         signal: AbortSignal.timeout(30000), // 30 second timeout
       });
 
+      console.log(`[Trace] HTTP response status: ${res.status}`);
       const responseText = await res.text();
+      
+      console.log(`[Trace] Response body (first 1000 chars): ${responseText.slice(0, 1000)}`);
 
       if (!res.ok) {
         if (res.status === 429) throw new Error("Rate limit reached, try again later");
@@ -108,6 +124,7 @@ async function chat(supabase: any, system: string, user: string, json = false) {
       const j = JSON.parse(responseText);
       return j.choices?.[0]?.message?.content ?? "";
     } catch (err: any) {
+      console.error(`[Chat] Error during attemptRequest: ${err.name} - ${err.message}`);
       if (err.name === "TimeoutError" || err.message === "fetch failed") {
         throw new Error("AI service timeout, try again later");
       }
@@ -182,13 +199,13 @@ export const extractJobFromUrl = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((i: unknown) => z.object({ url: z.string().url() }).parse(i))
   .handler(async ({ data, context }) => {
+    console.log("=== EXTRACTION PIPELINE START ===");
+    console.log("URL fetch started:", data.url);
     await assertAdmin(context);
 
     let pageText = await extractJobPage(data.url);
-    if (import.meta.env.DEV) {
-      console.log("Job URL:", data.url);
-      console.log("Extracted text length:", pageText.length);
-    }
+    console.log("URL fetch completed");
+    console.log("HTML size:", pageText.length);
 
     // Quick entity cleanup
     pageText = pageText
@@ -200,9 +217,6 @@ export const extractJobFromUrl = createServerFn({ method: "POST" })
       .replace(/&nbsp;/g, " ");
 
     const quality = assessContentQuality(pageText);
-    if (import.meta.env.DEV) {
-      console.log(`Pre-cleanup quality score: ${quality.score}. Reasons: ${quality.reasons.join(", ")}.`);
-    }
 
     const systemPrompt = "You are an expert Job Extraction AI. You strictly return valid JSON matching the exact schema requested. Do not wrap JSON in code fences. Use null for missing fields.";
     
@@ -258,8 +272,16 @@ Return strictly this JSON shape:
     // Retry loop for Gemini extraction up to 3 times
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        console.log(`Extraction attempt ${attempt}...`);
+        console.log(`\n--- Gemini attempt ${attempt} ---`);
+        console.log("Gemini request sent");
+        const startTime = Date.now();
         const content = await chat(context.supabase, systemPrompt, userPrompt, true);
+        console.log(`Gemini response received in ${Date.now() - startTime}ms`);
+        console.log("Raw Gemini response size:", content.length);
+        console.log("Raw Gemini response snippet:", content.slice(0, 200) + "...");
+        if (!content.includes("{")) {
+          console.log("Raw Gemini response is plain text:", content);
+        }
         
         let jsonStr = content;
         const match = content.match(/\{[\s\S]*\}/);
@@ -267,10 +289,24 @@ Return strictly this JSON shape:
           jsonStr = match[0];
         }
         
-        const rawJson = JSON.parse(jsonStr);
+        let rawJson;
+        try {
+          rawJson = JSON.parse(jsonStr);
+          console.log("Parsed JSON successfully");
+        } catch (e: any) {
+          console.error("JSON parsing failed:", e.message);
+          throw new Error("Invalid JSON format");
+        }
         
         // Strict Zod validation
-        parsed = JobExtractionSchema.parse(rawJson);
+        try {
+          parsed = JobExtractionSchema.parse(rawJson);
+          console.log("Zod validation result: SUCCESS");
+        } catch (e: any) {
+          console.error("Zod validation result: FAILED");
+          console.error("Zod errors:", e.errors || e.message);
+          throw e;
+        }
         
         // Enforce Taxonomy Fallback if it hallucinated categories
         const validCategories = ["IT", "Government", "Internship", "Business"];
@@ -282,9 +318,8 @@ Return strictly this JSON shape:
         break; // Success
       } catch (err: any) {
         lastError = err;
-        console.error(`Extraction attempt ${attempt} failed. Malformed response or validation error:`, err.message);
+        console.error(`Retry reason:`, err.message);
         if (attempt === 3) {
-          console.error("All extraction attempts failed. Last error:", err);
           throw new Error("AI failed to extract valid job data after 3 attempts. " + err.message);
         }
         await new Promise((r) => setTimeout(r, 2000 * attempt));
