@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Global cache to prevent flickering
+// Global cache to prevent flickering and avoid duplicate load errors
 const logoCache = new Set<string>();
 const failedCache = new Set<string>();
 
@@ -12,43 +12,42 @@ interface CompanyLogoProps {
   className?: string;
 }
 
-export function CompanyLogo({ url, name, className }: CompanyLogoProps) {
+export const CompanyLogo = React.memo(function CompanyLogo({ url, name, className }: CompanyLogoProps) {
+  // If no URL or known to fail, start in error state. If known success, start success.
   const [status, setStatus] = useState<"loading" | "success" | "error">(
-    url ? (failedCache.has(url) ? "error" : logoCache.has(url) ? "success" : "loading") : "error"
+    !url ? "error" : failedCache.has(url) ? "error" : logoCache.has(url) ? "success" : "loading"
   );
 
   useEffect(() => {
+    // Reset state if URL changes
     if (!url) {
       setStatus("error");
       return;
     }
-    
-    if (logoCache.has(url)) {
-      setStatus("success");
-      return;
-    }
-    
     if (failedCache.has(url)) {
       setStatus("error");
       return;
     }
-
-    setStatus("loading");
-    const img = new Image();
-    img.src = url;
-    img.onload = () => {
-      logoCache.add(url);
+    if (logoCache.has(url)) {
       setStatus("success");
-    };
-    img.onerror = () => {
-      failedCache.add(url);
-      setStatus("error");
-    };
+      return;
+    }
+    setStatus("loading");
   }, [url]);
 
-  if (status === "error") {
+  const handleError = () => {
+    if (url) failedCache.add(url);
+    setStatus("error");
+  };
+
+  const handleLoad = () => {
+    if (url) logoCache.add(url);
+    setStatus("success");
+  };
+
+  if (status === "error" || !url) {
     const initials = name
-      ? name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase()
+      ? name.trim().split(/\s+/).filter(Boolean).map(n => n[0]).join("").substring(0, 2).toUpperCase()
       : null;
 
     return (
@@ -59,10 +58,16 @@ export function CompanyLogo({ url, name, className }: CompanyLogoProps) {
   }
 
   return (
-    <div className={cn("relative h-full w-full overflow-hidden", className)}>
+    <div className={cn("relative h-full w-full overflow-hidden bg-white", className)}>
       <img
-        src={url!}
+        src={url}
         alt={name ? `${name} logo` : "Company logo"}
+        loading="lazy"
+        decoding="async"
+        width="128"
+        height="128"
+        onLoad={handleLoad}
+        onError={handleError}
         className={cn(
           "h-full w-full object-contain transition-opacity duration-300",
           status === "loading" ? "opacity-0" : "opacity-100"
@@ -73,4 +78,4 @@ export function CompanyLogo({ url, name, className }: CompanyLogoProps) {
       )}
     </div>
   );
-}
+});

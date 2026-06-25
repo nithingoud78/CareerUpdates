@@ -9,7 +9,10 @@ import {
   MapPin,
   Wallet,
 } from "lucide-react";
+import { marked } from "marked";
 import { supabase } from "@/integrations/supabase/client";
+
+marked.setOptions({ gfm: true, breaks: true });
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { AdSlot } from "@/components/ad-slot";
@@ -184,10 +187,18 @@ function JobDetails() {
         {/* Description */}
         {job.description && (
           <section className="glass rounded-2xl p-6">
-            <h2 className="text-lg font-semibold">Job Description</h2>
-            <div className="mt-3 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
-              {job.description}
-            </div>
+            <h2 className="text-lg font-semibold mb-4">Job Description</h2>
+            <div
+              className="prose prose-sm sm:prose-base dark:prose-invert max-w-none
+                prose-headings:font-bold prose-headings:tracking-tight
+                prose-h1:text-xl prose-h2:text-xl prose-h3:text-lg
+                prose-p:text-muted-foreground prose-p:leading-relaxed
+                prose-a:text-brand prose-a:no-underline hover:prose-a:underline
+                prose-ul:text-muted-foreground prose-ol:text-muted-foreground
+                prose-li:marker:text-brand
+                prose-strong:text-foreground"
+              dangerouslySetInnerHTML={{ __html: marked(job.description) as string }}
+            />
           </section>
         )}
 

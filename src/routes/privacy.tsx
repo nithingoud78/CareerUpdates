@@ -67,8 +67,10 @@ function Privacy() {
           <section>
             <h2 className="text-lg font-semibold text-foreground">5. Your rights</h2>
             <p>
-              You may request deletion of any data we hold about you by contacting us at
-              hello@careerupdates.app.
+              You may request deletion of any data we hold about you by contacting us at{" "}
+              <a href="mailto:careerupdates.in@gmail.com" className="text-brand hover:underline">
+                careerupdates.in@gmail.com
+              </a>.
             </p>
           </section>
 

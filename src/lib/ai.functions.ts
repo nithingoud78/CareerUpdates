@@ -240,14 +240,20 @@ CRITICAL EXTRACTION RULES (STRICTLY FOLLOW):
    - **Employment Type**: Look for "Internship", "Contract", "Part-time", "Remote Contract". Otherwise, default to "Full-time".
    - **Experience**: Infer from JD (e.g., "Freshers", "0-1 years", "5+ years"). Do not leave blank. If absolutely impossible to find, use "Not Mentioned".
    - **Qualification**: Infer from Education/Degree requirements (e.g., "B.E/B.Tech", "Any Graduate", "Bachelor's Degree"). Never leave blank. If impossible, use "Not Mentioned".
-3. **ORIGINAL DESCRIPTION (Plagiarism-Safe)**:
-   - Generate an ORIGINAL, professionally written job overview. NEVER copy sentences verbatim. Rewrite every paragraph while preserving meaning, facts, and tone.
-   - Use Markdown format.
-   - Generate structured bullet lists for:
-     - **## Responsibilities**: Structured bullet points (e.g., "• Build...", "• Collaborate...").
-     - **## Requirements**: Separate bullet list.
-     - **## Nice to Have**: Only include if the JD mentions preferred skills. Otherwise, omit this section.
-     - **## Benefits**: Extract health insurance, WFH, paid leave, relocation, etc. If absent, omit the section.
+3. **ORIGINAL DESCRIPTION (Plagiarism-Safe & AdSense Ready)**:
+   - You MUST completely rewrite the entire job description in professional English.
+   - NEVER copy sentences, NEVER copy paragraph order, NEVER copy bullet wording, NEVER copy headings, NEVER paraphrase line-by-line.
+   - Produce a fresh, recruiter-written version that reads like Career Updates wrote it.
+   - The meaning must stay identical, but the wording MUST be substantially different.
+   - Tone: concise, professional, reader-friendly. Avoid legal/company marketing boilerplate, repetitive HR language, Equal Opportunity paragraphs (unless genuinely important), copyright text, and recruiter disclaimers. Do NOT include application instructions already covered by the Apply button.
+   - You MUST format the output strictly in Markdown using the following structure (omit optional sections if not applicable):
+     ## Overview
+     ## Key Responsibilities
+     ## Required Skills
+     ## Eligibility
+     ## Preferred Skills
+     ## Benefits
+     ## Additional Information
 4. **AI SUMMARY**: Generate a richer summary of 2-4 paragraphs covering responsibilities, candidate profile, and growth opportunity. It should feel like a human wrote it.
 5. **TAGS (Key Skills)**: Automatically extract key technical and soft skills (e.g., Java, React, SQL, Leadership) and store them as an array of tags.
 6. **deadline**: Look for application deadline, closing date, apply before, etc. Format as YYYY-MM-DD.
@@ -493,18 +499,20 @@ export const recleanJobDescription = createServerFn({ method: "POST" })
 
       const cleanPrompt = `You are an expert job description normalizer. Below is raw text extracted from a job posting webpage.
         
-  Your task is to extract ONLY the actual job description and format it strictly as structured Markdown.
+  Your task is to completely rewrite the job description in professional English and format it strictly as structured Markdown.
 
-  CRITICAL RULES:
-  1. Remove all navigation menus, header content, footer content, and legal boilerplate.
-  2. Remove any JSON blocks, Schema.org data, or JavaScript code.
-  3. Remove repeated company branding or "About Us" marketing text unless it specifically describes the role.
+  CRITICAL RULES (STRICTLY FOLLOW FOR ADSENSE COMPLIANCE):
+  1. NEVER copy sentences, NEVER copy paragraph order, NEVER copy bullet wording, NEVER copy headings, NEVER paraphrase line-by-line.
+  2. Produce a fresh, recruiter-written version that reads like Career Updates wrote it. The meaning must stay identical, but the wording MUST be substantially different.
+  3. Tone: concise, professional, reader-friendly. Avoid legal/company marketing boilerplate, repetitive HR language, Equal Opportunity paragraphs (unless genuinely important), copyright text, and recruiter disclaimers. Do NOT include application instructions already covered by the Apply button.
   4. Structure the output using these EXACT Markdown headings (only include sections where enough information exists):
-    ## About the Role
-    ## Responsibilities
-    ## Requirements
-    ## Preferred Qualifications
+    ## Overview
+    ## Key Responsibilities
+    ## Required Skills
+    ## Eligibility
+    ## Preferred Skills
     ## Benefits
+    ## Additional Information
   5. Output ONLY the cleaned Markdown text. Do not include any conversational text.
 
   RAW TEXT:
