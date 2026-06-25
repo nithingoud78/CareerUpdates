@@ -70,6 +70,7 @@ function SearchPage() {
       if (search.category) query = query.eq("category", search.category);
       if (search.subcategory) query = query.eq("subcategory", search.subcategory);
       if (search.type) query = query.eq("employment_type", search.type);
+      
       const { data, error } = await query;
       if (error) throw error;
       return data ?? [];

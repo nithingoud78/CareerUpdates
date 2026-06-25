@@ -1,12 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Briefcase, Instagram } from "lucide-react";
-import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
-import { getSiteSettings } from "@/lib/site-settings.functions";
+import { Briefcase } from "lucide-react";
 
 export function SiteFooter() {
-  const get = useServerFn(getSiteSettings);
-  const { data } = useQuery({ queryKey: ["site-settings"], queryFn: () => get() });
 
   return (
     <footer className="mt-20 border-t border-border bg-surface">
@@ -36,23 +31,13 @@ export function SiteFooter() {
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li><Link to="/contact" className="hover:text-foreground">Contact</Link></li>
             <li><Link to="/privacy" className="hover:text-foreground">Privacy Policy</Link></li>
-            {data?.contact_email && (
-              <li><a href={`mailto:${data.contact_email}`} className="hover:text-foreground">Email Us</a></li>
-            )}
           </ul>
         </div>
       </div>
       <div className="border-t border-border">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-5 sm:flex-row sm:px-6 lg:px-8">
-          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Career Updates. All rights reserved.</p>
-          <div className="flex items-center gap-4">
-            <p className="text-xs text-muted-foreground">Curated job opportunities, no spam.</p>
-            {data?.instagram_url && (
-              <a href={data.instagram_url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
-                <Instagram className="h-4 w-4" />
-              </a>
-            )}
-          </div>
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
+          <p>© {new Date().getFullYear()} Career Updates. All rights reserved.</p>
+          <p>Curated job opportunities, no spam.</p>
         </div>
       </div>
     </footer>

@@ -23,7 +23,6 @@ import { Route as JobsSlugRouteImport } from './routes/jobs.$slug'
 import { Route as ApiCronRouteImport } from './routes/api/cron'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
-import { Route as AuthenticatedAdminSiteSettingsRouteImport } from './routes/_authenticated/admin.site-settings'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminJobsNewRouteImport } from './routes/_authenticated/admin.jobs.new'
 import { Route as AuthenticatedAdminJobsBulkRouteImport } from './routes/_authenticated/admin.jobs.bulk'
@@ -98,12 +97,6 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AuthenticatedAdminSiteSettingsRoute =
-  AuthenticatedAdminSiteSettingsRouteImport.update({
-    id: '/site-settings',
-    path: '/site-settings',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/settings',
@@ -143,7 +136,6 @@ export interface FileRoutesByFullPath {
   '/api/cron': typeof ApiCronRoute
   '/jobs/$slug': typeof JobsSlugRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
@@ -162,7 +154,6 @@ export interface FileRoutesByTo {
   '/api/cron': typeof ApiCronRoute
   '/jobs/$slug': typeof JobsSlugRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
@@ -184,7 +175,6 @@ export interface FileRoutesById {
   '/api/cron': typeof ApiCronRoute
   '/jobs/$slug': typeof JobsSlugRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/_authenticated/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/_authenticated/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
@@ -206,7 +196,6 @@ export interface FileRouteTypes {
     | '/api/cron'
     | '/jobs/$slug'
     | '/admin/settings'
-    | '/admin/site-settings'
     | '/admin/'
     | '/admin/jobs/audit'
     | '/admin/jobs/bulk'
@@ -225,7 +214,6 @@ export interface FileRouteTypes {
     | '/api/cron'
     | '/jobs/$slug'
     | '/admin/settings'
-    | '/admin/site-settings'
     | '/admin'
     | '/admin/jobs/audit'
     | '/admin/jobs/bulk'
@@ -246,7 +234,6 @@ export interface FileRouteTypes {
     | '/api/cron'
     | '/jobs/$slug'
     | '/_authenticated/admin/settings'
-    | '/_authenticated/admin/site-settings'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/jobs/audit'
     | '/_authenticated/admin/jobs/bulk'
@@ -368,13 +355,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/site-settings': {
-      id: '/_authenticated/admin/site-settings'
-      path: '/site-settings'
-      fullPath: '/admin/site-settings'
-      preLoaderRoute: typeof AuthenticatedAdminSiteSettingsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/_authenticated/admin/settings': {
       id: '/_authenticated/admin/settings'
       path: '/settings'
@@ -408,7 +388,6 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
-  AuthenticatedAdminSiteSettingsRoute: typeof AuthenticatedAdminSiteSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminJobsAuditRoute: typeof AuthenticatedAdminJobsAuditRoute
   AuthenticatedAdminJobsBulkRoute: typeof AuthenticatedAdminJobsBulkRoute
@@ -417,7 +396,6 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
-  AuthenticatedAdminSiteSettingsRoute: AuthenticatedAdminSiteSettingsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminJobsAuditRoute: AuthenticatedAdminJobsAuditRoute,
   AuthenticatedAdminJobsBulkRoute: AuthenticatedAdminJobsBulkRoute,
