@@ -180,10 +180,10 @@ const JobExtractionSchema = z.object({
   title: z.string().min(1, "Title is required").catch("Unknown Job Title"),
   company: z.string().min(1, "Company is required").catch("Unknown Company"),
   location: z.string().nullable().default(null),
-  experience: z.string().nullable().default(null),
-  salary: z.string().nullable().default(null),
-  employment_type: z.string().nullable().default(null),
-  qualification: z.string().nullable().default(null),
+  experience: z.string().default("Not Mentioned"),
+  salary: z.string().default("Not Mentioned"),
+  employment_type: z.string().default("Full-time"),
+  qualification: z.string().default("Not Mentioned"),
   category: z.string().default("Other"),
   subcategory: z.string().default("General"),
   company_logo: z.string().nullable().default(null),
@@ -233,24 +233,34 @@ You MUST map the job to EXACTLY ONE of these Categories, and EXACTLY ONE of its 
 4. Business
    Subcategories: HR, Sales, Marketing, Operations, Finance, Analyst
 
-CRITICAL RULES:
-- If you cannot confidently determine a category, use category="Other" and subcategory="General". Never leave them empty.
-- apply_url: Extract the actual application URL if present in the text. Otherwise, return the original URL provided.
-- deadline: Look for application deadline, closing date, apply before, etc. Format as YYYY-MM-DD.
-- description: Clean up the raw page text. Remove navigation, footers, JSON-LD, generic company branding, and legal boilerplate. Return ONLY the actual job description formatted as structured Markdown (using headings like ## About the Role, ## Responsibilities, ## Requirements, ## Preferred Qualifications, ## Benefits).
-- ai_summary: Provide a clear 2-3 sentence overview of the role for job seekers.
-- meta_description: Write an SEO-friendly description under 160 characters.
-- tags: Provide 3-6 short tags (e.g., company, role, tech stack, fresher/experienced).
+CRITICAL EXTRACTION RULES (STRICTLY FOLLOW):
+1. **NO HALLUCINATIONS**: Never invent Salary, Location, Benefits, Experience, or Degree. Only infer when there is strong evidence.
+2. **SMART INFERENCE (Fields)**:
+   - **Salary**: If missing, output exactly "Not Mentioned".
+   - **Employment Type**: Look for "Internship", "Contract", "Part-time", "Remote Contract". Otherwise, default to "Full-time".
+   - **Experience**: Infer from JD (e.g., "Freshers", "0-1 years", "5+ years"). Do not leave blank. If absolutely impossible to find, use "Not Mentioned".
+   - **Qualification**: Infer from Education/Degree requirements (e.g., "B.E/B.Tech", "Any Graduate", "Bachelor's Degree"). Never leave blank. If impossible, use "Not Mentioned".
+3. **ORIGINAL DESCRIPTION (Plagiarism-Safe)**:
+   - Generate an ORIGINAL, professionally written job overview. NEVER copy sentences verbatim. Rewrite every paragraph while preserving meaning, facts, and tone.
+   - Use Markdown format.
+   - Generate structured bullet lists for:
+     - **## Responsibilities**: Structured bullet points (e.g., "• Build...", "• Collaborate...").
+     - **## Requirements**: Separate bullet list.
+     - **## Nice to Have**: Only include if the JD mentions preferred skills. Otherwise, omit this section.
+     - **## Benefits**: Extract health insurance, WFH, paid leave, relocation, etc. If absent, omit the section.
+4. **AI SUMMARY**: Generate a richer summary of 2-4 paragraphs covering responsibilities, candidate profile, and growth opportunity. It should feel like a human wrote it.
+5. **TAGS (Key Skills)**: Automatically extract key technical and soft skills (e.g., Java, React, SQL, Leadership) and store them as an array of tags.
+6. **deadline**: Look for application deadline, closing date, apply before, etc. Format as YYYY-MM-DD.
 
 Return strictly this JSON shape:
 {
   "title": "string",
   "company": "string",
   "location": "string | null",
-  "experience": "string | null",
-  "salary": "string | null",
-  "employment_type": "string | null",
-  "qualification": "string | null",
+  "experience": "string",
+  "salary": "string",
+  "employment_type": "string",
+  "qualification": "string",
   "category": "string",
   "subcategory": "string",
   "company_logo": "string | null",
@@ -258,7 +268,7 @@ Return strictly this JSON shape:
   "description": "string (Markdown)",
   "ai_summary": "string",
   "meta_description": "string",
-  "tags": ["tag1", "tag2"],
+  "tags": ["skill1", "skill2"],
   "apply_url": "string | null"
 }`;
 

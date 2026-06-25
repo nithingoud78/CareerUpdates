@@ -137,6 +137,8 @@ function Home() {
       </section>
 
       <main className="mx-auto max-w-7xl space-y-12 px-4 pb-16 sm:px-6 lg:px-8">
+        <AdSlot />
+
         {/* LATEST */}
         <section>
           <SectionHeading title="Latest Opportunities" link="/search" />
@@ -147,7 +149,7 @@ function Home() {
           </div>
         </section>
 
-        <AdSlot label="Advertisement · 728×90" height={90} />
+        <AdSlot />
 
         {/* GOV + INTERN */}
         <div className="grid gap-8 lg:grid-cols-2">

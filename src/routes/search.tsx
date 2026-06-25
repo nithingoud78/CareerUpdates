@@ -136,7 +136,7 @@ function SearchPage() {
 
         {/* Results */}
         <div className="space-y-5">
-          <AdSlot label="Advertisement · 728×90" height={90} />
+          <AdSlot label="Advertisement · 728×90" />
           {isFetching && !data && (
             <p className="text-sm text-muted-foreground">Loading jobs…</p>
           )}

@@ -169,7 +169,7 @@ function JobDetails() {
           </dl>
         </header>
 
-        <AdSlot label="Advertisement · 728×90" />
+        <AdSlot />
 
         {/* AI Summary */}
         {job.ai_summary && (
@@ -185,11 +185,27 @@ function JobDetails() {
         {job.description && (
           <section className="glass rounded-2xl p-6">
             <h2 className="text-lg font-semibold">Job Description</h2>
-            <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+            <div className="mt-3 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
               {job.description}
-            </p>
+            </div>
           </section>
         )}
+
+        {/* Key Skills */}
+        {job.tags && job.tags.length > 0 && (
+          <section className="glass rounded-2xl p-6">
+            <h2 className="text-lg font-semibold">Key Skills</h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {job.tags.map((tag: string) => (
+                <span key={tag} className="rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-foreground">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <AdSlot />
 
         {/* Apply CTA */}
         <section className="glass-strong flex flex-col items-center gap-3 rounded-2xl p-8 text-center">

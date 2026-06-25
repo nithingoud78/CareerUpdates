@@ -5,6 +5,7 @@ import { Calendar, User, Tag, ChevronLeft, ArrowRight } from "lucide-react";
 import { marked } from "marked";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { AdSlot } from "@/components/ad-slot";
 import { StickySocial } from "@/components/sticky-social";
 import { getBlogBySlug, getRelatedBlogs } from "@/lib/blog.functions";
 
@@ -165,6 +166,9 @@ function BlogDetail() {
                 </div>
               )}
 
+              {/* Top Ad */}
+              <AdSlot />
+
               {/* Content */}
               <div
                 className="prose prose-sm sm:prose-base dark:prose-invert mt-8 max-w-none
@@ -179,6 +183,9 @@ function BlogDetail() {
                   prose-blockquote:border-brand/50 prose-blockquote:text-muted-foreground"
                 dangerouslySetInnerHTML={{ __html: renderedContent }}
               />
+
+              {/* Bottom Ad */}
+              <AdSlot />
 
               {/* Back link */}
               <div className="mt-12 border-t border-border pt-6">
