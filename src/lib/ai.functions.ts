@@ -159,6 +159,25 @@ function slugify(s: string) {
     .slice(0, 80);
 }
 
+const JobExtractionSchema = z.object({
+  title: z.string().min(1, "Title is required").catch("Unknown Job Title"),
+  company: z.string().min(1, "Company is required").catch("Unknown Company"),
+  location: z.string().nullable().default(null),
+  experience: z.string().nullable().default(null),
+  salary: z.string().nullable().default(null),
+  employment_type: z.string().nullable().default(null),
+  qualification: z.string().nullable().default(null),
+  category: z.string().default("Other"),
+  subcategory: z.string().default("General"),
+  company_logo: z.string().nullable().default(null),
+  deadline: z.string().nullable().default(null),
+  description: z.string().default(""),
+  ai_summary: z.string().default(""),
+  meta_description: z.string().default(""),
+  tags: z.array(z.string()).default([]),
+  apply_url: z.string().nullable().default(null),
+});
+
 export const extractJobFromUrl = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((i: unknown) => z.object({ url: z.string().url() }).parse(i))
@@ -171,7 +190,7 @@ export const extractJobFromUrl = createServerFn({ method: "POST" })
       console.log("Extracted text length:", pageText.length);
     }
 
-    // Quick entity cleanup for Jina's output if needed
+    // Quick entity cleanup
     pageText = pageText
       .replace(/&amp;/g, "&")
       .replace(/&lt;/g, "<")
@@ -180,106 +199,122 @@ export const extractJobFromUrl = createServerFn({ method: "POST" })
       .replace(/&#39;/g, "'")
       .replace(/&nbsp;/g, " ");
 
-    // Assess quality for logging purposes, but clean unconditionally
     const quality = assessContentQuality(pageText);
     if (import.meta.env.DEV) {
       console.log(`Pre-cleanup quality score: ${quality.score}. Reasons: ${quality.reasons.join(", ")}.`);
     }
 
-    let finalDescription = pageText;
-
-    const cleanPrompt = `You are an expert job description normalizer. Below is raw text extracted from a job posting webpage.
-      
-Your task is to extract ONLY the actual job description and format it strictly as structured Markdown.
-
-CRITICAL RULES:
-1. Remove all navigation menus, header content, footer content, and legal boilerplate.
-2. Remove any JSON blocks, Schema.org data, or JavaScript code.
-3. Remove repeated company branding or "About Us" marketing text unless it specifically describes the role.
-4. Structure the output using these EXACT Markdown headings (only include sections where enough information exists):
-   ## About the Role
-   ## Responsibilities
-   ## Requirements
-   ## Preferred Qualifications
-   ## Benefits
-5. Output ONLY the cleaned Markdown text. Do not include any conversational text.
-
-RAW TEXT:
-${pageText.slice(0, 15000)}`;
-
-    try {
-      finalDescription = await chat(context.supabase, "You clean and normalize job descriptions into structured Markdown.", cleanPrompt, false);
-    } catch (err) {
-      console.error("AI normalization failed, using original", err);
-    }
-
-    const system =
-      "You extract job posting information. Always respond with strict JSON matching the requested schema. Use null when a field cannot be determined.";
-    const prompt = `Extract job details from this page text and URL.
+    const systemPrompt = "You are an expert Job Extraction AI. You strictly return valid JSON matching the exact schema requested. Do not wrap JSON in code fences. Use null for missing fields.";
+    
+    const userPrompt = `Extract job details from the following raw page text.
 
 URL: ${data.url}
-PAGE TEXT: ${finalDescription || "(page could not be fetched - infer best you can from the URL)"}
+PAGE TEXT:
+${pageText.slice(0, 15000)}
 
-TAXONOMY FOR CATEGORY AND SUBCATEGORY:
-- IT: Software Engineering, Cloud Engineering, DevOps, Data Engineering, Data Science, Cybersecurity, QA, Technical Support
-- Government: PSU, Research, Defence, Banking
-- Internship: Software, Data, General
-- Business: Analyst, Operations, Consulting
+TAXONOMY FOR CATEGORY & SUBCATEGORY:
+You MUST map the job to EXACTLY ONE of these Categories, and EXACTLY ONE of its corresponding Subcategories.
+1. IT
+   Subcategories: Software Engineering, Frontend, Backend, Full Stack, Mobile, Cloud, DevOps, Cybersecurity, AI/ML, Data Engineering, Data Science, QA, Technical Support
+2. Government
+   Subcategories: Banking, PSU, Railways, Defence, SSC, UPSC, State Government
+3. Internship
+   Subcategories: Software, Data, AI, Marketing, Finance
+4. Business
+   Subcategories: HR, Sales, Marketing, Operations, Finance, Analyst
+
+CRITICAL RULES:
+- If you cannot confidently determine a category, use category="Other" and subcategory="General". Never leave them empty.
+- apply_url: Extract the actual application URL if present in the text. Otherwise, return the original URL provided.
+- deadline: Look for application deadline, closing date, apply before, etc. Format as YYYY-MM-DD.
+- description: Clean up the raw page text. Remove navigation, footers, JSON-LD, generic company branding, and legal boilerplate. Return ONLY the actual job description formatted as structured Markdown (using headings like ## About the Role, ## Responsibilities, ## Requirements, ## Preferred Qualifications, ## Benefits).
+- ai_summary: Provide a clear 2-3 sentence overview of the role for job seekers.
+- meta_description: Write an SEO-friendly description under 160 characters.
+- tags: Provide 3-6 short tags (e.g., company, role, tech stack, fresher/experienced).
 
 Return strictly this JSON shape:
 {
-  "title": string,
-  "company": string,
-  "location": string|null,
-  "experience": string|null,
-  "salary": string|null,
-  "employment_type": string|null,
-  "qualification": string|null,
-  "category": string|null,
-  "subcategory": string|null,
-  "company_logo": string|null,
-  "last_date": string|null,
-  "ai_summary": string,
-  "meta_description": string,
-  "tags": string[]
-}
+  "title": "string",
+  "company": "string",
+  "location": "string | null",
+  "experience": "string | null",
+  "salary": "string | null",
+  "employment_type": "string | null",
+  "qualification": "string | null",
+  "category": "string",
+  "subcategory": "string",
+  "company_logo": "string | null",
+  "deadline": "YYYY-MM-DD | null",
+  "description": "string (Markdown)",
+  "ai_summary": "string",
+  "meta_description": "string",
+  "tags": ["tag1", "tag2"],
+  "apply_url": "string | null"
+}`;
 
-- category and subcategory must exactly match one of the options in the TAXONOMY.
-- ai_summary: a clear 2-3 sentence overview of the role for job seekers.
-- last_date: search raw text for "application deadline", "closing date", "apply before", "applications close", "last date to apply", "deadline". Normalize to YYYY-MM-DD. If multiple dates exist, choose the application deadline. If no deadline exists, return null.
-- meta_description: under 160 characters, SEO friendly.
-- tags: 3-6 short tags (company, role type, technology, fresher/experienced, etc).`;
+    let parsed: any = null;
+    let lastError: any = null;
 
-    const content = await chat(context.supabase, system, prompt, true);
-    let parsed: any;
-    try {
-      parsed = JSON.parse(content);
-    } catch {
-      const match = content.match(/\{[\s\S]*\}/);
-      if (!match) throw new Error("AI did not return valid JSON");
-      parsed = JSON.parse(match[0]);
+    // Retry loop for Gemini extraction up to 3 times
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        console.log(`Extraction attempt ${attempt}...`);
+        const content = await chat(context.supabase, systemPrompt, userPrompt, true);
+        
+        let jsonStr = content;
+        const match = content.match(/\{[\s\S]*\}/);
+        if (match) {
+          jsonStr = match[0];
+        }
+        
+        const rawJson = JSON.parse(jsonStr);
+        
+        // Strict Zod validation
+        parsed = JobExtractionSchema.parse(rawJson);
+        
+        // Enforce Taxonomy Fallback if it hallucinated categories
+        const validCategories = ["IT", "Government", "Internship", "Business"];
+        if (!validCategories.includes(parsed.category)) {
+          parsed.category = "Other";
+          parsed.subcategory = "General";
+        }
+
+        break; // Success
+      } catch (err: any) {
+        lastError = err;
+        console.error(`Extraction attempt ${attempt} failed. Malformed response or validation error:`, err.message);
+        if (attempt === 3) {
+          console.error("All extraction attempts failed. Last error:", err);
+          throw new Error("AI failed to extract valid job data after 3 attempts. " + err.message);
+        }
+        await new Promise((r) => setTimeout(r, 2000 * attempt));
+      }
     }
 
-    const slug = slugify(`${parsed.company ?? "job"}-${parsed.title ?? ""}`) || `job-${Date.now()}`;
+    if (!parsed) {
+      throw new Error("Failed to parse job data");
+    }
+
+    const slug = slugify(`${parsed.company}-${parsed.title}`) || `job-${Date.now()}`;
 
     return {
       slug,
-      apply_url: data.url,
-      title: parsed.title ?? "",
-      company: parsed.company ?? "",
-      location: parsed.location ?? null,
-      experience: parsed.experience ?? null,
-      salary: parsed.salary ?? null,
-      employment_type: parsed.employment_type ?? null,
-      qualification: parsed.qualification ?? null,
-      category: parsed.category ?? null,
-      subcategory: parsed.subcategory ?? null,
-      last_date: parsed.last_date ?? null,
-      description: finalDescription ? finalDescription.slice(0, 15000) : "",
-      ai_summary: parsed.ai_summary ?? "",
-      meta_description: parsed.meta_description ?? "",
-      tags: Array.isArray(parsed.tags) ? parsed.tags : [],
-      company_logo: parsed.company_logo ?? null,
+      apply_url: parsed.apply_url || data.url,
+      title: parsed.title,
+      company: parsed.company,
+      location: parsed.location,
+      experience: parsed.experience,
+      salary: parsed.salary,
+      employment_type: parsed.employment_type,
+      qualification: parsed.qualification,
+      category: parsed.category,
+      subcategory: parsed.subcategory,
+      last_date: parsed.deadline,
+      description: parsed.description,
+      ai_summary: parsed.ai_summary,
+      meta_description: parsed.meta_description,
+      tags: parsed.tags,
+      company_logo: parsed.company_logo,
     };
   });
 
