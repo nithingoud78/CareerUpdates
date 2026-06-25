@@ -195,32 +195,28 @@ const JobExtractionSchema = z.object({
   apply_url: z.string().nullable().default(null),
 });
 
-export const extractJobFromUrl = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .validator((i: unknown) => z.object({ url: z.string().url() }).parse(i))
-  .handler(async ({ data, context }) => {
-    console.log("=== EXTRACTION PIPELINE START ===");
-    console.log("URL fetch started:", data.url);
-    await assertAdmin(context);
+export async function extractJobFromUrlInternal(data: { url: string }, supabaseClient: any) {
+  console.log("=== EXTRACTION PIPELINE START ===");
+  console.log("URL fetch started:", data.url);
 
-    let pageText = await extractJobPage(data.url);
-    console.log("URL fetch completed");
-    console.log("HTML size:", pageText.length);
+  let pageText = await extractJobPage(data.url);
+  console.log("URL fetch completed");
+  console.log("HTML size:", pageText.length);
 
-    // Quick entity cleanup
-    pageText = pageText
-      .replace(/&amp;/g, "&")
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/&nbsp;/g, " ");
+  // Quick entity cleanup
+  pageText = pageText
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, " ");
 
-    const quality = assessContentQuality(pageText);
+  const quality = assessContentQuality(pageText);
 
-    const systemPrompt = "You are an expert Job Extraction AI. You strictly return valid JSON matching the exact schema requested. Do not wrap JSON in code fences. Use null for missing fields.";
-    
-    const userPrompt = `Extract job details from the following raw page text.
+  const systemPrompt = "You are an expert Job Extraction AI. You strictly return valid JSON matching the exact schema requested. Do not wrap JSON in code fences. Use null for missing fields.";
+  
+  const userPrompt = `Extract job details from the following raw page text.
 
 URL: ${data.url}
 PAGE TEXT:
@@ -266,91 +262,99 @@ Return strictly this JSON shape:
   "apply_url": "string | null"
 }`;
 
-    let parsed: any = null;
-    let lastError: any = null;
+  let parsed: any = null;
+  let lastError: any = null;
 
-    // Retry loop for Gemini extraction up to 3 times
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      try {
-        console.log(`\n--- Gemini attempt ${attempt} ---`);
-        console.log("Gemini request sent");
-        const startTime = Date.now();
-        const content = await chat(context.supabase, systemPrompt, userPrompt, true);
-        console.log(`Gemini response received in ${Date.now() - startTime}ms`);
-        console.log("Raw Gemini response size:", content.length);
-        console.log("Raw Gemini response snippet:", content.slice(0, 200) + "...");
-        if (!content.includes("{")) {
-          console.log("Raw Gemini response is plain text:", content);
-        }
-        
-        let jsonStr = content;
-        const match = content.match(/\{[\s\S]*\}/);
-        if (match) {
-          jsonStr = match[0];
-        }
-        
-        let rawJson;
-        try {
-          rawJson = JSON.parse(jsonStr);
-          console.log("Parsed JSON successfully");
-        } catch (e: any) {
-          console.error("JSON parsing failed:", e.message);
-          throw new Error("Invalid JSON format");
-        }
-        
-        // Strict Zod validation
-        try {
-          parsed = JobExtractionSchema.parse(rawJson);
-          console.log("Zod validation result: SUCCESS");
-        } catch (e: any) {
-          console.error("Zod validation result: FAILED");
-          console.error("Zod errors:", e.errors || e.message);
-          throw e;
-        }
-        
-        // Enforce Taxonomy Fallback if it hallucinated categories
-        const validCategories = ["IT", "Government", "Internship", "Business"];
-        if (!validCategories.includes(parsed.category)) {
-          parsed.category = "Other";
-          parsed.subcategory = "General";
-        }
-
-        break; // Success
-      } catch (err: any) {
-        lastError = err;
-        console.error(`Retry reason:`, err.message);
-        if (attempt === 3) {
-          throw new Error("AI failed to extract valid job data after 3 attempts. " + err.message);
-        }
-        await new Promise((r) => setTimeout(r, 2000 * attempt));
+  // Retry loop for Gemini extraction up to 3 times
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      console.log(`\n--- Gemini attempt ${attempt} ---`);
+      console.log("Gemini request sent");
+      const startTime = Date.now();
+      const content = await chat(supabaseClient, systemPrompt, userPrompt, true);
+      console.log(`Gemini response received in ${Date.now() - startTime}ms`);
+      console.log("Raw Gemini response size:", content.length);
+      console.log("Raw Gemini response snippet:", content.slice(0, 200) + "...");
+      if (!content.includes("{")) {
+        console.log("Raw Gemini response is plain text:", content);
       }
+      
+      let jsonStr = content;
+      const match = content.match(/\{[\s\S]*\}/);
+      if (match) {
+        jsonStr = match[0];
+      }
+      
+      let rawJson;
+      try {
+        rawJson = JSON.parse(jsonStr);
+        console.log("Parsed JSON successfully");
+      } catch (e: any) {
+        console.error("JSON parsing failed:", e.message);
+        throw new Error("Invalid JSON format");
+      }
+      
+      // Strict Zod validation
+      try {
+        parsed = JobExtractionSchema.parse(rawJson);
+        console.log("Zod validation result: SUCCESS");
+      } catch (e: any) {
+        console.error("Zod validation result: FAILED");
+        console.error("Zod errors:", e.errors || e.message);
+        throw e;
+      }
+      
+      // Enforce Taxonomy Fallback if it hallucinated categories
+      const validCategories = ["IT", "Government", "Internship", "Business"];
+      if (!validCategories.includes(parsed.category)) {
+        parsed.category = "Other";
+        parsed.subcategory = "General";
+      }
+
+      break; // Success
+    } catch (err: any) {
+      lastError = err;
+      console.error(`Retry reason:`, err.message);
+      if (attempt === 3) {
+        throw new Error("AI failed to extract valid job data after 3 attempts. " + err.message);
+      }
+      await new Promise((r) => setTimeout(r, 2000 * attempt));
     }
+  }
 
-    if (!parsed) {
-      throw new Error("Failed to parse job data");
-    }
+  if (!parsed) {
+    throw new Error("Failed to parse job data");
+  }
 
-    const slug = slugify(`${parsed.company}-${parsed.title}`) || `job-${Date.now()}`;
+  const slug = slugify(`${parsed.company}-${parsed.title}`) || `job-${Date.now()}`;
 
-    return {
-      slug,
-      apply_url: parsed.apply_url || data.url,
-      title: parsed.title,
-      company: parsed.company,
-      location: parsed.location,
-      experience: parsed.experience,
-      salary: parsed.salary,
-      employment_type: parsed.employment_type,
-      qualification: parsed.qualification,
-      category: parsed.category,
-      subcategory: parsed.subcategory,
-      last_date: parsed.deadline,
-      description: parsed.description,
-      ai_summary: parsed.ai_summary,
-      meta_description: parsed.meta_description,
-      tags: parsed.tags,
-      company_logo: parsed.company_logo,
-    };
+  return {
+    slug,
+    apply_url: parsed.apply_url || data.url,
+    title: parsed.title,
+    company: parsed.company,
+    location: parsed.location,
+    experience: parsed.experience,
+    salary: parsed.salary,
+    employment_type: parsed.employment_type,
+    qualification: parsed.qualification,
+    category: parsed.category,
+    subcategory: parsed.subcategory,
+    last_date: parsed.deadline,
+    description: parsed.description,
+    ai_summary: parsed.ai_summary,
+    meta_description: parsed.meta_description,
+    tags: parsed.tags,
+    company_logo: parsed.company_logo,
+  };
+}
+
+export const extractJobFromUrl = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((i: unknown) => z.object({ url: z.string().url() }).parse(i))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    return extractJobFromUrlInternal(data, context.supabase);
   });
 
 const SummarySchema = z.object({

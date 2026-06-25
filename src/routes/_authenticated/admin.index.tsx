@@ -17,6 +17,7 @@ function Dashboard() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-jobs"],
     queryFn: () => list(),
+    refetchInterval: 5000,
   });
 
   const remove = useMutation({
@@ -75,6 +76,7 @@ function Dashboard() {
           className="rounded-md border border-input bg-background px-3 py-1.5 text-sm outline-none"
         >
           <option value="all">All Statuses</option>
+          <option value="draft">Draft</option>
           <option value="published">Published</option>
           <option value="expired">Expired</option>
           <option value="archived">Archived</option>
@@ -105,11 +107,29 @@ function Dashboard() {
                 <td className="px-4 py-3 text-muted-foreground">{j.category ?? "—"}</td>
                 <td className="px-4 py-3">
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                    j.status === "published" ? "bg-brand/10 text-brand" : "bg-muted text-muted-foreground"
+                    j.status === "published" ? "bg-brand/10 text-brand" : 
+                    j.status === "draft" ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500" :
+                    "bg-muted text-muted-foreground"
                   }`}>{j.status}</span>
                 </td>
                 <td className="px-4 py-3 text-right">
                   <div className="flex items-center justify-end gap-2">
+                    {j.status === "draft" && (
+                      <button
+                        onClick={() => updateStatus.mutate({ id: j.id, status: "published" })}
+                        className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-brand hover:bg-brand/10"
+                      >
+                        <Activity className="h-3 w-3" /> Publish
+                      </button>
+                    )}
+                    {j.status === "archived" && (
+                      <button
+                        onClick={() => updateStatus.mutate({ id: j.id, status: "published" })}
+                        className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-brand hover:bg-brand/10"
+                      >
+                        <Activity className="h-3 w-3" /> Restore
+                      </button>
+                    )}
                     {j.status !== "archived" && (
                       <button
                         onClick={() => updateStatus.mutate({ id: j.id, status: "archived" })}

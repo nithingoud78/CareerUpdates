@@ -14,6 +14,101 @@ export type Database = {
   }
   public: {
     Tables: {
+      company_sources: {
+        Row: {
+          id: string
+          company_name: string
+          career_url: string
+          platform: string | null
+          enabled: boolean
+          crawl_frequency: string
+          last_checked: string | null
+          last_success: string | null
+          status: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          company_name: string
+          career_url: string
+          platform?: string | null
+          enabled?: boolean
+          crawl_frequency?: string
+          last_checked?: string | null
+          last_success?: string | null
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          company_name?: string
+          career_url?: string
+          platform?: string | null
+          enabled?: boolean
+          crawl_frequency?: string
+          last_checked?: string | null
+          last_success?: string | null
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      crawl_logs: {
+        Row: {
+          id: string
+          company_source_id: string
+          started_at: string
+          finished_at: string | null
+          jobs_found: number
+          jobs_added: number
+          duplicates_skipped: number
+          failed_jobs: number
+          status: string | null
+          error_message: string | null
+          duration_ms: number | null
+          details: Json | null
+        }
+        Insert: {
+          id?: string
+          company_source_id: string
+          started_at?: string
+          finished_at?: string | null
+          jobs_found?: number
+          jobs_added?: number
+          duplicates_skipped?: number
+          failed_jobs?: number
+          status?: string | null
+          error_message?: string | null
+          duration_ms?: number | null
+          details?: Json | null
+        }
+        Update: {
+          id?: string
+          company_source_id?: string
+          started_at?: string
+          finished_at?: string | null
+          jobs_found?: number
+          jobs_added?: number
+          duplicates_skipped?: number
+          failed_jobs?: number
+          status?: string | null
+          error_message?: string | null
+          duration_ms?: number | null
+          details?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crawl_logs_company_source_id_fkey"
+            columns: ["company_source_id"]
+            isOneToOne: false
+            referencedRelation: "company_sources"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       ai_settings: {
         Row: {
           api_key: string | null
@@ -125,6 +220,36 @@ export type Database = {
         }
         Relationships: []
       }
+      site_settings: {
+        Row: {
+          id: string
+          site_name: string
+          contact_email: string | null
+          telegram_url: string | null
+          whatsapp_url: string | null
+          instagram_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          site_name?: string
+          contact_email?: string | null
+          telegram_url?: string | null
+          whatsapp_url?: string | null
+          instagram_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          site_name?: string
+          contact_email?: string | null
+          telegram_url?: string | null
+          whatsapp_url?: string | null
+          instagram_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -143,6 +268,69 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      scheduler_settings: {
+        Row: {
+          id: number
+          is_running: boolean | null
+          last_run_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: number
+          is_running?: boolean | null
+          last_run_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: number
+          is_running?: boolean | null
+          last_run_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      scheduler_logs: {
+        Row: {
+          id: string
+          started_at: string | null
+          finished_at: string | null
+          companies_processed: number | null
+          companies_skipped: number | null
+          companies_failed: number | null
+          duration_ms: number | null
+          status: string | null
+          error_message: string | null
+          jobs_added: number | null
+          jobs_failed: number | null
+        }
+        Insert: {
+          id?: string
+          started_at?: string | null
+          finished_at?: string | null
+          companies_processed?: number | null
+          companies_skipped?: number | null
+          companies_failed?: number | null
+          duration_ms?: number | null
+          status?: string | null
+          error_message?: string | null
+          jobs_added?: number | null
+          jobs_failed?: number | null
+        }
+        Update: {
+          id?: string
+          started_at?: string | null
+          finished_at?: string | null
+          companies_processed?: number | null
+          companies_skipped?: number | null
+          companies_failed?: number | null
+          duration_ms?: number | null
+          status?: string | null
+          error_message?: string | null
+          jobs_added?: number | null
+          jobs_failed?: number | null
         }
         Relationships: []
       }

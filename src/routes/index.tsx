@@ -50,23 +50,6 @@ async function fetchHomeJobs() {
 }
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Career Updates — Latest Jobs, Internships & Career Opportunities" },
-      {
-        name: "description",
-        content:
-          "Discover curated official job openings, internships and government careers. Direct links to verified company career pages.",
-      },
-      { property: "og:title", content: "Career Updates — Find Your Next Career Opportunity" },
-      {
-        property: "og:description",
-        content: "Curated official job opportunities updated daily. Apply via verified links.",
-      },
-      { property: "og:url", content: "/" },
-    ],
-    links: [{ rel: "canonical", href: "/" }],
-  }),
   loader: async ({ context }) => {
     try {
       console.error("[DEBUG] Executing index loader");

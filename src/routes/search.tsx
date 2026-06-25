@@ -1,3 +1,4 @@
+
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Search as SearchIcon, ChevronDown } from "lucide-react";
@@ -57,7 +58,7 @@ function SearchPage() {
       let query = supabase
         .from("jobs")
         .select(
-          "id, slug, title, company, company_logo, location, experience, salary, last_date, category, subcategory, employment_type",
+          "id, slug, title, company, company_logo, location, experience, salary, last_date, category, employment_type",
         )
         .eq("status", "published")
         .order("posted_date", { ascending: false })
@@ -68,7 +69,6 @@ function SearchPage() {
         );
       }
       if (search.category) query = query.eq("category", search.category);
-      if (search.subcategory) query = query.eq("subcategory", search.subcategory);
       if (search.type) query = query.eq("employment_type", search.type);
       
       const { data, error } = await query;

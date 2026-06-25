@@ -19,7 +19,7 @@ const JobInput = z.object({
   meta_description: z.string().nullable().optional(),
   tags: z.array(z.string()).default([]),
   category: z.string().nullable().optional(),
-  status: z.enum(["published", "expired", "archived"]).default("published"),
+  status: z.enum(["draft", "published", "archived"]).default("draft"),
   last_date: z.string().nullable().optional(),
 });
 
@@ -45,98 +45,102 @@ export const getJobBySlug = createServerFn({ method: "GET" })
     return job;
   });
 
+export async function upsertJobInternal(data: any, supabaseClient: any, userId?: string) {
+  const payload: any = { ...data };
+  if (userId) payload.created_by = userId;
+  const now = new Date().toISOString();
+
+  if (data.id) {
+    const { data: updatedRow, error } = await supabaseClient
+      .from("jobs")
+      .update(payload)
+      .eq("id", data.id)
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+    return { action: "updated", jobId: updatedRow.id };
+  }
+
+  let duplicateJobId = null;
+
+  const { data: byUrl } = await supabaseClient
+    .from("jobs")
+    .select("id")
+    .eq("apply_url", data.apply_url)
+    .limit(1)
+    .maybeSingle();
+
+  if (byUrl) {
+    duplicateJobId = byUrl.id;
+  } else {
+    const { data: matches } = await supabaseClient
+      .from("jobs")
+      .select("id, location")
+      .eq("company", data.company)
+      .eq("title", data.title);
+
+    if (matches && matches.length > 0) {
+      const exactLoc = matches.find((m: any) => m.location === data.location);
+      duplicateJobId = exactLoc ? exactLoc.id : matches[0].id;
+    }
+  }
+
+  if (duplicateJobId) {
+    const updatePayload = {
+      salary: data.salary,
+      last_date: data.last_date,
+      description: data.description,
+      ai_summary: data.ai_summary,
+      tags: data.tags,
+    };
+
+    const { data: updatedRow, error } = await supabaseClient
+      .from("jobs")
+      .update(updatePayload)
+      .eq("id", duplicateJobId)
+      .select("id")
+      .single();
+
+    if (error) throw new Error(error.message);
+    return { action: "updated", jobId: updatedRow.id };
+  }
+
+  let isUnique = false;
+  let suffix = 1;
+  let candidateSlug = payload.slug;
+
+  while (!isUnique) {
+    const { data: existing } = await supabaseClient
+      .from("jobs")
+      .select("id")
+      .eq("slug", candidateSlug)
+      .maybeSingle();
+      
+    if (!existing) {
+      isUnique = true;
+    } else {
+      suffix++;
+      candidateSlug = `${data.slug}-${suffix}`;
+    }
+  }
+  payload.slug = candidateSlug;
+
+  const { data: newRow, error } = await supabaseClient
+    .from("jobs")
+    .insert(payload)
+    .select("id")
+    .single();
+    
+  if (error) throw new Error(error.message);
+  return { action: "created", jobId: newRow.id };
+}
+
 export const upsertJob = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((input: unknown) => JobInput.parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const payload: any = { ...data, created_by: context.userId };
-    const now = new Date().toISOString();
-
-    if (data.id) {
-      const { data: updatedRow, error } = await context.supabase
-        .from("jobs")
-        .update(payload)
-        .eq("id", data.id)
-        .select("id")
-        .single();
-      if (error) throw new Error(error.message);
-      return { action: "updated", jobId: updatedRow.id };
-    }
-
-    let duplicateJobId = null;
-
-    const { data: byUrl } = await context.supabase
-      .from("jobs")
-      .select("id")
-      .eq("apply_url", data.apply_url)
-      .limit(1)
-      .maybeSingle();
-
-    if (byUrl) {
-      duplicateJobId = byUrl.id;
-    } else {
-      const { data: matches } = await context.supabase
-        .from("jobs")
-        .select("id, location")
-        .eq("company", data.company)
-        .eq("title", data.title);
-
-      if (matches && matches.length > 0) {
-        const exactLoc = matches.find((m: any) => m.location === data.location);
-        duplicateJobId = exactLoc ? exactLoc.id : matches[0].id;
-      }
-    }
-
-    if (duplicateJobId) {
-      const updatePayload = {
-        salary: data.salary,
-        last_date: data.last_date,
-        description: data.description,
-        ai_summary: data.ai_summary,
-        tags: data.tags,
-      };
-
-      const { data: updatedRow, error } = await context.supabase
-        .from("jobs")
-        .update(updatePayload)
-        .eq("id", duplicateJobId)
-        .select("id")
-        .single();
-
-      if (error) throw new Error(error.message);
-      return { action: "updated", jobId: updatedRow.id };
-    }
-
-
-    let isUnique = false;
-    let suffix = 1;
-    let candidateSlug = payload.slug;
-
-    while (!isUnique) {
-      const { data: existing } = await context.supabase
-        .from("jobs")
-        .select("id")
-        .eq("slug", candidateSlug)
-        .maybeSingle();
-        
-      if (!existing) {
-        isUnique = true;
-      } else {
-        suffix++;
-        candidateSlug = `${data.slug}-${suffix}`;
-      }
-    }
-    payload.slug = candidateSlug;
-
-    const { data: newRow, error } = await context.supabase
-      .from("jobs")
-      .insert(payload)
-      .select("id")
-      .single();
-      
-    if (error) throw new Error(error.message);
-    return { action: "created", jobId: newRow.id };
+    return upsertJobInternal(data, context.supabase, context.userId);
   });
 
 export const deleteJob = createServerFn({ method: "POST" })
@@ -163,7 +167,7 @@ export const listAllJobs = createServerFn({ method: "GET" })
 
 export const updateJobStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((input: unknown) => z.object({ id: z.string().uuid(), status: z.enum(["published", "expired", "archived"]) }).parse(input))
+  .validator((input: unknown) => z.object({ id: z.string().uuid(), status: z.enum(["draft", "published", "archived"]) }).parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { error } = await context.supabase

@@ -20,9 +20,9 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as JobsSlugRouteImport } from './routes/jobs.$slug'
-import { Route as ApiCronRouteImport } from './routes/api/cron'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminSiteSettingsRouteImport } from './routes/_authenticated/admin.site-settings'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminJobsNewRouteImport } from './routes/_authenticated/admin.jobs.new'
 import { Route as AuthenticatedAdminJobsBulkRouteImport } from './routes/_authenticated/admin.jobs.bulk'
@@ -83,11 +83,6 @@ const JobsSlugRoute = JobsSlugRouteImport.update({
   path: '/jobs/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiCronRoute = ApiCronRouteImport.update({
-  id: '/api/cron',
-  path: '/api/cron',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -98,6 +93,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminSiteSettingsRoute =
+  AuthenticatedAdminSiteSettingsRouteImport.update({
+    id: '/site-settings',
+    path: '/site-settings',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/settings',
@@ -140,9 +141,9 @@ export interface FileRoutesByFullPath {
   '/sitemap-jobs.xml': typeof SitemapJobsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/api/cron': typeof ApiCronRoute
   '/jobs/$slug': typeof JobsSlugRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
@@ -159,9 +160,9 @@ export interface FileRoutesByTo {
   '/sitemap-core.xml': typeof SitemapCoreDotxmlRoute
   '/sitemap-jobs.xml': typeof SitemapJobsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/api/cron': typeof ApiCronRoute
   '/jobs/$slug': typeof JobsSlugRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
@@ -181,9 +182,9 @@ export interface FileRoutesById {
   '/sitemap-jobs.xml': typeof SitemapJobsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/api/cron': typeof ApiCronRoute
   '/jobs/$slug': typeof JobsSlugRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/_authenticated/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
@@ -203,9 +204,9 @@ export interface FileRouteTypes {
     | '/sitemap-jobs.xml'
     | '/sitemap.xml'
     | '/admin'
-    | '/api/cron'
     | '/jobs/$slug'
     | '/admin/settings'
+    | '/admin/site-settings'
     | '/admin/'
     | '/admin/jobs/audit'
     | '/admin/jobs/bulk'
@@ -222,9 +223,9 @@ export interface FileRouteTypes {
     | '/sitemap-core.xml'
     | '/sitemap-jobs.xml'
     | '/sitemap.xml'
-    | '/api/cron'
     | '/jobs/$slug'
     | '/admin/settings'
+    | '/admin/site-settings'
     | '/admin'
     | '/admin/jobs/audit'
     | '/admin/jobs/bulk'
@@ -243,9 +244,9 @@ export interface FileRouteTypes {
     | '/sitemap-jobs.xml'
     | '/sitemap.xml'
     | '/_authenticated/admin'
-    | '/api/cron'
     | '/jobs/$slug'
     | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/site-settings'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/jobs/audit'
     | '/_authenticated/admin/jobs/bulk'
@@ -264,7 +265,6 @@ export interface RootRouteChildren {
   SitemapCoreDotxmlRoute: typeof SitemapCoreDotxmlRoute
   SitemapJobsDotxmlRoute: typeof SitemapJobsDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  ApiCronRoute: typeof ApiCronRoute
   JobsSlugRoute: typeof JobsSlugRoute
 }
 
@@ -347,13 +347,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JobsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/cron': {
-      id: '/api/cron'
-      path: '/api/cron'
-      fullPath: '/api/cron'
-      preLoaderRoute: typeof ApiCronRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -366,6 +359,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/site-settings': {
+      id: '/_authenticated/admin/site-settings'
+      path: '/site-settings'
+      fullPath: '/admin/site-settings'
+      preLoaderRoute: typeof AuthenticatedAdminSiteSettingsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/settings': {
@@ -408,6 +408,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminSiteSettingsRoute: typeof AuthenticatedAdminSiteSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminJobsAuditRoute: typeof AuthenticatedAdminJobsAuditRoute
   AuthenticatedAdminJobsBulkRoute: typeof AuthenticatedAdminJobsBulkRoute
@@ -417,6 +418,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminSiteSettingsRoute: AuthenticatedAdminSiteSettingsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminJobsAuditRoute: AuthenticatedAdminJobsAuditRoute,
   AuthenticatedAdminJobsBulkRoute: AuthenticatedAdminJobsBulkRoute,
@@ -450,7 +452,6 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapCoreDotxmlRoute: SitemapCoreDotxmlRoute,
   SitemapJobsDotxmlRoute: SitemapJobsDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  ApiCronRoute: ApiCronRoute,
   JobsSlugRoute: JobsSlugRoute,
 }
 export const routeTree = rootRouteImport
