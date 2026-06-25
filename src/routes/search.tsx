@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Search as SearchIcon } from "lucide-react";
+import { Search as SearchIcon, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,7 @@ import { StickySocial } from "@/components/sticky-social";
 const searchSchema = z.object({
   q: z.string().optional(),
   category: z.string().optional(),
+  subcategory: z.string().optional(),
   type: z.string().optional(),
 });
 
@@ -34,7 +35,13 @@ export const Route = createFileRoute("/search")({
   component: SearchPage,
 });
 
-const CATEGORIES = ["IT", "Government", "Internship"];
+const TAXONOMY: Record<string, string[]> = {
+  IT: ["Software Engineering", "Cloud Engineering", "DevOps", "Data Engineering", "Data Science", "Cybersecurity", "QA", "Technical Support"],
+  Government: ["PSU", "Research", "Defence", "Banking"],
+  Internship: ["Software", "Data", "General"],
+  Business: ["Analyst", "Operations", "Consulting"],
+};
+const CATEGORIES = Object.keys(TAXONOMY);
 const TYPES = ["Full-time", "Internship", "Government", "Contract"];
 
 function SearchPage() {
@@ -45,12 +52,12 @@ function SearchPage() {
   useEffect(() => setQ(search.q ?? ""), [search.q]);
 
   const { data, isFetching } = useQuery({
-    queryKey: ["search", search.q, search.category, search.type],
+    queryKey: ["search", search.q, search.category, search.subcategory, search.type],
     queryFn: async () => {
       let query = supabase
         .from("jobs")
         .select(
-          "id, slug, title, company, company_logo, location, experience, salary, last_date, category, employment_type",
+          "id, slug, title, company, company_logo, location, experience, salary, last_date, category, subcategory, employment_type",
         )
         .eq("status", "published")
         .order("posted_date", { ascending: false })
@@ -61,6 +68,7 @@ function SearchPage() {
         );
       }
       if (search.category) query = query.eq("category", search.category);
+      if (search.subcategory) query = query.eq("subcategory", search.subcategory);
       if (search.type) query = query.eq("employment_type", search.type);
       const { data, error } = await query;
       if (error) throw error;
@@ -104,27 +112,25 @@ function SearchPage() {
         </div>
       </div>
 
-      <main className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[260px_1fr] lg:px-8">
-        {/* Filters */}
-        <aside className="glass space-y-5 self-start rounded-2xl p-5">
-          <FilterGroup
-            title="Category"
-            options={CATEGORIES}
-            active={search.category}
-            onChange={(v) => update({ category: v })}
-          />
-          <FilterGroup
-            title="Employment Type"
-            options={TYPES}
-            active={search.type}
-            onChange={(v) => update({ type: v })}
-          />
-          <button
-            onClick={() => navigate({ search: {} })}
-            className="w-full rounded-md border border-border px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent"
-          >
-            Reset filters
-          </button>
+      <main className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 md:grid-cols-[240px_1fr] lg:grid-cols-[260px_1fr] lg:px-8">
+        {/* Mobile Filters */}
+        <div className="md:hidden">
+          <details className="group rounded-2xl border border-border bg-surface [&_summary::-webkit-details-marker]:hidden">
+            <summary className="flex cursor-pointer items-center justify-between p-4 font-semibold outline-none marker:content-none">
+              Filters
+              <span className="transition-transform group-open:-rotate-180">
+                <ChevronDown className="h-5 w-5" />
+              </span>
+            </summary>
+            <div className="border-t border-border p-4 pt-4">
+              <FiltersContent search={search} update={update} reset={() => navigate({ search: {} })} />
+            </div>
+          </details>
+        </div>
+
+        {/* Desktop Filters */}
+        <aside className="glass hidden space-y-5 self-start rounded-2xl p-5 md:block">
+          <FiltersContent search={search} update={update} reset={() => navigate({ search: {} })} />
         </aside>
 
         {/* Results */}
@@ -148,6 +154,40 @@ function SearchPage() {
       </main>
       <SiteFooter />
       <StickySocial />
+    </div>
+  );
+}
+
+function FiltersContent({ search, update, reset }: { search: any, update: any, reset: any }) {
+  const subcategories = search.category ? TAXONOMY[search.category] || [] : [];
+  return (
+    <div className="space-y-5">
+      <FilterGroup
+        title="Category"
+        options={CATEGORIES}
+        active={search.category}
+        onChange={(v) => update({ category: v, subcategory: undefined })}
+      />
+      {subcategories.length > 0 && (
+        <FilterGroup
+          title="Subcategory"
+          options={subcategories}
+          active={search.subcategory}
+          onChange={(v) => update({ subcategory: v })}
+        />
+      )}
+      <FilterGroup
+        title="Employment Type"
+        options={TYPES}
+        active={search.type}
+        onChange={(v) => update({ type: v })}
+      />
+      <button
+        onClick={reset}
+        className="w-full rounded-md border border-border px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent"
+      >
+        Reset filters
+      </button>
     </div>
   );
 }

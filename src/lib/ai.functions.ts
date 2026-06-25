@@ -50,7 +50,18 @@ async function getActiveProvider(supabase: any): Promise<{
 }
 
 async function chat(supabase: any, system: string, user: string, json = false) {
-  const cfg = await getActiveProvider(supabase);
+  let cfg;
+  try {
+    cfg = await getActiveProvider(supabase);
+  } catch (err: any) {
+    if (err.message.includes("API key not configured")) {
+      throw new Error("Invalid AI API key");
+    }
+    if (err.message.includes("AI_GATEWAY_API_KEY missing")) {
+      throw new Error("Missing AI API key");
+    }
+    throw err;
+  }
 
   const isGemini =
     cfg.provider === "gemini" ||
@@ -75,41 +86,68 @@ async function chat(supabase: any, system: string, user: string, json = false) {
     };
   }
 
-  if (import.meta.env.DEV) {
-    console.log("AI Provider:", cfg.provider);
-    console.log("Model:", cfg.model);
-    console.log("Base URL:", cfg.baseUrl);
-    console.log("Headers:", {
-      ...cfg.headers,
-      Authorization: cfg.headers.Authorization
-        ? "***hidden***"
-        : undefined,
-    });
-    console.log("Request Body:", JSON.stringify(body, null, 2));
+  const attemptRequest = async (attempt: number) => {
+    try {
+      const res = await fetch(`${cfg.baseUrl}/chat/completions`, {
+        method: "POST",
+        headers: cfg.headers,
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(30000), // 30 second timeout
+      });
+
+      const responseText = await res.text();
+
+      if (!res.ok) {
+        if (res.status === 429) throw new Error("Rate limit reached, try again later");
+        if (res.status === 401 || res.status === 403) throw new Error("Invalid AI API key");
+        if (res.status === 402) throw new Error("AI credits exhausted. Top up to continue.");
+        console.error(`AI Provider Error (${res.status}):`, responseText);
+        throw new Error("AI service unavailable");
+      }
+      
+      const j = JSON.parse(responseText);
+      return j.choices?.[0]?.message?.content ?? "";
+    } catch (err: any) {
+      if (err.name === "TimeoutError" || err.message === "fetch failed") {
+        throw new Error("AI service timeout, try again later");
+      }
+      throw err;
+    }
+  };
+
+  let lastError: Error | null = null;
+  for (let i = 1; i <= 3; i++) {
+    try {
+      return await attemptRequest(i);
+    } catch (err: any) {
+      lastError = err;
+      console.error(`Chat attempt ${i} failed:`, err.message);
+      // Don't retry auth or rate limit or user errors
+      if (err.message === "Invalid AI API key" || err.message === "Missing AI API key") {
+        throw err;
+      }
+      // Wait before retry
+      if (i < 3) await new Promise(r => setTimeout(r, 2000 * i));
+    }
   }
 
-  const res = await fetch(`${cfg.baseUrl}/chat/completions`, {
-    method: "POST",
-    headers: cfg.headers,
-    body: JSON.stringify(body),
-  });
-
-  const responseText = await res.text();
-
-  if (import.meta.env.DEV) {
-    console.log("AI Status:", res.status);
-    console.log("AI Response:", responseText);
-  }
-
-  if (!res.ok) {
-    if (res.status === 429) throw new Error(`Gemini 429 Rate Limit: ${responseText}`);
-    if (res.status === 402) throw new Error("AI credits exhausted. Top up to continue.");
-    throw new Error(`AI provider error (${res.status}): ${responseText}`);
-  }
-  
-  const j = JSON.parse(responseText);
-  return j.choices?.[0]?.message?.content ?? "";
+  throw lastError || new Error("AI service unavailable");
 }
+
+export const checkAiHealth = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    try {
+      await assertAdmin(context);
+      await chat(context.supabase, "You are a helpful assistant.", "Say 'ok' if you are online.");
+      return { status: "Connected" };
+    } catch (err: any) {
+      if (err.message === "Invalid AI API key" || err.message === "Missing AI API key") {
+        return { status: "Invalid Key" };
+      }
+      return { status: "Unavailable", error: err.message };
+    }
+  });
 
 
 
@@ -182,6 +220,12 @@ ${pageText.slice(0, 15000)}`;
 URL: ${data.url}
 PAGE TEXT: ${finalDescription || "(page could not be fetched - infer best you can from the URL)"}
 
+TAXONOMY FOR CATEGORY AND SUBCATEGORY:
+- IT: Software Engineering, Cloud Engineering, DevOps, Data Engineering, Data Science, Cybersecurity, QA, Technical Support
+- Government: PSU, Research, Defence, Banking
+- Internship: Software, Data, General
+- Business: Analyst, Operations, Consulting
+
 Return strictly this JSON shape:
 {
   "title": string,
@@ -192,6 +236,7 @@ Return strictly this JSON shape:
   "employment_type": string|null,
   "qualification": string|null,
   "category": string|null,
+  "subcategory": string|null,
   "company_logo": string|null,
   "last_date": string|null,
   "ai_summary": string,
@@ -199,6 +244,7 @@ Return strictly this JSON shape:
   "tags": string[]
 }
 
+- category and subcategory must exactly match one of the options in the TAXONOMY.
 - ai_summary: a clear 2-3 sentence overview of the role for job seekers.
 - last_date: search raw text for "application deadline", "closing date", "apply before", "applications close", "last date to apply", "deadline". Normalize to YYYY-MM-DD. If multiple dates exist, choose the application deadline. If no deadline exists, return null.
 - meta_description: under 160 characters, SEO friendly.
@@ -227,6 +273,7 @@ Return strictly this JSON shape:
       employment_type: parsed.employment_type ?? null,
       qualification: parsed.qualification ?? null,
       category: parsed.category ?? null,
+      subcategory: parsed.subcategory ?? null,
       last_date: parsed.last_date ?? null,
       description: finalDescription ? finalDescription.slice(0, 15000) : "",
       ai_summary: parsed.ai_summary ?? "",
