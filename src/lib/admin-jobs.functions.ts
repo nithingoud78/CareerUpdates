@@ -31,6 +31,20 @@ async function assertAdmin(ctx: { supabase: any; userId: string }) {
   if (error || !data) throw new Error("Forbidden: admin only");
 }
 
+export const getJobBySlug = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .validator((slug: string) => z.string().parse(slug))
+  .handler(async ({ data: slug, context }) => {
+    await assertAdmin(context);
+    const { data: job, error } = await context.supabase
+      .from("jobs")
+      .select("*")
+      .eq("slug", slug)
+      .single();
+    if (error || !job) throw new Error("Job not found");
+    return job;
+  });
+
 export const upsertJob = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((input: unknown) => JobInput.parse(input))

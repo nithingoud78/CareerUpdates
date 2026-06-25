@@ -27,6 +27,7 @@ import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminJobsNewRouteImport } from './routes/_authenticated/admin.jobs.new'
 import { Route as AuthenticatedAdminJobsBulkRouteImport } from './routes/_authenticated/admin.jobs.bulk'
 import { Route as AuthenticatedAdminJobsAuditRouteImport } from './routes/_authenticated/admin.jobs.audit'
+import { Route as AuthenticatedAdminJobsSlugEditRouteImport } from './routes/_authenticated/admin.jobs.$slug.edit'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -121,6 +122,12 @@ const AuthenticatedAdminJobsAuditRoute =
     path: '/jobs/audit',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminJobsSlugEditRoute =
+  AuthenticatedAdminJobsSlugEditRouteImport.update({
+    id: '/jobs/$slug/edit',
+    path: '/jobs/$slug/edit',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
   '/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
+  '/admin/jobs/$slug/edit': typeof AuthenticatedAdminJobsSlugEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -158,6 +166,7 @@ export interface FileRoutesByTo {
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
   '/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
+  '/admin/jobs/$slug/edit': typeof AuthenticatedAdminJobsSlugEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -179,6 +188,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/_authenticated/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
   '/_authenticated/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
+  '/_authenticated/admin/jobs/$slug/edit': typeof AuthenticatedAdminJobsSlugEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/admin/jobs/audit'
     | '/admin/jobs/bulk'
     | '/admin/jobs/new'
+    | '/admin/jobs/$slug/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/admin/jobs/audit'
     | '/admin/jobs/bulk'
     | '/admin/jobs/new'
+    | '/admin/jobs/$slug/edit'
   id:
     | '__root__'
     | '/'
@@ -238,6 +250,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/jobs/audit'
     | '/_authenticated/admin/jobs/bulk'
     | '/_authenticated/admin/jobs/new'
+    | '/_authenticated/admin/jobs/$slug/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -383,6 +396,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminJobsAuditRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/jobs/$slug/edit': {
+      id: '/_authenticated/admin/jobs/$slug/edit'
+      path: '/jobs/$slug/edit'
+      fullPath: '/admin/jobs/$slug/edit'
+      preLoaderRoute: typeof AuthenticatedAdminJobsSlugEditRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
@@ -392,6 +412,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminJobsAuditRoute: typeof AuthenticatedAdminJobsAuditRoute
   AuthenticatedAdminJobsBulkRoute: typeof AuthenticatedAdminJobsBulkRoute
   AuthenticatedAdminJobsNewRoute: typeof AuthenticatedAdminJobsNewRoute
+  AuthenticatedAdminJobsSlugEditRoute: typeof AuthenticatedAdminJobsSlugEditRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -400,6 +421,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminJobsAuditRoute: AuthenticatedAdminJobsAuditRoute,
   AuthenticatedAdminJobsBulkRoute: AuthenticatedAdminJobsBulkRoute,
   AuthenticatedAdminJobsNewRoute: AuthenticatedAdminJobsNewRoute,
+  AuthenticatedAdminJobsSlugEditRoute: AuthenticatedAdminJobsSlugEditRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
