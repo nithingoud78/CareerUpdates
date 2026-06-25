@@ -19,15 +19,21 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as JobsSlugRouteImport } from './routes/jobs.$slug'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminSiteSettingsRouteImport } from './routes/_authenticated/admin.site-settings'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as AuthenticatedAdminFeedbackRouteImport } from './routes/_authenticated/admin.feedback'
+import { Route as AuthenticatedAdminBlogIndexRouteImport } from './routes/_authenticated/admin.blog.index'
 import { Route as AuthenticatedAdminJobsNewRouteImport } from './routes/_authenticated/admin.jobs.new'
 import { Route as AuthenticatedAdminJobsBulkRouteImport } from './routes/_authenticated/admin.jobs.bulk'
 import { Route as AuthenticatedAdminJobsAuditRouteImport } from './routes/_authenticated/admin.jobs.audit'
+import { Route as AuthenticatedAdminBlogNewRouteImport } from './routes/_authenticated/admin.blog.new'
 import { Route as AuthenticatedAdminJobsSlugEditRouteImport } from './routes/_authenticated/admin.jobs.$slug.edit'
+import { Route as AuthenticatedAdminBlogIdEditRouteImport } from './routes/_authenticated/admin.blog.$id.edit'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -78,9 +84,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JobsSlugRoute = JobsSlugRouteImport.update({
   id: '/jobs/$slug',
   path: '/jobs/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -105,6 +121,18 @@ const AuthenticatedAdminSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminFeedbackRoute =
+  AuthenticatedAdminFeedbackRouteImport.update({
+    id: '/feedback',
+    path: '/feedback',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminBlogIndexRoute =
+  AuthenticatedAdminBlogIndexRouteImport.update({
+    id: '/blog/',
+    path: '/blog/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminJobsNewRoute =
   AuthenticatedAdminJobsNewRouteImport.update({
     id: '/jobs/new',
@@ -123,10 +151,22 @@ const AuthenticatedAdminJobsAuditRoute =
     path: '/jobs/audit',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminBlogNewRoute =
+  AuthenticatedAdminBlogNewRouteImport.update({
+    id: '/blog/new',
+    path: '/blog/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminJobsSlugEditRoute =
   AuthenticatedAdminJobsSlugEditRouteImport.update({
     id: '/jobs/$slug/edit',
     path: '/jobs/$slug/edit',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminBlogIdEditRoute =
+  AuthenticatedAdminBlogIdEditRouteImport.update({
+    id: '/blog/$id/edit',
+    path: '/blog/$id/edit',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 
@@ -141,13 +181,19 @@ export interface FileRoutesByFullPath {
   '/sitemap-jobs.xml': typeof SitemapJobsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/jobs/$slug': typeof JobsSlugRoute
+  '/blog/': typeof BlogIndexRoute
+  '/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
   '/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
+  '/admin/blog/': typeof AuthenticatedAdminBlogIndexRoute
+  '/admin/blog/$id/edit': typeof AuthenticatedAdminBlogIdEditRoute
   '/admin/jobs/$slug/edit': typeof AuthenticatedAdminJobsSlugEditRoute
 }
 export interface FileRoutesByTo {
@@ -160,13 +206,19 @@ export interface FileRoutesByTo {
   '/sitemap-core.xml': typeof SitemapCoreDotxmlRoute
   '/sitemap-jobs.xml': typeof SitemapJobsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/jobs/$slug': typeof JobsSlugRoute
+  '/blog': typeof BlogIndexRoute
+  '/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
   '/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
+  '/admin/blog': typeof AuthenticatedAdminBlogIndexRoute
+  '/admin/blog/$id/edit': typeof AuthenticatedAdminBlogIdEditRoute
   '/admin/jobs/$slug/edit': typeof AuthenticatedAdminJobsSlugEditRoute
 }
 export interface FileRoutesById {
@@ -182,13 +234,19 @@ export interface FileRoutesById {
   '/sitemap-jobs.xml': typeof SitemapJobsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/jobs/$slug': typeof JobsSlugRoute
+  '/blog/': typeof BlogIndexRoute
+  '/_authenticated/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
   '/_authenticated/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/_authenticated/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
   '/_authenticated/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
+  '/_authenticated/admin/blog/': typeof AuthenticatedAdminBlogIndexRoute
+  '/_authenticated/admin/blog/$id/edit': typeof AuthenticatedAdminBlogIdEditRoute
   '/_authenticated/admin/jobs/$slug/edit': typeof AuthenticatedAdminJobsSlugEditRoute
 }
 export interface FileRouteTypes {
@@ -204,13 +262,19 @@ export interface FileRouteTypes {
     | '/sitemap-jobs.xml'
     | '/sitemap.xml'
     | '/admin'
+    | '/blog/$slug'
     | '/jobs/$slug'
+    | '/blog/'
+    | '/admin/feedback'
     | '/admin/settings'
     | '/admin/site-settings'
     | '/admin/'
+    | '/admin/blog/new'
     | '/admin/jobs/audit'
     | '/admin/jobs/bulk'
     | '/admin/jobs/new'
+    | '/admin/blog/'
+    | '/admin/blog/$id/edit'
     | '/admin/jobs/$slug/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -223,13 +287,19 @@ export interface FileRouteTypes {
     | '/sitemap-core.xml'
     | '/sitemap-jobs.xml'
     | '/sitemap.xml'
+    | '/blog/$slug'
     | '/jobs/$slug'
+    | '/blog'
+    | '/admin/feedback'
     | '/admin/settings'
     | '/admin/site-settings'
     | '/admin'
+    | '/admin/blog/new'
     | '/admin/jobs/audit'
     | '/admin/jobs/bulk'
     | '/admin/jobs/new'
+    | '/admin/blog'
+    | '/admin/blog/$id/edit'
     | '/admin/jobs/$slug/edit'
   id:
     | '__root__'
@@ -244,13 +314,19 @@ export interface FileRouteTypes {
     | '/sitemap-jobs.xml'
     | '/sitemap.xml'
     | '/_authenticated/admin'
+    | '/blog/$slug'
     | '/jobs/$slug'
+    | '/blog/'
+    | '/_authenticated/admin/feedback'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/site-settings'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/blog/new'
     | '/_authenticated/admin/jobs/audit'
     | '/_authenticated/admin/jobs/bulk'
     | '/_authenticated/admin/jobs/new'
+    | '/_authenticated/admin/blog/'
+    | '/_authenticated/admin/blog/$id/edit'
     | '/_authenticated/admin/jobs/$slug/edit'
   fileRoutesById: FileRoutesById
 }
@@ -265,7 +341,9 @@ export interface RootRouteChildren {
   SitemapCoreDotxmlRoute: typeof SitemapCoreDotxmlRoute
   SitemapJobsDotxmlRoute: typeof SitemapJobsDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  BlogSlugRoute: typeof BlogSlugRoute
   JobsSlugRoute: typeof JobsSlugRoute
+  BlogIndexRoute: typeof BlogIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -340,11 +418,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/jobs/$slug': {
       id: '/jobs/$slug'
       path: '/jobs/$slug'
       fullPath: '/jobs/$slug'
       preLoaderRoute: typeof JobsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -375,6 +467,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/feedback': {
+      id: '/_authenticated/admin/feedback'
+      path: '/feedback'
+      fullPath: '/admin/feedback'
+      preLoaderRoute: typeof AuthenticatedAdminFeedbackRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/blog/': {
+      id: '/_authenticated/admin/blog/'
+      path: '/blog'
+      fullPath: '/admin/blog/'
+      preLoaderRoute: typeof AuthenticatedAdminBlogIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/jobs/new': {
       id: '/_authenticated/admin/jobs/new'
       path: '/jobs/new'
@@ -396,6 +502,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminJobsAuditRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/blog/new': {
+      id: '/_authenticated/admin/blog/new'
+      path: '/blog/new'
+      fullPath: '/admin/blog/new'
+      preLoaderRoute: typeof AuthenticatedAdminBlogNewRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/jobs/$slug/edit': {
       id: '/_authenticated/admin/jobs/$slug/edit'
       path: '/jobs/$slug/edit'
@@ -403,26 +516,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminJobsSlugEditRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/blog/$id/edit': {
+      id: '/_authenticated/admin/blog/$id/edit'
+      path: '/blog/$id/edit'
+      fullPath: '/admin/blog/$id/edit'
+      preLoaderRoute: typeof AuthenticatedAdminBlogIdEditRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminFeedbackRoute: typeof AuthenticatedAdminFeedbackRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminSiteSettingsRoute: typeof AuthenticatedAdminSiteSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminBlogNewRoute: typeof AuthenticatedAdminBlogNewRoute
   AuthenticatedAdminJobsAuditRoute: typeof AuthenticatedAdminJobsAuditRoute
   AuthenticatedAdminJobsBulkRoute: typeof AuthenticatedAdminJobsBulkRoute
   AuthenticatedAdminJobsNewRoute: typeof AuthenticatedAdminJobsNewRoute
+  AuthenticatedAdminBlogIndexRoute: typeof AuthenticatedAdminBlogIndexRoute
+  AuthenticatedAdminBlogIdEditRoute: typeof AuthenticatedAdminBlogIdEditRoute
   AuthenticatedAdminJobsSlugEditRoute: typeof AuthenticatedAdminJobsSlugEditRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminFeedbackRoute: AuthenticatedAdminFeedbackRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminSiteSettingsRoute: AuthenticatedAdminSiteSettingsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminBlogNewRoute: AuthenticatedAdminBlogNewRoute,
   AuthenticatedAdminJobsAuditRoute: AuthenticatedAdminJobsAuditRoute,
   AuthenticatedAdminJobsBulkRoute: AuthenticatedAdminJobsBulkRoute,
   AuthenticatedAdminJobsNewRoute: AuthenticatedAdminJobsNewRoute,
+  AuthenticatedAdminBlogIndexRoute: AuthenticatedAdminBlogIndexRoute,
+  AuthenticatedAdminBlogIdEditRoute: AuthenticatedAdminBlogIdEditRoute,
   AuthenticatedAdminJobsSlugEditRoute: AuthenticatedAdminJobsSlugEditRoute,
 }
 
@@ -452,7 +580,9 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapCoreDotxmlRoute: SitemapCoreDotxmlRoute,
   SitemapJobsDotxmlRoute: SitemapJobsDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  BlogSlugRoute: BlogSlugRoute,
   JobsSlugRoute: JobsSlugRoute,
+  BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

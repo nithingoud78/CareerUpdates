@@ -2,8 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { Plus, Trash2, Archive, Activity } from "lucide-react";
+import { Plus, Trash2, Archive, Activity, Inbox } from "lucide-react";
 import { listAllJobs, deleteJob, updateJobStatus } from "@/lib/admin-jobs.functions";
+import { getUnreadFeedbackCount } from "@/lib/feedback.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: Dashboard,
@@ -30,9 +31,17 @@ function Dashboard() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-jobs"] }),
   });
 
+  const getUnread = useServerFn(getUnreadFeedbackCount);
+  const { data: feedbackData } = useQuery({
+    queryKey: ["unread-feedback-count"],
+    queryFn: () => getUnread(),
+    refetchInterval: 30000,
+  });
+
   const [statusFilter, setStatusFilter] = useState("all");
 
   const published = data?.filter((j: any) => j.status === "published").length ?? 0;
+  const unreadFeedback = (feedbackData as any)?.count ?? 0;
 
   return (
     <div className="space-y-6">
@@ -63,9 +72,19 @@ function Dashboard() {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-3">
         <Stat label="Total jobs" value={data?.length ?? 0} />
         <Stat label="Published" value={published} />
+        <Link to="/admin/feedback" className="glass rounded-2xl p-5 transition-colors hover:bg-accent">
+          <div className="flex items-center justify-between">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">Unread Feedback</p>
+            <Inbox className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <p className="mt-1 text-2xl font-bold">{unreadFeedback}</p>
+          {unreadFeedback > 0 && (
+            <p className="mt-1 text-xs text-brand font-medium">View messages →</p>
+          )}
+        </Link>
       </div>
 
       <div className="flex items-center justify-between mb-4">

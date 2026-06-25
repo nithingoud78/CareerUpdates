@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Briefcase, LayoutDashboard, LogOut, Plus, Settings, Cpu } from "lucide-react";
+import { Briefcase, LayoutDashboard, LogOut, Plus, Settings, Cpu, BookOpen, Inbox } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -55,6 +55,8 @@ function AdminLayout() {
           <AdminLink to="/admin/jobs/new" icon={Plus} label="New Job" />
           <AdminLink to="/admin/site-settings" icon={Settings} label="Site Settings" />
           <AdminLink to="/admin/settings" icon={Cpu} label="AI Settings" />
+          <AdminLink to="/admin/blog" icon={BookOpen} label="Blog" />
+          <AdminLink to="/admin/feedback" icon={Inbox} label="Feedback" />
           <div className="ml-auto flex items-center gap-2">
             <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">View site →</Link>
             <button

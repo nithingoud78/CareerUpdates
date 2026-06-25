@@ -14,6 +14,93 @@ export type Database = {
   }
   public: {
     Tables: {
+      blogs: {
+        Row: {
+          id: string
+          title: string
+          slug: string
+          excerpt: string | null
+          content: string | null
+          cover_image: string | null
+          category: string | null
+          tags: string[]
+          author: string
+          status: 'draft' | 'published'
+          featured: boolean
+          seo_title: string | null
+          seo_description: string | null
+          published_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          slug: string
+          excerpt?: string | null
+          content?: string | null
+          cover_image?: string | null
+          category?: string | null
+          tags?: string[]
+          author?: string
+          status?: 'draft' | 'published'
+          featured?: boolean
+          seo_title?: string | null
+          seo_description?: string | null
+          published_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          slug?: string
+          excerpt?: string | null
+          content?: string | null
+          cover_image?: string | null
+          category?: string | null
+          tags?: string[]
+          author?: string
+          status?: 'draft' | 'published'
+          featured?: boolean
+          seo_title?: string | null
+          seo_description?: string | null
+          published_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      feedback: {
+        Row: {
+          id: string
+          name: string
+          email: string
+          subject: string
+          message: string
+          status: 'Unread' | 'Read'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          email: string
+          subject: string
+          message: string
+          status?: 'Unread' | 'Read'
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          email?: string
+          subject?: string
+          message?: string
+          status?: 'Unread' | 'Read'
+          created_at?: string
+        }
+        Relationships: []
+      }
       company_sources: {
         Row: {
           id: string
