@@ -28,7 +28,7 @@ INSERT INTO public.site_settings (
   instagram_url
 )
 SELECT
-  'hello@careerupdates.app',
+  'hello@careerupdates.co.in',
   'https://t.me/',
   'https://whatsapp.com/channel/',
   'https://instagram.com/'

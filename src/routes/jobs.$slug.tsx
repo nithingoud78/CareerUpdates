@@ -46,7 +46,7 @@ export const Route = createFileRoute("/jobs/$slug")({
   },
   head: ({ params, loaderData }) => {
     const j = (loaderData as any)?.job;
-    const siteUrl = "https://careerupdates.app";
+    const siteUrl = "https://careerupdates.co.in";
     return {
       meta: [
         { title: j ? `${j.title} at ${j.company} — Career Updates` : "Job — Career Updates" },

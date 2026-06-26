@@ -10,7 +10,7 @@ import { getPublishedBlogs, getFeaturedBlog, getBlogCategories } from "@/lib/blo
 
 export const Route = createFileRoute("/blog/")({
   head: () => {
-    const siteUrl = "https://careerupdates.app";
+    const siteUrl = "https://careerupdates.co.in";
     return {
       meta: [
         { title: "Blog — Career Updates" },

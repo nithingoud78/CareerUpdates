@@ -12,7 +12,7 @@ import { getBlogBySlug, getRelatedBlogs } from "@/lib/blog.functions";
 
 export const Route = createFileRoute("/blog/$slug")({
   head: ({ params }) => {
-    const siteUrl = "https://careerupdates.app";
+    const siteUrl = "https://careerupdates.co.in";
     return {
       meta: [
         { title: "Blog — Career Updates" },

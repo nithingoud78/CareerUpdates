@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://careerupdates.app/api/sitemap.xml
+Sitemap: https://careerupdates.co.in/sitemap.xml

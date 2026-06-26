@@ -106,7 +106,7 @@ export async function extractJobPage(url: string): Promise<string> {
   try {
     const jina = await fetch(`https://r.jina.ai/http://${url}`, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; CareerUpdatesBot/1.0; +https://careerupdates.app)",
+        "User-Agent": "Mozilla/5.0 (compatible; CareerUpdatesBot/1.0; +https://careerupdates.co.in)",
       },
       signal: AbortSignal.timeout(15000),
     });
@@ -119,7 +119,7 @@ export async function extractJobPage(url: string): Promise<string> {
   try {
     const html = await fetch(url, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; CareerUpdatesBot/1.0; +https://careerupdates.app)",
+        "User-Agent": "Mozilla/5.0 (compatible; CareerUpdatesBot/1.0; +https://careerupdates.co.in)",
       },
       signal: AbortSignal.timeout(15000),
     });

@@ -16,7 +16,7 @@ export const APIRoute = createAPIFileRoute("/api/sitemap.xml")({
       .select("slug, updated_at")
       .eq("status", "published")) as { data: any[] | null };
 
-    const baseUrl = "https://careerupdates.app";
+    const baseUrl = "https://careerupdates.co.in";
 
     const urls = [
       { loc: baseUrl, lastmod: new Date().toISOString() },
