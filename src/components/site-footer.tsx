@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Briefcase } from "lucide-react";
+
 
 export function SiteFooter() {
 
@@ -9,7 +9,7 @@ export function SiteFooter() {
         <div className="md:col-span-2">
           <div className="flex items-center gap-2 font-semibold">
             <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand text-brand-foreground">
-              <Briefcase className="h-4 w-4" />
+              <img src="/custom-icon.png" alt="Logo icon" className="h-7 w-7 object-contain" />
             </span>
             Career Updates
           </div>

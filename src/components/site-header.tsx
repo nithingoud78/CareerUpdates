@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Briefcase, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -19,7 +19,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand text-brand-foreground shadow-sm">
-            <Briefcase className="h-4 w-4" />
+            <img src="/custom-icon.png" alt="Logo icon" className="h-8 w-8 object-contain" />
           </span>
           <span className="text-base">
             Career <span className="text-brand">Updates</span>

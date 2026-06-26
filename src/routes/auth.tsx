@@ -1,6 +1,6 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Briefcase } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
@@ -56,7 +56,7 @@ function AuthPage() {
       <div className="glass-strong w-full max-w-md rounded-2xl p-8">
         <div className="mb-6 flex items-center gap-2 text-base font-semibold">
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand text-brand-foreground">
-            <Briefcase className="h-4 w-4" />
+            <img src="/custom-icon.png" alt="Logo icon" className="h-8 w-8 object-contain" />
           </span>
           Career Updates · Admin
         </div>

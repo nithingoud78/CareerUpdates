@@ -1,19 +1,20 @@
+// @ts-ignore
 import { createAPIFileRoute } from "@tanstack/react-start/api";
 import { supabase } from "@/integrations/supabase/client";
 
 export const APIRoute = createAPIFileRoute("/api/sitemap.xml")({
   GET: async () => {
     // Fetch all published jobs
-    const { data: jobs } = await supabase
+    const { data: jobs } = (await supabase
       .from("jobs")
       .select("slug, updated_at")
-      .eq("status", "published");
+      .eq("status", "published")) as { data: any[] | null };
 
     // Fetch all published blog posts
-    const { data: blogs } = await supabase
-      .from("blog_posts")
+    const { data: blogs } = (await supabase
+      .from("blogs")
       .select("slug, updated_at")
-      .eq("status", "published");
+      .eq("status", "published")) as { data: any[] | null };
 
     const baseUrl = "https://careerupdates.app";
 
