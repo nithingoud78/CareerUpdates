@@ -2,7 +2,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Search as SearchIcon, ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
@@ -45,6 +45,33 @@ const TAXONOMY: Record<string, string[]> = {
 const CATEGORIES = Object.keys(TAXONOMY);
 const TYPES = ["Full-time", "Internship", "Government", "Contract"];
 
+type Job = {
+  id: string;
+  slug: string;
+  title: string;
+  company: string;
+  company_logo: string | null;
+  location: string | null;
+  experience: string | null;
+  salary: string | null;
+  last_date: string | null;
+  category: string | null;
+  employment_type: string | null;
+};
+
+// Fetch ALL published jobs once — counts and filtering are done client-side.
+async function fetchAllPublishedJobs(): Promise<Job[]> {
+  const { data, error } = await supabase
+    .from("jobs")
+    .select(
+      "id, slug, title, company, company_logo, location, experience, salary, last_date, category, employment_type",
+    )
+    .eq("status", "published")
+    .order("posted_date", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
 function SearchPage() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: "/search" });
@@ -52,30 +79,52 @@ function SearchPage() {
 
   useEffect(() => setQ(search.q ?? ""), [search.q]);
 
-  const { data, isFetching } = useQuery({
-    queryKey: ["search", search.q, search.category, search.subcategory, search.type],
-    queryFn: async () => {
-      let query = supabase
-        .from("jobs")
-        .select(
-          "id, slug, title, company, company_logo, location, experience, salary, last_date, category, employment_type",
-        )
-        .eq("status", "published")
-        .order("posted_date", { ascending: false })
-        .limit(40);
-      if (search.q) {
-        query = query.or(
-          `title.ilike.%${search.q}%,company.ilike.%${search.q}%,location.ilike.%${search.q}%`,
-        );
-      }
-      if (search.category) query = query.eq("category", search.category);
-      if (search.type) query = query.eq("employment_type", search.type);
-      
-      const { data, error } = await query;
-      if (error) throw error;
-      return data ?? [];
-    },
+  // Single query fetches all published jobs; stale time is generous so it doesn't
+  // re-fetch on every filter click — counts always reflect the live published set.
+  const { data: allJobs = [], isFetching } = useQuery({
+    queryKey: ["search-all-jobs"],
+    queryFn: fetchAllPublishedJobs,
+    staleTime: 60_000, // 1 minute
   });
+
+  // Derive per-category and per-type counts from the full dataset.
+  const categoryCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const job of allJobs) {
+      if (job.category) map[job.category] = (map[job.category] ?? 0) + 1;
+    }
+    return map;
+  }, [allJobs]);
+
+  const typeCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const job of allJobs) {
+      if (job.employment_type) map[job.employment_type] = (map[job.employment_type] ?? 0) + 1;
+    }
+    return map;
+  }, [allJobs]);
+
+  // Apply all active filters client-side — instant, no extra DB calls.
+  const filteredJobs = useMemo(() => {
+    let result = allJobs;
+
+    if (search.q) {
+      const lq = search.q.toLowerCase();
+      result = result.filter(
+        (j) =>
+          j.title.toLowerCase().includes(lq) ||
+          j.company.toLowerCase().includes(lq) ||
+          (j.location ?? "").toLowerCase().includes(lq),
+      );
+    }
+    if (search.category) {
+      result = result.filter((j) => j.category === search.category);
+    }
+    if (search.type) {
+      result = result.filter((j) => j.employment_type === search.type);
+    }
+    return result;
+  }, [allJobs, search.q, search.category, search.type]);
 
   function update(partial: Record<string, string | undefined>) {
     navigate({
@@ -87,6 +136,8 @@ function SearchPage() {
     e.preventDefault();
     update({ q: q || undefined });
   }
+
+  const hasFilters = !!(search.q || search.category || search.type);
 
   return (
     <div className="min-h-screen bg-background">
@@ -107,7 +158,9 @@ function SearchPage() {
             </button>
           </form>
           <p className="mt-2 text-xs text-muted-foreground">
-            {data ? `${data.length} results` : isFetching ? "Searching..." : ""}
+            {isFetching && !allJobs.length
+              ? "Searching…"
+              : `${filteredJobs.length} Result${filteredJobs.length !== 1 ? "s" : ""}`}
             {search.q && ` for "${search.q}"`}
           </p>
         </div>
@@ -118,29 +171,43 @@ function SearchPage() {
         <div className="md:hidden">
           <details className="group rounded-2xl border border-border bg-surface [&_summary::-webkit-details-marker]:hidden">
             <summary className="flex cursor-pointer items-center justify-between p-4 font-semibold outline-none marker:content-none">
-              Filters
+              Filters {hasFilters && <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-brand-foreground">{[search.category, search.type].filter(Boolean).length}</span>}
               <span className="transition-transform group-open:-rotate-180">
                 <ChevronDown className="h-5 w-5" />
               </span>
             </summary>
             <div className="border-t border-border p-4 pt-4">
-              <FiltersContent search={search} update={update} reset={() => navigate({ search: {} })} />
+              <FiltersContent
+                search={search}
+                update={update}
+                reset={() => navigate({ search: {} })}
+                totalCount={allJobs.length}
+                categoryCounts={categoryCounts}
+                typeCounts={typeCounts}
+              />
             </div>
           </details>
         </div>
 
         {/* Desktop Filters */}
         <aside className="glass hidden space-y-5 self-start rounded-2xl p-5 md:block">
-          <FiltersContent search={search} update={update} reset={() => navigate({ search: {} })} />
+          <FiltersContent
+            search={search}
+            update={update}
+            reset={() => navigate({ search: {} })}
+            totalCount={allJobs.length}
+            categoryCounts={categoryCounts}
+            typeCounts={typeCounts}
+          />
         </aside>
 
         {/* Results */}
         <div className="space-y-5">
           <AdSlot label="Advertisement · 728×90" />
-          {isFetching && !data && (
+          {isFetching && !allJobs.length && (
             <p className="text-sm text-muted-foreground">Loading jobs…</p>
           )}
-          {data && data.length === 0 && (
+          {!isFetching && filteredJobs.length === 0 && (
             <div className="glass rounded-2xl p-10 text-center">
               <p className="text-base font-semibold">No jobs match your search</p>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -149,7 +216,7 @@ function SearchPage() {
             </div>
           )}
           <div className="grid gap-4 sm:grid-cols-2">
-            {data?.map((job) => <JobCard key={job.id} job={job} />)}
+            {filteredJobs.map((job) => <JobCard key={job.id} job={job} />)}
           </div>
         </div>
       </main>
@@ -159,71 +226,145 @@ function SearchPage() {
   );
 }
 
-function FiltersContent({ search, update, reset }: { search: any, update: any, reset: any }) {
+interface FiltersContentProps {
+  search: { category?: string; subcategory?: string; type?: string };
+  update: (partial: Record<string, string | undefined>) => void;
+  reset: () => void;
+  totalCount: number;
+  categoryCounts: Record<string, number>;
+  typeCounts: Record<string, number>;
+}
+
+function FiltersContent({ search, update, reset, totalCount, categoryCounts, typeCounts }: FiltersContentProps) {
   const subcategories = search.category ? TAXONOMY[search.category] || [] : [];
+  const hasFilters = !!(search.category || search.type);
+
   return (
     <div className="space-y-5">
-      <FilterGroup
-        title="Category"
-        options={CATEGORIES}
-        active={search.category}
-        onChange={(v) => update({ category: v, subcategory: undefined })}
-      />
+      {/* Category */}
+      <div>
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Category
+        </h3>
+        <div className="space-y-1">
+          {/* All Jobs option */}
+          <FilterButton
+            label="All Jobs"
+            count={totalCount}
+            active={!search.category}
+            onClick={() => update({ category: undefined, subcategory: undefined })}
+          />
+          {CATEGORIES.map((cat) => (
+            <FilterButton
+              key={cat}
+              label={cat}
+              count={categoryCounts[cat] ?? 0}
+              active={search.category === cat}
+              onClick={() =>
+                update({
+                  category: search.category === cat ? undefined : cat,
+                  subcategory: undefined,
+                })
+              }
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Subcategory — shown only when a category is selected */}
       {subcategories.length > 0 && (
-        <FilterGroup
-          title="Subcategory"
-          options={subcategories}
-          active={search.subcategory}
-          onChange={(v) => update({ subcategory: v })}
-        />
+        <div>
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Subcategory
+          </h3>
+          <div className="space-y-1">
+            {subcategories.map((sub) => (
+              <button
+                key={sub}
+                onClick={() =>
+                  update({ subcategory: search.subcategory === sub ? undefined : sub })
+                }
+                className={`block w-full rounded-md px-2 py-1.5 text-left text-sm transition-colors ${
+                  (search as any).subcategory === sub
+                    ? "bg-brand/10 font-medium text-brand"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                }`}
+              >
+                {sub}
+              </button>
+            ))}
+          </div>
+        </div>
       )}
-      <FilterGroup
-        title="Employment Type"
-        options={TYPES}
-        active={search.type}
-        onChange={(v) => update({ type: v })}
-      />
-      <button
-        onClick={reset}
-        className="w-full rounded-md border border-border px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent"
-      >
-        Reset filters
-      </button>
+
+      {/* Employment Type */}
+      <div>
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Employment Type
+        </h3>
+        <div className="space-y-1">
+          {/* All option */}
+          <FilterButton
+            label="All"
+            count={totalCount}
+            active={!search.type}
+            onClick={() => update({ type: undefined })}
+          />
+          {TYPES.map((t) => (
+            <FilterButton
+              key={t}
+              label={t}
+              count={typeCounts[t] ?? 0}
+              active={search.type === t}
+              onClick={() => update({ type: search.type === t ? undefined : t })}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Reset */}
+      {hasFilters && (
+        <button
+          onClick={reset}
+          className="w-full rounded-md border border-border px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent transition-colors"
+        >
+          Reset filters
+        </button>
+      )}
     </div>
   );
 }
 
-function FilterGroup({
-  title,
-  options,
+function FilterButton({
+  label,
+  count,
   active,
-  onChange,
+  onClick,
 }: {
-  title: string;
-  options: string[];
-  active?: string;
-  onChange: (v: string | undefined) => void;
+  label: string;
+  count: number;
+  active: boolean;
+  onClick: () => void;
 }) {
   return (
-    <div>
-      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        {title}
-      </h3>
-      <div className="space-y-1">
-        {options.map((opt) => (
-          <button
-            key={opt}
-            onClick={() => onChange(active === opt ? undefined : opt)}
-            className={`block w-full rounded-md px-2 py-1.5 text-left text-sm transition-colors ${
-              active === opt
-                ? "bg-brand/10 font-medium text-brand"
-                : "text-muted-foreground hover:bg-accent hover:text-foreground"
-            }`}
-          >
-            {opt}
-          </button>
-        ))}
-      </div>
-    </div>
+    <button
+      onClick={onClick}
+      className={`flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm transition-colors ${
+        active
+          ? "bg-brand/10 font-semibold text-brand"
+          : "text-muted-foreground hover:bg-accent hover:text-foreground"
+      }`}
+    >
+      <span>{label}</span>
+      <span
+        className={`ml-2 rounded-full px-1.5 py-0.5 text-[10px] font-semibold tabular-nums ${
+          active
+            ? "bg-brand text-brand-foreground"
+            : "bg-muted text-muted-foreground"
+        }`}
+      >
+        {count}
+      </span>
+    </button>
   );
 }
