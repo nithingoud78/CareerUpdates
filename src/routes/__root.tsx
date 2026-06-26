@@ -179,6 +179,11 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
         <GoogleAnalytics />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6032482437020204"
+          crossOrigin="anonymous"
+        ></script>
         <Scripts />
       </head>
       <body className="overflow-x-hidden">
