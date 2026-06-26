@@ -22,7 +22,7 @@ async function fetchJob(slug: string) {
   const { data: job, error } = await supabase
     .from("jobs")
     .select(
-      "id, slug, title, company, company_logo, company_logo_storage_url, location, experience, salary, employment_type, qualification, apply_url, description, ai_summary, meta_description, tags, category, status, posted_date, last_date, views, created_by, created_at, updated_at",
+      "id, slug, title, company, company_logo, location, experience, salary, employment_type, qualification, apply_url, description, ai_summary, meta_description, tags, category, status, posted_date, last_date, views, created_by, created_at, updated_at",
     )
     .eq("slug", slug)
     .eq("status", "published")
@@ -31,7 +31,7 @@ async function fetchJob(slug: string) {
   if (!job) throw notFound();
   let relatedQuery = supabase
     .from("jobs")
-    .select("id, slug, title, company, company_logo, company_logo_storage_url, location, experience, salary, last_date, category")
+    .select("id, slug, title, company, company_logo, location, experience, salary, last_date, category")
     .eq("status", "published");
   if (job.category) {
     relatedQuery = relatedQuery.eq("category", job.category);

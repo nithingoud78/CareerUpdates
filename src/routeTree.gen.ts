@@ -31,7 +31,6 @@ import { Route as AuthenticatedAdminSiteSettingsRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminFeedbackRouteImport } from './routes/_authenticated/admin.feedback'
 import { Route as AuthenticatedAdminBlogIndexRouteImport } from './routes/_authenticated/admin.blog.index'
-import { Route as AuthenticatedAdminSiteSettingsLogoMigrationRouteImport } from './routes/_authenticated/admin.site-settings.logo-migration'
 import { Route as AuthenticatedAdminJobsNewRouteImport } from './routes/_authenticated/admin.jobs.new'
 import { Route as AuthenticatedAdminJobsBulkRouteImport } from './routes/_authenticated/admin.jobs.bulk'
 import { Route as AuthenticatedAdminJobsAuditRouteImport } from './routes/_authenticated/admin.jobs.audit'
@@ -152,12 +151,6 @@ const AuthenticatedAdminBlogIndexRoute =
     path: '/blog/',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminSiteSettingsLogoMigrationRoute =
-  AuthenticatedAdminSiteSettingsLogoMigrationRouteImport.update({
-    id: '/logo-migration',
-    path: '/logo-migration',
-    getParentRoute: () => AuthenticatedAdminSiteSettingsRoute,
-  } as any)
 const AuthenticatedAdminJobsNewRoute =
   AuthenticatedAdminJobsNewRouteImport.update({
     id: '/jobs/new',
@@ -214,13 +207,12 @@ export interface FileRoutesByFullPath {
   '/blog/': typeof BlogIndexRoute
   '/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRouteWithChildren
+  '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
   '/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
-  '/admin/site-settings/logo-migration': typeof AuthenticatedAdminSiteSettingsLogoMigrationRoute
   '/admin/blog/': typeof AuthenticatedAdminBlogIndexRoute
   '/admin/blog/$id/edit': typeof AuthenticatedAdminBlogIdEditRoute
   '/admin/jobs/$slug/edit': typeof AuthenticatedAdminJobsSlugEditRoute
@@ -243,13 +235,12 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogIndexRoute
   '/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRouteWithChildren
+  '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
   '/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
-  '/admin/site-settings/logo-migration': typeof AuthenticatedAdminSiteSettingsLogoMigrationRoute
   '/admin/blog': typeof AuthenticatedAdminBlogIndexRoute
   '/admin/blog/$id/edit': typeof AuthenticatedAdminBlogIdEditRoute
   '/admin/jobs/$slug/edit': typeof AuthenticatedAdminJobsSlugEditRoute
@@ -275,13 +266,12 @@ export interface FileRoutesById {
   '/blog/': typeof BlogIndexRoute
   '/_authenticated/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/_authenticated/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRouteWithChildren
+  '/_authenticated/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
   '/_authenticated/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/_authenticated/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
   '/_authenticated/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
-  '/_authenticated/admin/site-settings/logo-migration': typeof AuthenticatedAdminSiteSettingsLogoMigrationRoute
   '/_authenticated/admin/blog/': typeof AuthenticatedAdminBlogIndexRoute
   '/_authenticated/admin/blog/$id/edit': typeof AuthenticatedAdminBlogIdEditRoute
   '/_authenticated/admin/jobs/$slug/edit': typeof AuthenticatedAdminJobsSlugEditRoute
@@ -313,7 +303,6 @@ export interface FileRouteTypes {
     | '/admin/jobs/audit'
     | '/admin/jobs/bulk'
     | '/admin/jobs/new'
-    | '/admin/site-settings/logo-migration'
     | '/admin/blog/'
     | '/admin/blog/$id/edit'
     | '/admin/jobs/$slug/edit'
@@ -342,7 +331,6 @@ export interface FileRouteTypes {
     | '/admin/jobs/audit'
     | '/admin/jobs/bulk'
     | '/admin/jobs/new'
-    | '/admin/site-settings/logo-migration'
     | '/admin/blog'
     | '/admin/blog/$id/edit'
     | '/admin/jobs/$slug/edit'
@@ -373,7 +361,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/jobs/audit'
     | '/_authenticated/admin/jobs/bulk'
     | '/_authenticated/admin/jobs/new'
-    | '/_authenticated/admin/site-settings/logo-migration'
     | '/_authenticated/admin/blog/'
     | '/_authenticated/admin/blog/$id/edit'
     | '/_authenticated/admin/jobs/$slug/edit'
@@ -554,13 +541,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBlogIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/site-settings/logo-migration': {
-      id: '/_authenticated/admin/site-settings/logo-migration'
-      path: '/logo-migration'
-      fullPath: '/admin/site-settings/logo-migration'
-      preLoaderRoute: typeof AuthenticatedAdminSiteSettingsLogoMigrationRouteImport
-      parentRoute: typeof AuthenticatedAdminSiteSettingsRoute
-    }
     '/_authenticated/admin/jobs/new': {
       id: '/_authenticated/admin/jobs/new'
       path: '/jobs/new'
@@ -606,25 +586,10 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedAdminSiteSettingsRouteChildren {
-  AuthenticatedAdminSiteSettingsLogoMigrationRoute: typeof AuthenticatedAdminSiteSettingsLogoMigrationRoute
-}
-
-const AuthenticatedAdminSiteSettingsRouteChildren: AuthenticatedAdminSiteSettingsRouteChildren =
-  {
-    AuthenticatedAdminSiteSettingsLogoMigrationRoute:
-      AuthenticatedAdminSiteSettingsLogoMigrationRoute,
-  }
-
-const AuthenticatedAdminSiteSettingsRouteWithChildren =
-  AuthenticatedAdminSiteSettingsRoute._addFileChildren(
-    AuthenticatedAdminSiteSettingsRouteChildren,
-  )
-
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminFeedbackRoute: typeof AuthenticatedAdminFeedbackRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
-  AuthenticatedAdminSiteSettingsRoute: typeof AuthenticatedAdminSiteSettingsRouteWithChildren
+  AuthenticatedAdminSiteSettingsRoute: typeof AuthenticatedAdminSiteSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminBlogNewRoute: typeof AuthenticatedAdminBlogNewRoute
   AuthenticatedAdminJobsAuditRoute: typeof AuthenticatedAdminJobsAuditRoute
@@ -638,8 +603,7 @@ interface AuthenticatedAdminRouteChildren {
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminFeedbackRoute: AuthenticatedAdminFeedbackRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
-  AuthenticatedAdminSiteSettingsRoute:
-    AuthenticatedAdminSiteSettingsRouteWithChildren,
+  AuthenticatedAdminSiteSettingsRoute: AuthenticatedAdminSiteSettingsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminBlogNewRoute: AuthenticatedAdminBlogNewRoute,
   AuthenticatedAdminJobsAuditRoute: AuthenticatedAdminJobsAuditRoute,

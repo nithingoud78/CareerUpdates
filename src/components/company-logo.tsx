@@ -50,8 +50,6 @@ function domainFromLogoUrl(logoUrl: string): string | null {
 
 interface CompanyLogoProps {
   url?: string | null;
-  /** Permanent Supabase Storage URL — preferred over url when present */
-  storageUrl?: string | null;
   name?: string;
   className?: string;
   jobId?: string;
@@ -60,15 +58,12 @@ interface CompanyLogoProps {
 
 export const CompanyLogo = React.memo(function CompanyLogo({
   url,
-  storageUrl,
   name,
   className,
   priority = false,
 }: CompanyLogoProps) {
-  // Priority: storage_url > url (Clearbit/external) — both normalised to null if empty
-  const cleanStorageUrl = storageUrl?.trim() || null;
   const cleanUrl = url?.trim() || null;
-  const primaryUrl = cleanStorageUrl ?? cleanUrl;
+  const primaryUrl = cleanUrl;
 
   // Derive the initial state from the module-level cache so we never
   // cause a re-render for URLs we already know the result of.
