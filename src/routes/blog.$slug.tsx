@@ -2,23 +2,42 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Calendar, User, Tag, ChevronLeft, ArrowRight } from "lucide-react";
-import { marked } from "marked";
+import { renderMarkdown } from "@/lib/markdown";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { AdSlot } from "@/components/ad-slot";
 import { StickySocial } from "@/components/sticky-social";
 import { getBlogBySlug, getRelatedBlogs } from "@/lib/blog.functions";
 
-// Configure marked for safe rendering
-marked.setOptions({ gfm: true, breaks: true });
 
 export const Route = createFileRoute("/blog/$slug")({
-  head: ({ params }) => ({
-    meta: [
-      { title: "Blog — Career Updates" },
-      { name: "description", content: "Read this article on Career Updates." },
-    ],
-  }),
+  head: ({ params }) => {
+    const siteUrl = "https://careerupdates.app";
+    return {
+      meta: [
+        { title: "Blog — Career Updates" },
+        { name: "description", content: "Read this article on Career Updates." },
+        { property: "og:type", content: "article" },
+        { property: "og:site_name", content: "Career Updates" },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+      links: [{ rel: "canonical", href: `${siteUrl}/blog/${params.slug}` }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+              { "@type": "ListItem", position: 2, name: "Blog", item: `${siteUrl}/blog` },
+              { "@type": "ListItem", position: 3, name: "Article", item: `${siteUrl}/blog/${params.slug}` },
+            ],
+          }),
+        },
+      ],
+    };
+  },
   component: BlogDetail,
 });
 
@@ -92,17 +111,13 @@ function BlogDetail() {
   }
 
   const post = blog as any;
-  const renderedContent = post.content ? marked(post.content) as string : "";
+  const renderedContent = post.content ? renderMarkdown(post.content) : "";
   const relatedPosts = (related as any[]) ?? [];
   const metaTitle = post.seo_title || post.title;
   const metaDesc = post.seo_description || post.excerpt || "";
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Per-post SEO via imperative manipulation */}
-      <title>{metaTitle} — Career Updates</title>
-      <meta name="description" content={metaDesc} />
-
       <SiteHeader />
       <main>
         {/* Cover image */}

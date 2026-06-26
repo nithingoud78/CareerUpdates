@@ -234,19 +234,26 @@ You MUST map the job to EXACTLY ONE of these Categories, and EXACTLY ONE of its 
    Subcategories: HR, Sales, Marketing, Operations, Finance, Analyst
 
 CRITICAL EXTRACTION RULES (STRICTLY FOLLOW):
-1. **NO HALLUCINATIONS**: Never invent Salary, Location, Benefits, Experience, or Degree. Only infer when there is strong evidence.
+1. **NO HALLUCINATIONS**: Never invent Salary, Location, Benefits, Experience, or Degree. Only infer when there is strong textual evidence.
 2. **SMART INFERENCE (Fields)**:
-   - **Salary**: If missing, output exactly "Not Mentioned".
-   - **Employment Type**: Look for "Internship", "Contract", "Part-time", "Remote Contract". Otherwise, default to "Full-time".
-   - **Experience**: Infer from JD (e.g., "Freshers", "0-1 years", "5+ years"). Do not leave blank. If absolutely impossible to find, use "Not Mentioned".
-   - **Qualification**: Infer from Education/Degree requirements (e.g., "B.E/B.Tech", "Any Graduate", "Bachelor's Degree"). Never leave blank. If impossible, use "Not Mentioned".
-3. **ORIGINAL DESCRIPTION (Plagiarism-Safe & AdSense Ready)**:
-   - You MUST completely rewrite the entire job description in professional English.
-   - NEVER copy sentences, NEVER copy paragraph order, NEVER copy bullet wording, NEVER copy headings, NEVER paraphrase line-by-line.
-   - Produce a fresh, recruiter-written version that reads like Career Updates wrote it.
-   - The meaning must stay identical, but the wording MUST be substantially different.
-   - Tone: concise, professional, reader-friendly. Avoid legal/company marketing boilerplate, repetitive HR language, Equal Opportunity paragraphs (unless genuinely important), copyright text, and recruiter disclaimers. Do NOT include application instructions already covered by the Apply button.
-   - You MUST format the output strictly in Markdown using the following structure (omit optional sections if not applicable):
+   - **Salary**: If no salary/compensation info at all, output exactly "Not Mentioned".
+   - **Employment Type**: If the text explicitly mentions "Internship", "Contract", "Part-time", or "Freelance", use that exact type. Otherwise ALWAYS default to "Full-Time". Never leave blank.
+   - **Experience**: Infer from JD ("Freshers", "0-1 years", "5+ years", "Senior", "Junior", "Entry level"). If truly impossible to determine, use "Not Mentioned". Never leave blank.
+   - **Qualification**: Infer from Education/Degree requirements ("B.E/B.Tech", "Any Graduate", "Bachelor's Degree", "MBA", "MCA"). If impossible to determine, use "Not Mentioned". Never leave blank.
+3. **COMPANY LOGO URL**:
+   - Priority 1: If an official company logo URL is directly found in the page content (e.g., <img src="...logo...">, look for image URLs containing "logo" in path), use it.
+   - Priority 2: Construct Clearbit URL: https://logo.clearbit.com/{company-domain} (derive domain from the apply URL or company website, e.g., google.com for Google)
+   - Priority 3: If Clearbit seems unlikely to work (very small/obscure company), use Google favicon: https://www.google.com/s2/favicons?domain={company-domain}&sz=128
+   - Priority 4: null only if you cannot determine the company domain at all.
+   - IMPORTANT: The company_logo field should almost ALWAYS be filled. Default to Clearbit if uncertain.
+4. **ORIGINAL REWRITE — CRITICAL FOR ADSENSE COMPLIANCE**:
+   - You MUST completely rewrite the entire job description from scratch — not paraphrase, not rearrange.
+   - Pretend you are a Career Updates editor who has read the JD and is now writing the listing independently from memory.
+   - NEVER: copy sentences verbatim, copy paragraph/section order, copy bullet point wording, copy recruiter marketing phrases, copy Equal Opportunity boilerplate, copy copyright notices, copy application instructions.
+   - ALWAYS: Change sentence structure, change vocabulary, invent new transitions, restructure information logically.
+   - The factual content (role, skills, responsibilities, requirements) MUST be accurate — only the expression changes.
+   - Tone: concise, professional, direct. No corporate fluff. No repeated emphasis. Readers should feel informed.
+   - You MUST format the output using these EXACT Markdown section headings (omit sections where not enough info exists):
      ## Overview
      ## Key Responsibilities
      ## Required Skills
@@ -254,9 +261,10 @@ CRITICAL EXTRACTION RULES (STRICTLY FOLLOW):
      ## Preferred Skills
      ## Benefits
      ## Additional Information
-4. **AI SUMMARY**: Generate a richer summary of 2-4 paragraphs covering responsibilities, candidate profile, and growth opportunity. It should feel like a human wrote it.
-5. **TAGS (Key Skills)**: Automatically extract key technical and soft skills (e.g., Java, React, SQL, Leadership) and store them as an array of tags.
-6. **deadline**: Look for application deadline, closing date, apply before, etc. Format as YYYY-MM-DD.
+5. **AI SUMMARY**: Write 2-4 paragraphs covering: what the role is about, what kind of candidate fits, and what growth/opportunity this role offers. Must read like a human career advisor wrote it, not a bot.
+6. **META DESCRIPTION**: 120-155 chars. SEO-optimised. Mention job title, company, and key benefit.
+7. **TAGS (Key Skills)**: Extract 5-12 specific technical and soft skills as an array of short strings (e.g., "React", "Node.js", "SQL", "Leadership", "Python").
+8. **deadline**: Look for application closing date, "apply before", "last date". Format as YYYY-MM-DD. Null if not found.
 
 Return strictly this JSON shape:
 {
@@ -344,6 +352,21 @@ Return strictly this JSON shape:
 
   const slug = slugify(`${parsed.company}-${parsed.title}`) || `job-${Date.now()}`;
 
+  // Server-side logo fallback: if AI returned null, derive Clearbit URL from apply_url domain
+  let resolvedLogo = parsed.company_logo;
+  if (!resolvedLogo) {
+    const applyUrl = parsed.apply_url || data.url;
+    try {
+      const domain = new URL(applyUrl).hostname.replace(/^www\./, "");
+      if (domain && domain.includes(".")) {
+        resolvedLogo = `https://logo.clearbit.com/${domain}`;
+        console.log(`[Logo] Clearbit fallback: ${resolvedLogo}`);
+      }
+    } catch {
+      console.log("[Logo] Could not derive domain for Clearbit fallback");
+    }
+  }
+
   return {
     slug,
     apply_url: parsed.apply_url || data.url,
@@ -361,9 +384,10 @@ Return strictly this JSON shape:
     ai_summary: parsed.ai_summary,
     meta_description: parsed.meta_description,
     tags: parsed.tags,
-    company_logo: parsed.company_logo,
+    company_logo: resolvedLogo,
   };
 }
+
 
 export const extractJobFromUrl = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

@@ -9,15 +9,37 @@ import { StickySocial } from "@/components/sticky-social";
 import { getPublishedBlogs, getFeaturedBlog, getBlogCategories } from "@/lib/blog.functions";
 
 export const Route = createFileRoute("/blog/")({
-  head: () => ({
-    meta: [
-      { title: "Blog — Career Updates" },
-      { name: "description", content: "Career tips, interview guides, and industry news from Career Updates." },
-      { property: "og:title", content: "Blog — Career Updates" },
-      { property: "og:description", content: "Career tips, interview guides, and industry news from Career Updates." },
-    ],
-    links: [{ rel: "canonical", href: "/blog" }],
-  }),
+  head: () => {
+    const siteUrl = "https://careerupdates.app";
+    return {
+      meta: [
+        { title: "Blog — Career Updates" },
+        { name: "description", content: "Career tips, interview guides, and industry news from Career Updates." },
+        { property: "og:title", content: "Blog — Career Updates" },
+        { property: "og:description", content: "Career tips, interview guides, and industry news from Career Updates." },
+        { property: "og:type", content: "website" },
+        { property: "og:site_name", content: "Career Updates" },
+        { property: "og:url", content: `${siteUrl}/blog` },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: "Blog — Career Updates" },
+        { name: "twitter:description", content: "Career tips, interview guides, and industry news from Career Updates." },
+      ],
+      links: [{ rel: "canonical", href: `${siteUrl}/blog` }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+              { "@type": "ListItem", position: 2, name: "Blog", item: `${siteUrl}/blog` },
+            ],
+          }),
+        },
+      ],
+    };
+  },
   component: BlogIndex,
 });
 

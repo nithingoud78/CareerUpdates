@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { GoogleAnalytics } from "../components/google-analytics";
 
 function NotFoundComponent() {
   return (
@@ -78,16 +79,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Career Updates — Latest Jobs & Career Opportunities" },
-      { name: "description", content: "Curated official job openings, internships and career updates. Apply directly via verified company career pages." },
+      {
+        name: "description",
+        content:
+          "Curated official job openings, internships and career updates. Apply directly via verified company career pages.",
+      },
       { name: "author", content: "Career Updates" },
-      { property: "og:title", content: "Career Updates" },
-      { property: "og:description", content: "Find your next career opportunity." },
+      { property: "og:title", content: "Career Updates — Latest Jobs & Career Opportunities" },
+      { property: "og:description", content: "Find your next career opportunity. Curated official job openings, internships and career updates." },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Career Updates" },
-      { property: "og:image", content: "/og-image.png" },
+      { property: "og:url", content: "https://careerupdates.app" },
+      { property: "og:image", content: "https://careerupdates.app/og-image.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "/og-image.png" },
+      { name: "twitter:site", content: "@careerupdates" },
+      { name: "twitter:title", content: "Career Updates — Latest Jobs & Career Opportunities" },
+      { name: "twitter:description", content: "Find your next career opportunity. Curated official job openings, internships and career updates." },
+      { name: "twitter:image", content: "https://careerupdates.app/og-image.png" },
       { name: "theme-color", content: "#8b5cf6" },
+      { name: "robots", content: "index, follow" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -99,6 +111,51 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" },
+      // Performance: preconnect to external logo/favicon CDNs
+      { rel: "preconnect", href: "https://logo.clearbit.com" },
+      { rel: "dns-prefetch", href: "https://www.google.com" },
+      { rel: "dns-prefetch", href: "https://bcsoykjrwnrzkqacnkgr.supabase.co" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://careerupdates.app/#organization",
+              name: "Career Updates",
+              url: "https://careerupdates.app",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://careerupdates.app/og-image.png",
+                width: 1200,
+                height: 630,
+              },
+              sameAs: [
+                "https://t.me/careerupdate_in",
+                "https://whatsapp.com/channel/0029VbDWQziFi8xUacpWjx2K",
+              ],
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://careerupdates.app/#website",
+              url: "https://careerupdates.app",
+              name: "Career Updates",
+              publisher: { "@id": "https://careerupdates.app/#organization" },
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: "https://careerupdates.app/search?q={search_term_string}",
+                },
+                "query-input": "required name=search_term_string",
+              },
+            },
+          ],
+        }),
+      },
     ],
   }),
   loader: async () => {
@@ -121,6 +178,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <GoogleAnalytics />
         <Scripts />
       </head>
       <body>

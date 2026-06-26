@@ -9,10 +9,8 @@ import {
   MapPin,
   Wallet,
 } from "lucide-react";
-import { marked } from "marked";
+import { renderMarkdown } from "@/lib/markdown";
 import { supabase } from "@/integrations/supabase/client";
-
-marked.setOptions({ gfm: true, breaks: true });
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { AdSlot } from "@/components/ad-slot";
@@ -48,6 +46,7 @@ export const Route = createFileRoute("/jobs/$slug")({
   },
   head: ({ params, loaderData }) => {
     const j = (loaderData as any)?.job;
+    const siteUrl = "https://careerupdates.app";
     return {
       meta: [
         { title: j ? `${j.title} at ${j.company} — Career Updates` : "Job — Career Updates" },
@@ -55,43 +54,92 @@ export const Route = createFileRoute("/jobs/$slug")({
           name: "description",
           content: j?.meta_description ?? j?.ai_summary?.slice(0, 160) ?? "Job details on Career Updates.",
         },
-        { property: "og:title", content: j ? `${j.title} at ${j.company}` : "Career Updates" },
-        { property: "og:description", content: j?.meta_description ?? "" },
-        { property: "og:url", content: `/jobs/${params.slug}` },
+        { property: "og:title", content: j ? `${j.title} at ${j.company} — Career Updates` : "Career Updates" },
+        { property: "og:description", content: j?.meta_description ?? j?.ai_summary?.slice(0, 160) ?? "" },
+        { property: "og:url", content: `${siteUrl}/jobs/${params.slug}` },
         { property: "og:type", content: "article" },
-        ...(j?.company_logo ? [{ property: "og:image", content: j.company_logo }] : []),
+        { property: "og:site_name", content: "Career Updates" },
+        ...(j?.company_logo ? [{ property: "og:image", content: j.company_logo }] : [{ property: "og:image", content: `${siteUrl}/og-image.png` }]),
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: j ? `${j.title} at ${j.company}` : "Career Updates" },
+        { name: "twitter:description", content: j?.meta_description ?? "" },
+        ...(j?.company_logo ? [{ name: "twitter:image", content: j.company_logo }] : []),
       ],
-      links: [{ rel: "canonical", href: `/jobs/${params.slug}` }],
+      links: [{ rel: "canonical", href: `${siteUrl}/jobs/${params.slug}` }],
       scripts: j
         ? [
             {
               type: "application/ld+json",
               children: JSON.stringify({
                 "@context": "https://schema.org",
-                "@type": "JobPosting",
-                title: j.title,
-                description: j.description || j.ai_summary,
-                datePosted: j.posted_date,
-                validThrough: j.last_date,
-                employmentType: j.employment_type,
-                hiringOrganization: { "@type": "Organization", name: j.company, logo: j.company_logo },
-                jobLocation: {
-                  "@type": "Place",
-                  address: { "@type": "PostalAddress", addressLocality: j.location },
-                },
-                baseSalary: j.salary,
-                applicantLocationRequirements: j.location ? {
-                  "@type": "Country",
-                  name: j.location
-                } : undefined,
-                directApply: true,
-                url: j.apply_url,
+                "@graph": [
+                  {
+                    "@type": "JobPosting",
+                    "@id": `${siteUrl}/jobs/${params.slug}`,
+                    title: j.title,
+                    description: j.ai_summary || j.description,
+                    datePosted: j.posted_date,
+                    validThrough: j.last_date || undefined,
+                    employmentType: j.employment_type?.toUpperCase().replace(/\s+/g, "_") || "FULL_TIME",
+                    hiringOrganization: {
+                      "@type": "Organization",
+                      name: j.company,
+                      ...(j.company_logo ? { logo: j.company_logo } : {}),
+                      sameAs: j.apply_url || undefined,
+                    },
+                    jobLocation: j.location
+                      ? {
+                          "@type": "Place",
+                          address: {
+                            "@type": "PostalAddress",
+                            addressLocality: j.location,
+                            addressCountry: "IN",
+                          },
+                        }
+                      : undefined,
+                    ...(j.salary && j.salary !== "Not Mentioned"
+                      ? {
+                          baseSalary: {
+                            "@type": "MonetaryAmount",
+                            currency: "INR",
+                            value: {
+                              "@type": "QuantitativeValue",
+                              description: j.salary,
+                            },
+                          },
+                        }
+                      : {}),
+                    ...(j.qualification && j.qualification !== "Not Mentioned"
+                      ? { educationRequirements: { "@type": "EducationalOccupationalCredential", credentialCategory: j.qualification } }
+                      : {}),
+                    ...(j.experience && j.experience !== "Not Mentioned"
+                      ? { experienceRequirements: { "@type": "OccupationalExperienceRequirements", description: j.experience } }
+                      : {}),
+                    identifier: {
+                      "@type": "PropertyValue",
+                      name: "Career Updates",
+                      value: params.slug,
+                    },
+                    directApply: true,
+                    url: `${siteUrl}/jobs/${params.slug}`,
+                    ...(j.tags?.length ? { skills: j.tags.join(", ") } : {}),
+                  },
+                  {
+                    "@type": "BreadcrumbList",
+                    itemListElement: [
+                      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+                      { "@type": "ListItem", position: 2, name: "Jobs", item: `${siteUrl}/search` },
+                      { "@type": "ListItem", position: 3, name: j.title, item: `${siteUrl}/jobs/${params.slug}` },
+                    ],
+                  },
+                ],
               }),
             },
           ]
         : [],
     };
   },
+
   notFoundComponent: () => (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -148,7 +196,7 @@ function JobDetails() {
         <header className="glass rounded-2xl p-6">
           <div className="flex items-start gap-4">
             <div className="h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-muted">
-              <CompanyLogo url={job.company_logo} name={job.company} />
+              <CompanyLogo url={job.company_logo} name={job.company} priority />
             </div>
             <div className="min-w-0">
               <p className="text-xs font-medium uppercase tracking-wider text-brand">{job.category ?? "Job"}</p>
@@ -191,13 +239,14 @@ function JobDetails() {
             <div
               className="prose prose-sm sm:prose-base dark:prose-invert max-w-none
                 prose-headings:font-bold prose-headings:tracking-tight
-                prose-h1:text-xl prose-h2:text-xl prose-h3:text-lg
+                prose-h2:text-xl prose-h2:mt-6 prose-h2:mb-3
+                prose-h3:text-lg prose-h3:mt-4 prose-h3:mb-2
                 prose-p:text-muted-foreground prose-p:leading-relaxed
                 prose-a:text-brand prose-a:no-underline hover:prose-a:underline
                 prose-ul:text-muted-foreground prose-ol:text-muted-foreground
                 prose-li:marker:text-brand
                 prose-strong:text-foreground"
-              dangerouslySetInnerHTML={{ __html: marked(job.description) as string }}
+              dangerouslySetInnerHTML={{ __html: renderMarkdown(job.description) }}
             />
           </section>
         )}
