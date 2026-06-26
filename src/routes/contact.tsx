@@ -20,11 +20,18 @@ export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "Contact — Career Updates" },
-      { name: "description", content: "Reach out to Career Updates for partnership, content corrections or general queries." },
+      { name: "description", content: "Reach out to Career Updates for partnership, content corrections or general queries. We typically respond within 24 hours." },
       { property: "og:title", content: "Contact — Career Updates" },
-      { property: "og:url", content: "/contact" },
+      { property: "og:description", content: "Reach out to Career Updates for partnership, content corrections or general queries." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://careerupdates.co.in/contact" },
+      { property: "og:image", content: "https://careerupdates.co.in/careerupdates-share-2026.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Contact — Career Updates" },
+      { name: "twitter:description", content: "Reach out to Career Updates for partnership, content corrections or general queries." },
+      { name: "twitter:image", content: "https://careerupdates.co.in/careerupdates-share-2026.png" },
     ],
-    links: [{ rel: "canonical", href: "/contact" }],
+    links: [{ rel: "canonical", href: "https://careerupdates.co.in/contact" }],
   }),
   component: Contact,
 });

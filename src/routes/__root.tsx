@@ -17,19 +17,34 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
+        <p className="text-xs font-semibold uppercase tracking-widest text-brand">404</p>
+        <h1 className="mt-3 text-5xl font-bold tracking-tight text-foreground">Page not found</h1>
+        <h2 className="mt-4 text-base font-medium text-muted-foreground">
+          The page you're looking for doesn't exist or may have been moved.
+        </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          If you were looking for a job, it may have expired or been removed after its deadline passed.
         </p>
-        <div className="mt-6">
+        <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex w-full items-center justify-center rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-foreground shadow-sm transition-transform hover:scale-105 sm:w-auto"
           >
-            Go home
+            Back to Home
+          </Link>
+          <Link
+            to="/search"
+            className="inline-flex w-full items-center justify-center rounded-full border border-border bg-surface px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-accent sm:w-auto"
+          >
+            Browse Latest Jobs
           </Link>
         </div>
+        <Link
+          to="/search"
+          className="mt-4 inline-block text-sm text-brand hover:underline"
+        >
+          Search all jobs →
+        </Link>
       </div>
     </div>
   );

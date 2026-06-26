@@ -6,11 +6,18 @@ export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
       { title: "Privacy Policy — Career Updates" },
-      { name: "description", content: "How Career Updates handles your data, cookies and third-party services." },
+      { name: "description", content: "How Career Updates handles your data, cookies and third-party advertising. We do not collect resumes or personal application data." },
       { property: "og:title", content: "Privacy Policy — Career Updates" },
-      { property: "og:url", content: "/privacy" },
+      { property: "og:description", content: "How Career Updates handles your data, cookies and third-party advertising." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://careerupdates.co.in/privacy" },
+      { property: "og:image", content: "https://careerupdates.co.in/careerupdates-share-2026.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Privacy Policy — Career Updates" },
+      { name: "twitter:description", content: "How Career Updates handles your data, cookies and third-party advertising." },
+      { name: "twitter:image", content: "https://careerupdates.co.in/careerupdates-share-2026.png" },
     ],
-    links: [{ rel: "canonical", href: "/privacy" }],
+    links: [{ rel: "canonical", href: "https://careerupdates.co.in/privacy" }],
   }),
   component: Privacy,
 });
