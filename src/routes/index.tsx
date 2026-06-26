@@ -81,12 +81,16 @@ function Home() {
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <AdSlot />
+      </div>
+
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <div className="absolute inset-x-0 top-0 h-[480px] bg-[radial-gradient(80%_60%_at_50%_0%,color-mix(in_oklab,var(--brand)_18%,transparent),transparent_70%)]" />
         </div>
-        <div className="mx-auto max-w-5xl px-4 pb-12 pt-24 text-center sm:px-6 sm:pt-24 lg:px-8 lg:pt-32">
+        <div className="mx-auto max-w-5xl px-4 pb-12 pt-2 text-center sm:px-6 lg:px-8 lg:pt-4">
           <p className="mb-3 inline-flex rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
             Curated official openings · Updated daily
           </p>

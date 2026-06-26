@@ -65,7 +65,7 @@ export function AdSlot({ slotId, label = "Advertisement", className, format = "a
         <div
           className={cn(
             "flex items-center justify-center rounded-xl border border-dashed border-border bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground",
-            "w-[320px] h-[100px] md:w-[728px] md:h-[90px]",
+            "w-full max-w-[320px] h-[100px] sm:max-w-[468px] sm:h-[60px] md:max-w-[728px] md:h-[90px]",
             className,
           )}
           aria-label="Ad placement"

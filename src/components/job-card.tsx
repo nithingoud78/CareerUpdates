@@ -13,7 +13,7 @@ export function JobCard({ job, compact = false }: { job: Job; compact?: boolean 
     <Link
       to="/jobs/$slug"
       params={{ slug: job.slug }}
-      className="group glass relative flex flex-col gap-3 sm:gap-4 rounded-2xl p-4 sm:p-5 transition-all hover:border-brand/50 hover:shadow-lg hover:shadow-brand/5"
+      className="group glass relative flex min-w-0 flex-col gap-3 sm:gap-4 rounded-2xl p-3 sm:p-5 transition-all hover:border-brand/50 hover:shadow-lg hover:shadow-brand/5"
     >
       <div className="flex items-start gap-3">
         <div className="h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-muted">
@@ -52,12 +52,12 @@ export function JobCard({ job, compact = false }: { job: Job; compact?: boolean 
       )}
       <div className="mt-auto flex flex-wrap items-center justify-between gap-2 sm:gap-3 pt-2">
         {job.last_date ? (
-          <span className="inline-flex shrink-0 items-center gap-1 text-[11px] text-muted-foreground">
+          <span className="inline-flex shrink-0 items-center gap-1 text-[10px] sm:text-[11px] text-muted-foreground">
             <Calendar className="h-3 w-3" />
             Last date: {new Date(job.last_date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
           </span>
         ) : <span />}
-        <span className="shrink-0 rounded-full bg-brand px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold text-brand-foreground transition-transform group-hover:scale-105">
+        <span className="shrink-0 rounded-full bg-brand px-2.5 py-1 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-semibold text-brand-foreground transition-transform group-hover:scale-105">
           Apply Now
         </span>
       </div>
