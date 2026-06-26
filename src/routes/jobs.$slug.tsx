@@ -59,7 +59,7 @@ export const Route = createFileRoute("/jobs/$slug")({
         { property: "og:url", content: `${siteUrl}/jobs/${params.slug}` },
         { property: "og:type", content: "article" },
         { property: "og:site_name", content: "Career Updates" },
-        ...(j?.company_logo ? [{ property: "og:image", content: j.company_logo }] : [{ property: "og:image", content: `${siteUrl}/og-image.png` }]),
+        ...(j?.company_logo ? [{ property: "og:image", content: j.company_logo }] : [{ property: "og:image", content: `${siteUrl}/careerupdates-share-2026.png` }]),
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: j ? `${j.title} at ${j.company}` : "Career Updates" },
         { name: "twitter:description", content: j?.meta_description ?? "" },
