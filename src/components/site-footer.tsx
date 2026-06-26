@@ -32,7 +32,10 @@ export function SiteFooter() {
           <h4 className="text-sm font-semibold">Legal</h4>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li><Link to="/contact" className="hover:text-foreground">Contact</Link></li>
+            <li><Link to="/faq" className="hover:text-foreground">FAQ</Link></li>
             <li><Link to="/privacy" className="hover:text-foreground">Privacy Policy</Link></li>
+            <li><Link to="/terms" className="hover:text-foreground">Terms &amp; Conditions</Link></li>
+            <li><Link to="/disclaimer" className="hover:text-foreground">Disclaimer</Link></li>
           </ul>
         </div>
       </div>

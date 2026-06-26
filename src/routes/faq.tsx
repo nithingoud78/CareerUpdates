@@ -204,12 +204,26 @@ function FaqPage() {
           <p className="mt-1 text-sm text-muted-foreground">
             Can't find what you're looking for? Send us a message and we'll get back to you.
           </p>
-          <Link
-            to="/contact"
-            className="mt-5 inline-flex items-center gap-2 rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-brand-foreground shadow-sm transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
-          >
-            Contact us
-          </Link>
+          <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-brand-foreground shadow-sm transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
+            >
+              Contact Us
+            </Link>
+            <Link
+              to="/terms"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-6 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
+            >
+              Terms
+            </Link>
+            <Link
+              to="/privacy"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-6 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
+            >
+              Privacy
+            </Link>
+          </div>
         </div>
       </main>
       <SiteFooter />

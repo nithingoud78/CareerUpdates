@@ -62,6 +62,17 @@ function About() {
             once the deadline passes.
           </p>
         </section>
+
+        <section className="mt-12">
+          <h2 className="text-xl font-bold text-foreground">Learn more</h2>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <a href="/faq" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">FAQ</a>
+            <a href="/contact" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">Contact</a>
+            <a href="/privacy" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">Privacy Policy</a>
+            <a href="/terms" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">Terms &amp; Conditions</a>
+            <a href="/disclaimer" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">Disclaimer</a>
+          </div>
+        </section>
       </main>
       <SiteFooter />
     </div>

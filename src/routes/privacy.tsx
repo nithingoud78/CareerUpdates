@@ -89,6 +89,12 @@ function Privacy() {
             </p>
           </section>
         </div>
+
+        <div className="mt-10 flex flex-wrap gap-3">
+          <a href="/terms" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">Terms &amp; Conditions</a>
+          <a href="/disclaimer" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">Disclaimer</a>
+          <a href="/contact" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">Contact Us</a>
+        </div>
       </main>
       <SiteFooter />
     </div>
