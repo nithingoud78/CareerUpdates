@@ -23,7 +23,7 @@ export const getAiSettings = createServerFn({ method: "GET" })
     await assertAdmin(context);
     const { data } = await context.supabase
       .from("ai_settings")
-      .select("*")
+      .select("id, provider, model, base_url, api_key, is_active, created_at, updated_at")
       .eq("is_active", true)
       .order("updated_at", { ascending: false })
       .limit(1)

@@ -17,20 +17,20 @@ async function fetchHomeJobs() {
     const [latest, govt, intern] = await Promise.all([
       supabase
         .from("jobs")
-        .select("id, slug, title, company, company_logo, location, experience, salary, last_date, category")
+        .select("id, slug, title, company, company_logo, company_logo_storage_url, location, experience, salary, last_date, category")
         .eq("status", "published")
         .order("posted_date", { ascending: false })
         .limit(6),
       supabase
         .from("jobs")
-        .select("id, slug, title, company, company_logo, location, experience, salary, last_date, category")
+        .select("id, slug, title, company, company_logo, company_logo_storage_url, location, experience, salary, last_date, category")
         .eq("status", "published")
         .eq("category", "Government")
         .order("posted_date", { ascending: false })
         .limit(4),
       supabase
         .from("jobs")
-        .select("id, slug, title, company, company_logo, location, experience, salary, last_date, category")
+        .select("id, slug, title, company, company_logo, company_logo_storage_url, location, experience, salary, last_date, category")
         .eq("status", "published")
         .eq("category", "Internship")
         .order("posted_date", { ascending: false })

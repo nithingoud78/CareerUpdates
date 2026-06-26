@@ -51,6 +51,7 @@ type Job = {
   title: string;
   company: string;
   company_logo: string | null;
+  company_logo_storage_url: string | null;
   location: string | null;
   experience: string | null;
   salary: string | null;
@@ -64,7 +65,7 @@ async function fetchAllPublishedJobs(): Promise<Job[]> {
   const { data, error } = await supabase
     .from("jobs")
     .select(
-      "id, slug, title, company, company_logo, location, experience, salary, last_date, category, employment_type",
+      "id, slug, title, company, company_logo, company_logo_storage_url, location, experience, salary, last_date, category, employment_type",
     )
     .eq("status", "published")
     .order("posted_date", { ascending: false });

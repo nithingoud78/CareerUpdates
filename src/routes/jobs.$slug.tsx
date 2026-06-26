@@ -19,22 +19,26 @@ import { JobCard } from "@/components/job-card";
 import { CompanyLogo } from "@/components/company-logo";
 
 async function fetchJob(slug: string) {
-  const { data, error } = await supabase
+  const { data: job, error } = await supabase
     .from("jobs")
-    .select("*")
+    .select(
+      "id, slug, title, company, company_logo, company_logo_storage_url, location, experience, salary, employment_type, qualification, apply_url, description, ai_summary, meta_description, tags, category, status, posted_date, last_date, views, created_by, created_at, updated_at",
+    )
     .eq("slug", slug)
     .eq("status", "published")
     .maybeSingle();
   if (error) throw error;
-  if (!data) throw notFound();
-  const { data: related } = await supabase
+  if (!job) throw notFound();
+  let relatedQuery = supabase
     .from("jobs")
-    .select("id, slug, title, company, company_logo, location, experience, salary, last_date, category")
-    .eq("status", "published")
-    .neq("id", data.id)
-    .eq("category", data.category ?? "IT")
-    .limit(4);
-  return { job: data, related: related ?? [] };
+    .select("id, slug, title, company, company_logo, company_logo_storage_url, location, experience, salary, last_date, category")
+    .eq("status", "published");
+  if (job.category) {
+    relatedQuery = relatedQuery.eq("category", job.category);
+  }
+  const { data: relatedByCategory } = await relatedQuery.neq("id", job.id).limit(3);
+
+  return { job, related: relatedByCategory || [] };
 }
 
 export const Route = createFileRoute("/jobs/$slug")({

@@ -22,7 +22,7 @@ async function getActiveProvider(supabase: any): Promise<{
   console.log("[Execution] getActiveProvider started");
   const { data } = await supabase
     .from("ai_settings")
-    .select("*")
+    .select("provider, model, base_url, api_key")
     .eq("is_active", true)
     .order("updated_at", { ascending: false })
     .limit(1)

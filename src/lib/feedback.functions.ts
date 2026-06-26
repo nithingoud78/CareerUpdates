@@ -45,7 +45,7 @@ export const listFeedback = createServerFn({ method: "GET" })
     await assertAdmin(context);
     const { data, error } = await context.supabase
       .from("feedback")
-      .select("*")
+      .select("id, name, email, subject, message, status, created_at")
       .order("created_at", { ascending: false });
 
     if (error) throw new Error(error.message);
