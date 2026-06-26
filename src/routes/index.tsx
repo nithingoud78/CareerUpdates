@@ -86,11 +86,11 @@ function Home() {
         <div className="absolute inset-0 -z-10">
           <div className="absolute inset-x-0 top-0 h-[480px] bg-[radial-gradient(80%_60%_at_50%_0%,color-mix(in_oklab,var(--brand)_18%,transparent),transparent_70%)]" />
         </div>
-        <div className="mx-auto max-w-5xl px-4 pb-12 pt-16 text-center sm:px-6 sm:pt-24 lg:px-8">
+        <div className="mx-auto max-w-5xl px-4 pb-12 pt-24 text-center sm:px-6 sm:pt-24 lg:px-8 lg:pt-32">
           <p className="mb-3 inline-flex rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
             Curated official openings · Updated daily
           </p>
-          <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
+          <h1 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
             Find Your Next <span className="text-brand">Career Opportunity</span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-pretty text-base text-muted-foreground sm:text-lg">
@@ -101,19 +101,19 @@ function Home() {
             Search the keyword or job you are looking for here.
           </p>
 
-          <form onSubmit={onSearch} className="mx-auto mt-6 max-w-2xl">
-            <div className="glass-strong flex items-center gap-2 rounded-full p-1.5 shadow-lg shadow-brand/5">
-              <Search className="ml-3 h-4 w-4 shrink-0 text-muted-foreground" />
+          <form onSubmit={onSearch} className="mx-auto mt-6 w-full max-w-2xl px-2 sm:px-0">
+            <div className="glass-strong flex items-center gap-1 sm:gap-2 rounded-full p-1.5 shadow-lg shadow-brand/5">
+              <Search className="ml-2 sm:ml-3 h-4 w-4 shrink-0 text-muted-foreground" />
               <input
                 aria-label="Search by job title, company, or keyword"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Search by job title, company, or keyword..."
-                className="min-w-0 flex-1 bg-transparent px-1 py-2 text-sm outline-none placeholder:text-muted-foreground"
+                className="min-w-0 flex-1 bg-transparent px-1 py-2 text-xs sm:text-sm outline-none placeholder:text-muted-foreground"
               />
               <button
                 type="submit"
-                className="shrink-0 rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground transition-transform hover:scale-105"
+                className="shrink-0 rounded-full bg-brand px-3 py-1.5 sm:px-4 sm:py-2 text-sm font-semibold text-brand-foreground transition-transform hover:scale-105"
               >
                 Search
               </button>

@@ -11,32 +11,32 @@ export function StickySocial() {
   });
 
   return (
-    <div className="fixed bottom-4 right-4 z-30 flex flex-col gap-2">
+    <div className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-30 flex flex-col gap-2">
       <a
         href={settings?.telegram_url || "https://t.me/careerupdate_in"}
         target="_blank"
         rel="noopener noreferrer"
-        className="group inline-flex items-center gap-2 rounded-full bg-telegram px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-telegram/30 transition-transform hover:scale-105"
+        className="group inline-flex items-center justify-center gap-2 rounded-full bg-telegram p-3 sm:px-4 sm:py-2.5 text-sm font-semibold text-white shadow-lg shadow-telegram/30 transition-transform hover:scale-105"
       >
-        <Send className="h-4 w-4" />
+        <Send className="h-5 w-5 sm:h-4 sm:w-4" />
         <span className="hidden sm:inline">Join Telegram</span>
       </a>
       <a
         href={settings?.whatsapp_url || "https://whatsapp.com/channel/0029VbDWQziFi8xUacpWjx2K"}
         target="_blank"
         rel="noopener noreferrer"
-        className="group inline-flex items-center gap-2 rounded-full bg-whatsapp px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-whatsapp/30 transition-transform hover:scale-105"
+        className="group inline-flex items-center justify-center gap-2 rounded-full bg-whatsapp p-3 sm:px-4 sm:py-2.5 text-sm font-semibold text-white shadow-lg shadow-whatsapp/30 transition-transform hover:scale-105"
       >
-        <MessageCircle className="h-4 w-4" />
+        <MessageCircle className="h-5 w-5 sm:h-4 sm:w-4" />
         <span className="hidden sm:inline">WhatsApp Channel</span>
       </a>
       <a
         href={settings?.instagram_url || "https://www.instagram.com/careerupdates_in?igsh=cXp1NTJ4cXZmMW92"}
         target="_blank"
         rel="noopener noreferrer"
-        className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-pink-500/30 transition-transform hover:scale-105"
+        className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 p-3 sm:px-4 sm:py-2.5 text-sm font-semibold text-white shadow-lg shadow-pink-500/30 transition-transform hover:scale-105"
       >
-        <Instagram className="h-4 w-4" />
+        <Instagram className="h-5 w-5 sm:h-4 sm:w-4" />
         <span className="hidden sm:inline">Follow on Instagram</span>
       </a>
     </div>

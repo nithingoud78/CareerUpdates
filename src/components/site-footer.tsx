@@ -4,9 +4,9 @@ import { Link } from "@tanstack/react-router";
 export function SiteFooter() {
 
   return (
-    <footer className="mt-20 border-t border-border bg-surface">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-4 lg:px-8">
-        <div className="md:col-span-2">
+    <footer className="mt-20 border-t border-border bg-surface pb-24 sm:pb-0">
+      <div className="mx-auto flex flex-col gap-10 px-4 py-12 text-center sm:px-6 md:grid md:grid-cols-4 md:text-left lg:px-8">
+        <div className="flex flex-col items-center md:col-span-2 md:items-start">
           <div className="flex items-center gap-2 font-semibold">
             <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand text-brand-foreground">
               <img src="/custom-icon.png" alt="Logo icon" className="h-7 w-7 object-contain" />

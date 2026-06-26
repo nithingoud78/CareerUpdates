@@ -42,6 +42,18 @@ export const CompanyLogo = React.memo(function CompanyLogo({
       return;
     }
     setStatus("loading");
+
+    const timer = setTimeout(() => {
+      setStatus((prev) => {
+        if (prev === "loading") {
+          failedCache.add(url);
+          return "error";
+        }
+        return prev;
+      });
+    }, 2000);
+
+    return () => clearTimeout(timer);
   }, [url]);
 
   const handleError = () => {
