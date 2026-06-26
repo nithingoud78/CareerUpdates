@@ -1,5 +1,6 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Logo } from "@/components/logo";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -55,9 +56,7 @@ function AuthPage() {
     <div className="grid min-h-screen place-items-center bg-background px-4">
       <div className="glass-strong w-full max-w-md rounded-2xl p-8">
         <div className="mb-6 flex items-center gap-2 text-base font-semibold">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand text-brand-foreground">
-            <img src="/custom-icon.png" alt="Logo icon" className="h-8 w-8 object-contain" />
-          </span>
+          <Logo className="mb-4" />
           Career Updates · Admin
         </div>
         <h1 className="text-2xl font-bold tracking-tight">

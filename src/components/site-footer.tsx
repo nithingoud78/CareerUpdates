@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { Logo } from "./logo";
 
 
 export function SiteFooter() {
@@ -8,9 +9,7 @@ export function SiteFooter() {
       <div className="mx-auto flex flex-col gap-10 px-4 py-12 text-center sm:px-6 md:grid md:grid-cols-4 md:text-left lg:px-8">
         <div className="flex flex-col items-center md:col-span-2 md:items-start">
           <div className="flex items-center gap-2 font-semibold">
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand text-brand-foreground">
-              <img src="/custom-icon.png" alt="Logo icon" className="h-7 w-7 object-contain" />
-            </span>
+            <Logo className="h-8 w-8 rounded-lg" iconClassName="h-7 w-7" />
             Career Updates
           </div>
           <p className="mt-3 max-w-md text-sm text-muted-foreground">

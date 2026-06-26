@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
+import { Logo } from "./logo";
 
 const nav = [
   { to: "/", label: "Home" },
@@ -19,9 +20,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-3 sm:gap-6 sm:px-6 lg:px-8">
         <Link to="/" className="flex min-w-0 shrink items-center gap-2 font-semibold tracking-tight">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand text-brand-foreground shadow-sm">
-            <img src="/custom-icon.png" alt="Logo icon" className="h-8 w-8 object-contain" />
-          </span>
+          <Logo />
           <span className="truncate text-sm sm:text-base">
             Career <span className="text-brand">Updates</span>
           </span>

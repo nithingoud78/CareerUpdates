@@ -2,6 +2,7 @@ import { createFileRoute, Link, Outlet, redirect, useNavigate, useRouter } from 
 import { useEffect, useState } from "react";
 import { Briefcase, LayoutDashboard, LogOut, Plus, Settings, Cpu, BookOpen, Inbox } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Logo } from "@/components/logo";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -46,9 +47,7 @@ function AdminLayout() {
       <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-7xl items-center gap-2 px-4 sm:px-6">
           <Link to="/admin" className="mr-4 flex items-center gap-2 font-semibold">
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand text-brand-foreground">
-              <Briefcase className="h-4 w-4" />
-            </span>
+            <Logo className="h-8 w-8 rounded-lg" iconClassName="h-7 w-7" />
             <span className="hidden sm:inline">Career Updates · Admin</span>
           </Link>
           <AdminLink to="/admin" icon={LayoutDashboard} label="Dashboard" />
