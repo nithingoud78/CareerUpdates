@@ -5,7 +5,7 @@ import { CompanyLogo } from "./company-logo";
 
 type Job = Pick<
   Tables<"jobs">,
-  "id" | "slug" | "title" | "company" | "company_logo" | "location" | "experience" | "salary" | "last_date" | "category"
+  "id" | "slug" | "title" | "company" | "company_logo" | "company_logo_storage_url" | "location" | "experience" | "salary" | "last_date" | "category"
 >;
 
 export function JobCard({ job, compact = false }: { job: Job; compact?: boolean }) {
@@ -17,7 +17,11 @@ export function JobCard({ job, compact = false }: { job: Job; compact?: boolean 
     >
       <div className="flex items-start gap-3">
         <div className="h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-muted">
-          <CompanyLogo url={job.company_logo} name={job.company} />
+          <CompanyLogo
+            storageUrl={job.company_logo_storage_url}
+            url={job.company_logo}
+            name={job.company}
+          />
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="truncate text-sm font-semibold text-foreground group-hover:text-brand">
