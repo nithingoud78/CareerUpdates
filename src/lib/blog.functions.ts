@@ -132,6 +132,38 @@ export const getRelatedBlogs = createServerFn({ method: "GET" })
     return blogs ?? [];
   });
 
+export const getRelatedJobsForBlog = createServerFn({ method: "GET" })
+  .validator(
+    (input: { tags?: string[]; category?: string; limit?: number }) =>
+      z.object({ tags: z.array(z.string()).optional(), category: z.string().optional(), limit: z.number().default(4) }).parse(input)
+  )
+  .handler(async ({ data }) => {
+    const { category, limit } = data;
+    let q = supabase
+      .from("jobs")
+      .select("id, slug, title, company, company_logo, location, experience, salary, last_date, category, employment_type")
+      .eq("status", "published")
+      .order("posted_date", { ascending: false });
+
+    if (category) q = q.ilike("category", `%${category}%`);
+    const { data: jobs, error } = await q.limit(limit);
+    
+    if (error) throw new Error(error.message);
+    
+    // Fallback if no matching jobs
+    if (!jobs || jobs.length === 0) {
+       const { data: fallbackJobs } = await supabase
+         .from("jobs")
+         .select("id, slug, title, company, company_logo, location, experience, salary, last_date, category, employment_type")
+         .eq("status", "published")
+         .order("posted_date", { ascending: false })
+         .limit(limit);
+       return fallbackJobs ?? [];
+    }
+    
+    return jobs ?? [];
+  });
+
 // ─── Admin Functions ──────────────────────────────────────────────────────────
 
 export const listAllBlogs = createServerFn({ method: "GET" })

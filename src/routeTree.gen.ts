@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SitemapJobsDotxmlRouteImport } from './routes/sitemap-jobs[.]xml'
+import { Route as SitemapHubsDotxmlRouteImport } from './routes/sitemap-hubs[.]xml'
 import { Route as SitemapCoreDotxmlRouteImport } from './routes/sitemap-core[.]xml'
+import { Route as SitemapBlogDotxmlRouteImport } from './routes/sitemap-blog[.]xml'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as FaqRouteImport } from './routes/faq'
@@ -23,7 +25,11 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as SearchAdminRouteImport } from './routes/search_.admin'
+import { Route as LocationSlugRouteImport } from './routes/location.$slug'
 import { Route as JobsSlugRouteImport } from './routes/jobs.$slug'
+import { Route as CompanySlugRouteImport } from './routes/company.$slug'
+import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -53,9 +59,19 @@ const SitemapJobsDotxmlRoute = SitemapJobsDotxmlRouteImport.update({
   path: '/sitemap-jobs.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapHubsDotxmlRoute = SitemapHubsDotxmlRouteImport.update({
+  id: '/sitemap-hubs.xml',
+  path: '/sitemap-hubs.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapCoreDotxmlRoute = SitemapCoreDotxmlRouteImport.update({
   id: '/sitemap-core.xml',
   path: '/sitemap-core.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapBlogDotxmlRoute = SitemapBlogDotxmlRouteImport.update({
+  id: '/sitemap-blog.xml',
+  path: '/sitemap-blog.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRoute = SearchRouteImport.update({
@@ -107,9 +123,29 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   path: '/blog/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SearchAdminRoute = SearchAdminRouteImport.update({
+  id: '/search_/admin',
+  path: '/search/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LocationSlugRoute = LocationSlugRouteImport.update({
+  id: '/location/$slug',
+  path: '/location/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JobsSlugRoute = JobsSlugRouteImport.update({
   id: '/jobs/$slug',
   path: '/jobs/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompanySlugRoute = CompanySlugRouteImport.update({
+  id: '/company/$slug',
+  path: '/company/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategorySlugRoute = CategorySlugRouteImport.update({
+  id: '/category/$slug',
+  path: '/category/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
@@ -197,13 +233,19 @@ export interface FileRoutesByFullPath {
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
   '/search': typeof SearchRoute
+  '/sitemap-blog.xml': typeof SitemapBlogDotxmlRoute
   '/sitemap-core.xml': typeof SitemapCoreDotxmlRoute
+  '/sitemap-hubs.xml': typeof SitemapHubsDotxmlRoute
   '/sitemap-jobs.xml': typeof SitemapJobsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
+  '/category/$slug': typeof CategorySlugRoute
+  '/company/$slug': typeof CompanySlugRoute
   '/jobs/$slug': typeof JobsSlugRoute
+  '/location/$slug': typeof LocationSlugRoute
+  '/search/admin': typeof SearchAdminRoute
   '/blog/': typeof BlogIndexRoute
   '/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -226,12 +268,18 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
   '/search': typeof SearchRoute
+  '/sitemap-blog.xml': typeof SitemapBlogDotxmlRoute
   '/sitemap-core.xml': typeof SitemapCoreDotxmlRoute
+  '/sitemap-hubs.xml': typeof SitemapHubsDotxmlRoute
   '/sitemap-jobs.xml': typeof SitemapJobsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/category/$slug': typeof CategorySlugRoute
+  '/company/$slug': typeof CompanySlugRoute
   '/jobs/$slug': typeof JobsSlugRoute
+  '/location/$slug': typeof LocationSlugRoute
+  '/search/admin': typeof SearchAdminRoute
   '/blog': typeof BlogIndexRoute
   '/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -256,13 +304,19 @@ export interface FileRoutesById {
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
   '/search': typeof SearchRoute
+  '/sitemap-blog.xml': typeof SitemapBlogDotxmlRoute
   '/sitemap-core.xml': typeof SitemapCoreDotxmlRoute
+  '/sitemap-hubs.xml': typeof SitemapHubsDotxmlRoute
   '/sitemap-jobs.xml': typeof SitemapJobsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
+  '/category/$slug': typeof CategorySlugRoute
+  '/company/$slug': typeof CompanySlugRoute
   '/jobs/$slug': typeof JobsSlugRoute
+  '/location/$slug': typeof LocationSlugRoute
+  '/search_/admin': typeof SearchAdminRoute
   '/blog/': typeof BlogIndexRoute
   '/_authenticated/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -287,13 +341,19 @@ export interface FileRouteTypes {
     | '/faq'
     | '/privacy'
     | '/search'
+    | '/sitemap-blog.xml'
     | '/sitemap-core.xml'
+    | '/sitemap-hubs.xml'
     | '/sitemap-jobs.xml'
     | '/sitemap.xml'
     | '/terms'
     | '/admin'
     | '/blog/$slug'
+    | '/category/$slug'
+    | '/company/$slug'
     | '/jobs/$slug'
+    | '/location/$slug'
+    | '/search/admin'
     | '/blog/'
     | '/admin/feedback'
     | '/admin/settings'
@@ -316,12 +376,18 @@ export interface FileRouteTypes {
     | '/faq'
     | '/privacy'
     | '/search'
+    | '/sitemap-blog.xml'
     | '/sitemap-core.xml'
+    | '/sitemap-hubs.xml'
     | '/sitemap-jobs.xml'
     | '/sitemap.xml'
     | '/terms'
     | '/blog/$slug'
+    | '/category/$slug'
+    | '/company/$slug'
     | '/jobs/$slug'
+    | '/location/$slug'
+    | '/search/admin'
     | '/blog'
     | '/admin/feedback'
     | '/admin/settings'
@@ -345,13 +411,19 @@ export interface FileRouteTypes {
     | '/faq'
     | '/privacy'
     | '/search'
+    | '/sitemap-blog.xml'
     | '/sitemap-core.xml'
+    | '/sitemap-hubs.xml'
     | '/sitemap-jobs.xml'
     | '/sitemap.xml'
     | '/terms'
     | '/_authenticated/admin'
     | '/blog/$slug'
+    | '/category/$slug'
+    | '/company/$slug'
     | '/jobs/$slug'
+    | '/location/$slug'
+    | '/search_/admin'
     | '/blog/'
     | '/_authenticated/admin/feedback'
     | '/_authenticated/admin/settings'
@@ -376,12 +448,18 @@ export interface RootRouteChildren {
   FaqRoute: typeof FaqRoute
   PrivacyRoute: typeof PrivacyRoute
   SearchRoute: typeof SearchRoute
+  SitemapBlogDotxmlRoute: typeof SitemapBlogDotxmlRoute
   SitemapCoreDotxmlRoute: typeof SitemapCoreDotxmlRoute
+  SitemapHubsDotxmlRoute: typeof SitemapHubsDotxmlRoute
   SitemapJobsDotxmlRoute: typeof SitemapJobsDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  CategorySlugRoute: typeof CategorySlugRoute
+  CompanySlugRoute: typeof CompanySlugRoute
   JobsSlugRoute: typeof JobsSlugRoute
+  LocationSlugRoute: typeof LocationSlugRoute
+  SearchAdminRoute: typeof SearchAdminRoute
   BlogIndexRoute: typeof BlogIndexRoute
 }
 
@@ -408,11 +486,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapJobsDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap-hubs.xml': {
+      id: '/sitemap-hubs.xml'
+      path: '/sitemap-hubs.xml'
+      fullPath: '/sitemap-hubs.xml'
+      preLoaderRoute: typeof SitemapHubsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap-core.xml': {
       id: '/sitemap-core.xml'
       path: '/sitemap-core.xml'
       fullPath: '/sitemap-core.xml'
       preLoaderRoute: typeof SitemapCoreDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-blog.xml': {
+      id: '/sitemap-blog.xml'
+      path: '/sitemap-blog.xml'
+      fullPath: '/sitemap-blog.xml'
+      preLoaderRoute: typeof SitemapBlogDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/search': {
@@ -485,11 +577,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/search_/admin': {
+      id: '/search_/admin'
+      path: '/search/admin'
+      fullPath: '/search/admin'
+      preLoaderRoute: typeof SearchAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/location/$slug': {
+      id: '/location/$slug'
+      path: '/location/$slug'
+      fullPath: '/location/$slug'
+      preLoaderRoute: typeof LocationSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/jobs/$slug': {
       id: '/jobs/$slug'
       path: '/jobs/$slug'
       fullPath: '/jobs/$slug'
       preLoaderRoute: typeof JobsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/company/$slug': {
+      id: '/company/$slug'
+      path: '/company/$slug'
+      fullPath: '/company/$slug'
+      preLoaderRoute: typeof CompanySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/category/$slug': {
+      id: '/category/$slug'
+      path: '/category/$slug'
+      fullPath: '/category/$slug'
+      preLoaderRoute: typeof CategorySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/$slug': {
@@ -639,12 +759,18 @@ const rootRouteChildren: RootRouteChildren = {
   FaqRoute: FaqRoute,
   PrivacyRoute: PrivacyRoute,
   SearchRoute: SearchRoute,
+  SitemapBlogDotxmlRoute: SitemapBlogDotxmlRoute,
   SitemapCoreDotxmlRoute: SitemapCoreDotxmlRoute,
+  SitemapHubsDotxmlRoute: SitemapHubsDotxmlRoute,
   SitemapJobsDotxmlRoute: SitemapJobsDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   BlogSlugRoute: BlogSlugRoute,
+  CategorySlugRoute: CategorySlugRoute,
+  CompanySlugRoute: CompanySlugRoute,
   JobsSlugRoute: JobsSlugRoute,
+  LocationSlugRoute: LocationSlugRoute,
+  SearchAdminRoute: SearchAdminRoute,
   BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport

@@ -14,6 +14,12 @@ export const Route = createFileRoute("/sitemap.xml")({
   <sitemap>
     <loc>${baseUrl}/sitemap-jobs.xml</loc>
   </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/sitemap-blog.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/sitemap-hubs.xml</loc>
+  </sitemap>
 </sitemapindex>`;
 
         return new Response(xml, {

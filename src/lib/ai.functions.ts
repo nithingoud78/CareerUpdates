@@ -253,14 +253,17 @@ CRITICAL EXTRACTION RULES (STRICTLY FOLLOW):
    - ALWAYS: Change sentence structure, change vocabulary, invent new transitions, restructure information logically.
    - The factual content (role, skills, responsibilities, requirements) MUST be accurate — only the expression changes.
    - Tone: concise, professional, direct. No corporate fluff. No repeated emphasis. Readers should feel informed.
-   - You MUST format the output using these EXACT Markdown section headings (omit sections where not enough info exists):
-     ## Overview
+   - You MUST format the output using these EXACT Markdown section headings (include every single one):
+     ## Job Overview
      ## Key Responsibilities
-     ## Required Skills
-     ## Eligibility
-     ## Preferred Skills
-     ## Benefits
-     ## Additional Information
+     ## Required Qualifications
+     ## Preferred Qualifications
+     ## Work Model & Location
+     ## About the Company
+     ## Why This Role May Be Relevant
+     ## Application Guidance
+     ## Frequently Asked Questions (Generate 3-5 useful FAQs with answers)
+     ## Source & Disclaimer (State that Career Updates is an aggregator and applications occur on the employer's official website)
 5. **AI SUMMARY**: Write 2-4 paragraphs covering: what the role is about, what kind of candidate fits, and what growth/opportunity this role offers. Must read like a human career advisor wrote it, not a bot.
 6. **META DESCRIPTION**: 120-155 chars. SEO-optimised. Mention job title, company, and key benefit.
 7. **TAGS (Key Skills)**: Extract 5-12 specific technical and soft skills as an array of short strings (e.g., "React", "Node.js", "SQL", "Leadership", "Python").

@@ -7,7 +7,8 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { AdSlot } from "@/components/ad-slot";
 import { StickySocial } from "@/components/sticky-social";
-import { getBlogBySlug, getRelatedBlogs } from "@/lib/blog.functions";
+import { JobCard } from "@/components/job-card";
+import { getBlogBySlug, getRelatedBlogs, getRelatedJobsForBlog } from "@/lib/blog.functions";
 
 
 export const Route = createFileRoute("/blog/$slug")({
@@ -54,6 +55,7 @@ function BlogDetail() {
 
   const getPost = useServerFn(getBlogBySlug);
   const getRelated = useServerFn(getRelatedBlogs);
+  const getRelatedJobs = useServerFn(getRelatedJobsForBlog);
 
   const { data: blog, isLoading, error } = useQuery({
     queryKey: ["blog", slug],
@@ -70,6 +72,12 @@ function BlogDetail() {
           limit: 3,
         },
       }),
+    enabled: !!blog,
+  });
+
+  const { data: relatedJobsData } = useQuery({
+    queryKey: ["related-jobs", slug, (blog as any)?.category],
+    queryFn: () => getRelatedJobs({ data: { category: (blog as any)?.category ?? undefined, limit: 4 } }),
     enabled: !!blog,
   });
 
@@ -274,6 +282,18 @@ function BlogDetail() {
               </div>
             </aside>
           </div>
+
+          {/* Related Jobs Loop */}
+          {relatedJobsData && relatedJobsData.length > 0 && (
+            <div className="mt-16 border-t border-border pt-12">
+              <h2 className="text-2xl font-bold mb-6">Explore Open Roles</h2>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {relatedJobsData.map((job: any) => (
+                  <JobCard key={job.id} job={job} compact />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </main>
       <SiteFooter />

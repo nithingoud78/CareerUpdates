@@ -38,7 +38,22 @@ async function fetchJob(slug: string) {
   }
   const { data: relatedByCategory } = await relatedQuery.neq("id", job.id).limit(3);
 
-  return { job, related: relatedByCategory || [] };
+  // Fetch related blogs
+  let blogQuery = supabase.from("blogs").select("id, slug, title, cover_image, category").eq("status", "published");
+  // Basic context matching: if job has tags, or by category
+  if (job.category) {
+    blogQuery = blogQuery.ilike("category", `%${job.category}%`);
+  }
+  const { data: relatedBlogsResult } = await blogQuery.limit(3);
+  
+  // Fallback if no category match
+  let relatedBlogs = relatedBlogsResult || [];
+  if (relatedBlogs.length === 0) {
+    const { data: fallbackBlogs } = await supabase.from("blogs").select("id, slug, title, cover_image, category").eq("status", "published").limit(3);
+    relatedBlogs = fallbackBlogs || [];
+  }
+
+  return { job, related: relatedByCategory || [], relatedBlogs };
 }
 
 export const Route = createFileRoute("/jobs/$slug")({
@@ -239,7 +254,6 @@ function JobDetails() {
         {/* Description */}
         {job.description && (
           <section className="glass rounded-2xl p-6">
-            <h2 className="text-lg font-semibold mb-4">Job Description</h2>
             <div
               className="prose prose-sm sm:prose-base dark:prose-invert max-w-none
                 prose-headings:font-bold prose-headings:tracking-tight
@@ -287,12 +301,34 @@ function JobDetails() {
           </a>
         </section>
 
-        {/* Related */}
+        {/* Related Blogs */}
+        {data.relatedBlogs.length > 0 && (
+          <section className="glass rounded-2xl p-6">
+            <h2 className="mb-4 text-lg font-semibold">Career Guides & Tips</h2>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {data.relatedBlogs.map((b: any) => (
+                <Link key={b.id} to={`/blog/${b.slug}`} className="group block overflow-hidden rounded-xl border border-border bg-background transition-colors hover:border-brand/50">
+                  <div className="aspect-video w-full overflow-hidden bg-muted">
+                    {b.cover_image && (
+                      <img src={b.cover_image} alt={b.title} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-brand">{b.category}</p>
+                    <h3 className="mt-1 line-clamp-2 text-sm font-medium leading-tight text-foreground">{b.title}</h3>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Related Jobs */}
         {data.related.length > 0 && (
           <section>
-            <h2 className="mb-4 text-lg font-semibold">Related Jobs</h2>
+            <h2 className="mb-4 text-lg font-semibold">Similar Jobs</h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {data.related.map((r) => (
+              {data.related.map((r: any) => (
                 <JobCard key={r.id} job={r} compact />
               ))}
             </div>

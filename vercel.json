@@ -1,2 +1,15 @@
 {
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "careerupdates.vercel.app"
+        }
+      ],
+      "destination": "https://careerupdates.co.in/$1",
+      "permanent": true
+    }
+  ]
 }
