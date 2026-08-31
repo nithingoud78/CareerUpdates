@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import {
   Briefcase,
   Building2,
@@ -13,10 +14,10 @@ import { renderMarkdown } from "@/lib/markdown";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-
 import { StickySocial } from "@/components/sticky-social";
 import { JobCard } from "@/components/job-card";
 import { CompanyLogo } from "@/components/company-logo";
+import { track } from "@/lib/analytics-tracking";
 
 async function fetchJob(slug: string) {
   const { data: job, error } = await supabase
@@ -191,6 +192,12 @@ function JobDetails() {
   const { data } = useSuspenseQuery({ queryKey: ["job", slug], queryFn: () => fetchJob(slug) });
   const job = data.job;
 
+  // Track job_view once on mount
+  useEffect(() => {
+    track({ event_type: "job_view", path: `/jobs/${slug}`, job_id: job.id });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [job.id]);
+
   const facts = [
     { icon: Building2, label: "Company", value: job.company },
     { icon: Wallet, label: "Salary", value: job.salary },
@@ -291,6 +298,9 @@ function JobDetails() {
             href={job.apply_url}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() =>
+              track({ event_type: "apply_click", path: `/jobs/${slug}`, job_id: job.id })
+            }
             className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/20 transition-transform hover:scale-105"
           >
             Apply on Official Site <ExternalLink className="h-4 w-4" />

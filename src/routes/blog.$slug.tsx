@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Calendar, User, Tag, ChevronLeft, ArrowRight } from "lucide-react";
 import { renderMarkdown } from "@/lib/markdown";
@@ -9,6 +10,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { StickySocial } from "@/components/sticky-social";
 import { JobCard } from "@/components/job-card";
 import { getBlogBySlug, getRelatedBlogs, getRelatedJobsForBlog } from "@/lib/blog.functions";
+import { track } from "@/lib/analytics-tracking";
 
 
 export const Route = createFileRoute("/blog/$slug")({
@@ -93,6 +95,14 @@ function formatDate(iso: string) {
 function BlogDetail() {
   const { slug } = Route.useParams();
   const blog = Route.useLoaderData();
+
+  // Track blog_view once on mount
+  useEffect(() => {
+    if ((blog as any)?.id) {
+      track({ event_type: "blog_view", path: `/blog/${slug}`, blog_id: (blog as any).id });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [(blog as any)?.id]);
 
   const getRelated = useServerFn(getRelatedBlogs);
   const getRelatedJobs = useServerFn(getRelatedJobsForBlog);

@@ -8,8 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { JobCard } from "@/components/job-card";
-
 import { StickySocial } from "@/components/sticky-social";
+import { track } from "@/lib/analytics-tracking";
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -134,6 +134,10 @@ function SearchPage() {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const trimmed = q.trim();
+    if (trimmed) {
+      track({ event_type: "search", path: "/search", search_query: trimmed.slice(0, 500) });
+    }
     update({ q: q || undefined });
   }
 

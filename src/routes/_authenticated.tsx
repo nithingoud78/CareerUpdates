@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Briefcase, LayoutDashboard, LogOut, Plus, Settings, Cpu, BookOpen, Inbox } from "lucide-react";
+import { BarChart3, Briefcase, LayoutDashboard, LogOut, Plus, Settings, Cpu, BookOpen, Inbox } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/logo";
 
@@ -56,6 +56,7 @@ function AdminLayout() {
           <AdminLink to="/admin/settings" icon={Cpu} label="AI Settings" />
           <AdminLink to="/admin/blog" icon={BookOpen} label="Blog" />
           <AdminLink to="/admin/feedback" icon={Inbox} label="Feedback" />
+          <AdminLink to="/admin/analytics" icon={BarChart3} label="Analytics" />
           <div className="ml-auto flex items-center gap-2">
             <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">View site →</Link>
             <button

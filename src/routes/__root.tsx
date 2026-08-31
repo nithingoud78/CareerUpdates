@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { GoogleAnalytics } from "../components/google-analytics";
+import { AnalyticsTracker } from "../components/analytics-tracker";
 
 function NotFoundComponent() {
   return (
@@ -188,18 +189,30 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+function AdScripts() {
+  const router = useRouter();
+  if (router.state.location.pathname.startsWith("/admin")) {
+    return null;
+  }
+  return (
+    <>
+      <script
+        async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6032482437020204"
+        crossOrigin="anonymous"
+      ></script>
+      <script src="https://quge5.com/88/tag.min.js" data-zone="275042" async data-cfasync="false"></script>
+    </>
+  );
+}
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
         <HeadContent />
         <GoogleAnalytics />
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6032482437020204"
-          crossOrigin="anonymous"
-        ></script>
-        <script src="https://quge5.com/88/tag.min.js" data-zone="275042" async data-cfasync="false"></script>
+        <AdScripts />
         <Scripts />
       </head>
       <body className="overflow-x-hidden">
@@ -214,6 +227,8 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      {/* Global analytics page_view tracker — fires once per navigation */}
+      <AnalyticsTracker />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
