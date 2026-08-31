@@ -20,7 +20,6 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -33,17 +32,8 @@ function AuthPage() {
     setLoading(true);
     setError(null);
     try {
-      if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: window.location.origin + "/admin" },
-        });
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
       navigate({ to: "/admin" });
     } catch (err: any) {
       setError(err.message ?? "Authentication failed");
@@ -60,12 +50,10 @@ function AuthPage() {
           Career Updates · Admin
         </div>
         <h1 className="text-2xl font-bold tracking-tight">
-          {mode === "signin" ? "Sign in to admin" : "Create admin account"}
+          Sign in to admin
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {mode === "signin"
-            ? "Sign in to manage job listings and AI settings."
-            : "Sign up, then assign yourself the admin role."}
+          Sign in to manage job listings and AI settings.
         </p>
 
         <form onSubmit={onSubmit} className="mt-6 space-y-4">
@@ -100,16 +88,9 @@ function AuthPage() {
             disabled={loading}
             className="w-full rounded-full bg-brand py-2.5 text-sm font-semibold text-brand-foreground disabled:opacity-60"
           >
-            {loading ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
+            {loading ? "Please wait…" : "Sign in"}
           </button>
         </form>
-
-        <button
-          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="mt-4 w-full text-center text-xs text-muted-foreground hover:text-foreground"
-        >
-          {mode === "signin" ? "Need an account? Create one →" : "Already have an account? Sign in →"}
-        </button>
       </div>
     </div>
   );

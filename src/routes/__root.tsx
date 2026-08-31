@@ -191,7 +191,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function AdScripts() {
   const router = useRouter();
-  if (router.state.location.pathname.startsWith("/admin")) {
+  const pathname = router.state.location.pathname;
+  if (pathname === "/auth" || pathname === "/admin" || pathname.startsWith("/admin/")) {
     return null;
   }
   return (
