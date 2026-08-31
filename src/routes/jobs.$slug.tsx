@@ -139,7 +139,6 @@ export const Route = createFileRoute("/jobs/$slug")({
                       name: "Career Updates",
                       value: params.slug,
                     },
-                    directApply: true,
                     url: `${siteUrl}/jobs/${params.slug}`,
                     ...(j.tags?.length ? { skills: j.tags.join(", ") } : {}),
                   },

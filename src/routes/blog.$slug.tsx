@@ -12,37 +12,77 @@ import { getBlogBySlug, getRelatedBlogs, getRelatedJobsForBlog } from "@/lib/blo
 
 
 export const Route = createFileRoute("/blog/$slug")({
-  head: ({ params }) => {
+  loader: async ({ params, context }) => {
+    return await context.queryClient.ensureQueryData({
+      queryKey: ["blog", params.slug],
+      queryFn: () => getBlogBySlug({ data: params.slug }),
+    });
+  },
+  head: ({ params, loaderData }) => {
+    const post = loaderData as any;
     const siteUrl = "https://careerupdates.co.in";
+    const title = post?.seo_title || post?.title || "Blog — Career Updates";
+    const desc = post?.seo_description || post?.excerpt || "Read this article on Career Updates.";
+    
     return {
       meta: [
-        { title: "Blog — Career Updates" },
-        { name: "description", content: "Read this article on Career Updates." },
+        { title: `${title} — Career Updates` },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
         { property: "og:type", content: "article" },
         { property: "og:site_name", content: "Career Updates" },
+        { property: "og:url", content: `${siteUrl}/blog/${params.slug}` },
+        ...(post?.cover_image ? [{ property: "og:image", content: post.cover_image }] : [{ property: "og:image", content: `${siteUrl}/careerupdates-share-2026.png` }]),
         { name: "twitter:card", content: "summary_large_image" },
       ],
       links: [{ rel: "canonical", href: `${siteUrl}/blog/${params.slug}` }],
-      scripts: [
+      scripts: post ? [
         {
           type: "application/ld+json",
           children: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
-              { "@type": "ListItem", position: 2, name: "Blog", item: `${siteUrl}/blog` },
-              { "@type": "ListItem", position: 3, name: "Article", item: `${siteUrl}/blog/${params.slug}` },
-            ],
+            "@graph": [
+              {
+                "@type": "BlogPosting",
+                "@id": `${siteUrl}/blog/${params.slug}`,
+                "headline": title,
+                "description": desc,
+                "author": {
+                  "@type": "Person",
+                  "name": post.author || "Career Updates Team"
+                },
+                "publisher": {
+                  "@type": "Organization",
+                  "name": "Career Updates",
+                  "logo": {
+                    "@type": "ImageObject",
+                    "url": `${siteUrl}/android-chrome-512.png`
+                  }
+                },
+                "datePublished": post.published_at || post.created_at,
+                "dateModified": post.updated_at || post.published_at || post.created_at,
+                ...(post.cover_image ? { "image": post.cover_image } : {})
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  { "@type": "ListItem", "position": 1, "name": "Home", "item": siteUrl },
+                  { "@type": "ListItem", "position": 2, "name": "Blog", "item": `${siteUrl}/blog` },
+                  { "@type": "ListItem", "position": 3, "name": title, "item": `${siteUrl}/blog/${params.slug}` }
+                ]
+              }
+            ]
           }),
         },
-      ],
+      ] : [],
     };
   },
   component: BlogDetail,
 });
 
 function formatDate(iso: string) {
+  if (!iso) return "";
   return new Date(iso).toLocaleDateString("en-IN", {
     day: "numeric",
     month: "long",
@@ -52,15 +92,10 @@ function formatDate(iso: string) {
 
 function BlogDetail() {
   const { slug } = Route.useParams();
+  const blog = Route.useLoaderData();
 
-  const getPost = useServerFn(getBlogBySlug);
   const getRelated = useServerFn(getRelatedBlogs);
   const getRelatedJobs = useServerFn(getRelatedJobsForBlog);
-
-  const { data: blog, isLoading, error } = useQuery({
-    queryKey: ["blog", slug],
-    queryFn: () => getPost({ data: slug }),
-  });
 
   const { data: related } = useQuery({
     queryKey: ["related-blogs", slug, (blog as any)?.category],
@@ -81,32 +116,11 @@ function BlogDetail() {
     enabled: !!blog,
   });
 
-  if (isLoading) {
+  if (!blog) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen flex flex-col bg-background">
         <SiteHeader />
-        <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
-          <div className="space-y-4 animate-pulse">
-            <div className="h-6 w-24 rounded bg-muted" />
-            <div className="h-10 w-3/4 rounded bg-muted" />
-            <div className="h-64 rounded-xl bg-muted" />
-            <div className="space-y-2">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="h-4 rounded bg-muted" style={{ width: `${85 + Math.random() * 15}%` }} />
-              ))}
-            </div>
-          </div>
-        </main>
-        <SiteFooter />
-      </div>
-    );
-  }
-
-  if (error || !blog) {
-    return (
-      <div className="min-h-screen bg-background">
-        <SiteHeader />
-        <main className="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6">
+        <main className="flex-1 mx-auto max-w-4xl px-4 py-16 sm:px-6 text-center">
           <h1 className="text-2xl font-bold">Article not found</h1>
           <p className="mt-2 text-muted-foreground">This article may have been removed or the URL is incorrect.</p>
           <Link to="/blog" className="mt-6 inline-flex items-center gap-1 text-brand hover:underline">

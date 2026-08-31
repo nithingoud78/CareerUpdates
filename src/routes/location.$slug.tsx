@@ -45,6 +45,7 @@ export const Route = createFileRoute("/location/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
         { property: "og:url", content: `https://careerupdates.co.in/location/${params.slug}` },
+        ...(data?.jobs?.length === 0 ? [{ name: "robots", content: "noindex, nofollow" }] : []),
       ],
       links: [{ rel: "canonical", href: `https://careerupdates.co.in/location/${params.slug}` }],
     };
