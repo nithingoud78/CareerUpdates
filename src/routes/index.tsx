@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { JobCard } from "@/components/job-card";
-import { AdSlot } from "@/components/ad-slot";
+
 import { StickySocial } from "@/components/sticky-social";
 
 const TRENDING = ["Infosys", "TCS", "Wipro", "Google", "Accenture", "Amazon"];
@@ -81,9 +81,6 @@ function Home() {
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <AdSlot />
-      </div>
 
       {/* HERO */}
       <section className="relative overflow-hidden">
@@ -141,8 +138,6 @@ function Home() {
       </section>
 
       <main className="mx-auto max-w-7xl space-y-12 px-4 pb-16 sm:px-6 lg:px-8">
-        <AdSlot />
-
         {/* LATEST */}
         <section>
           <SectionHeading title="Latest Opportunities" link="/search" />
@@ -152,8 +147,6 @@ function Home() {
             ))}
           </div>
         </section>
-
-        <AdSlot />
 
         {/* GOV + INTERN */}
         <div className="grid gap-8 lg:grid-cols-2">

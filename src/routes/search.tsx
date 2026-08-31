@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { JobCard } from "@/components/job-card";
-import { AdSlot } from "@/components/ad-slot";
+
 import { StickySocial } from "@/components/sticky-social";
 
 const searchSchema = z.object({
@@ -203,7 +203,7 @@ function SearchPage() {
 
         {/* Results */}
         <div className="space-y-5">
-          <AdSlot label="Advertisement · 728×90" />
+
           {isFetching && !allJobs.length && (
             <p className="text-sm text-muted-foreground">Loading jobs…</p>
           )}

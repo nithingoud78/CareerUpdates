@@ -13,7 +13,7 @@ import { renderMarkdown } from "@/lib/markdown";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { AdSlot } from "@/components/ad-slot";
+
 import { StickySocial } from "@/components/sticky-social";
 import { JobCard } from "@/components/job-card";
 import { CompanyLogo } from "@/components/company-logo";
@@ -239,8 +239,6 @@ function JobDetails() {
           </dl>
         </header>
 
-        <AdSlot />
-
         {/* AI Summary */}
         {job.ai_summary && (
           <section className="glass rounded-2xl p-6">
@@ -283,7 +281,6 @@ function JobDetails() {
           </section>
         )}
 
-        <AdSlot />
 
         {/* Apply CTA */}
         <section className="glass-strong flex flex-col items-center gap-3 rounded-2xl p-8 text-center">
@@ -307,7 +304,7 @@ function JobDetails() {
             <h2 className="mb-4 text-lg font-semibold">Career Guides & Tips</h2>
             <div className="grid gap-4 sm:grid-cols-3">
               {data.relatedBlogs.map((b: any) => (
-                <Link key={b.id} to={`/blog/${b.slug}`} className="group block overflow-hidden rounded-xl border border-border bg-background transition-colors hover:border-brand/50">
+                <Link key={b.id} to="/blog/$slug" params={{ slug: b.slug }} className="group block overflow-hidden rounded-xl border border-border bg-background transition-colors hover:border-brand/50">
                   <div className="aspect-video w-full overflow-hidden bg-muted">
                     {b.cover_image && (
                       <img src={b.cover_image} alt={b.title} className="h-full w-full object-cover transition-transform group-hover:scale-105" />

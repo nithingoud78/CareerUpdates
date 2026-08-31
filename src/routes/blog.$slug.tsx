@@ -5,7 +5,7 @@ import { Calendar, User, Tag, ChevronLeft, ArrowRight } from "lucide-react";
 import { renderMarkdown } from "@/lib/markdown";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { AdSlot } from "@/components/ad-slot";
+
 import { StickySocial } from "@/components/sticky-social";
 import { JobCard } from "@/components/job-card";
 import { getBlogBySlug, getRelatedBlogs, getRelatedJobsForBlog } from "@/lib/blog.functions";
@@ -189,8 +189,6 @@ function BlogDetail() {
                 </div>
               )}
 
-              {/* Top Ad */}
-              <AdSlot />
 
               {/* Content */}
               <div
@@ -207,8 +205,6 @@ function BlogDetail() {
                 dangerouslySetInnerHTML={{ __html: renderedContent }}
               />
 
-              {/* Bottom Ad */}
-              <AdSlot />
 
               {/* Back link */}
               <div className="mt-12 border-t border-border pt-6">

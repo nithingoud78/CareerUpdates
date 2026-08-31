@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { JobCard } from "@/components/job-card";
-import { AdSlot } from "@/components/ad-slot";
+
 
 function formatName(slug: string) {
   return slug
@@ -71,8 +71,6 @@ function LocationPage() {
       </div>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <AdSlot label="Advertisement" />
-        
         <div className="mt-8 flex items-center justify-between">
           <h2 className="text-xl font-semibold">Latest {data.locationName} Openings</h2>
           <span className="text-sm text-muted-foreground">{data.jobs.length} roles found</span>

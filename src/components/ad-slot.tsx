@@ -1,37 +1,51 @@
 import { useEffect, useRef } from "react";
-import { cn } from "@/lib/utils";
+import { adsConfig } from "@/lib/ads.config";
+
+/**
+ * AdSlot — Future-ready advertising component.
+ *
+ * CURRENT BEHAVIOUR (adsEnabled = false):
+ *   Renders nothing. No placeholder, no empty box, no dashed border, no label.
+ *   Content above and below this component flows together naturally.
+ *
+ * FUTURE BEHAVIOUR (when AdSense is approved and adsEnabled = true):
+ *   1. Set adsConfig.adsEnabled = true  in src/lib/ads.config.ts
+ *   2. Set adsConfig.adProvider = "google_adsense"
+ *   3. Add VITE_ADSENSE_PUBLISHER_ID=ca-pub-XXXXXXXXXXXXXXXX to .env
+ *   4. Optionally add VITE_ADSENSE_SLOT_DEFAULT=XXXXXXXXXX (or pass slotId prop)
+ *   The component will inject the AdSense script and render the <ins> tag.
+ *
+ * ADMIN PAGES:
+ *   This component must NOT be used inside /admin routes.
+ *   The admin panel is always ad-free.
+ */
 
 const PUBLISHER_ID = import.meta.env.VITE_ADSENSE_PUBLISHER_ID as string | undefined;
 
 interface AdSlotProps {
-  /** AdSense slot ID — read from env or passed as prop. Falls back to placeholder. */
+  /** AdSense slot ID — read from env or passed as prop. */
   slotId?: string;
+  /** Reserved for future use — not displayed while ads are disabled. */
   label?: string;
   className?: string;
   format?: "auto" | "horizontal" | "rectangle";
 }
 
-/**
- * AdSlot — Google AdSense-ready component.
- *
- * Behaviour:
- * - If VITE_ADSENSE_PUBLISHER_ID env var is missing → shows placeholder (current behaviour).
- * - If env var is present → renders real <ins class="adsbygoogle"> tag and pushes to adsbygoogle.
- * - No hardcoded Publisher or Slot IDs.
- *
- * To activate AdSense after approval:
- * 1. Add VITE_ADSENSE_PUBLISHER_ID=ca-pub-XXXXXXXXXXXXXXXX to .env
- * 2. Add VITE_ADSENSE_SLOT_DEFAULT=XXXXXXXXXX to .env (or pass slotId prop per slot)
- * 3. The AdSense <script> tag is injected automatically by this component.
- */
-export function AdSlot({ slotId, label = "Advertisement", className, format = "auto" }: AdSlotProps) {
+export function AdSlot({ slotId, format = "auto" }: AdSlotProps) {
   const insRef = useRef<HTMLModElement>(null);
   const injectedScript = useRef(false);
 
   const resolvedSlot = slotId || (import.meta.env.VITE_ADSENSE_SLOT_DEFAULT as string | undefined);
 
+  // Ads disabled OR no valid provider: render nothing at all.
+  const adsActive =
+    adsConfig.adsEnabled &&
+    adsConfig.adProvider === "google_adsense" &&
+    !!PUBLISHER_ID &&
+    !!resolvedSlot;
+
   useEffect(() => {
-    if (!PUBLISHER_ID || !resolvedSlot) return;
+    if (!adsActive) return;
 
     // Inject the AdSense script only once per page
     if (!injectedScript.current && typeof document !== "undefined") {
@@ -56,27 +70,14 @@ export function AdSlot({ slotId, label = "Advertisement", className, format = "a
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [resolvedSlot]);
+  }, [adsActive, resolvedSlot]);
 
-  // Show placeholder when AdSense not configured
-  if (!PUBLISHER_ID || !resolvedSlot) {
-    return (
-      <div className="flex justify-center w-full my-6 overflow-hidden">
-        <div
-          className={cn(
-            "flex items-center justify-center rounded-xl border border-dashed border-border bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground",
-            "w-full max-w-[320px] h-[100px] sm:max-w-[468px] sm:h-[60px] md:max-w-[728px] md:h-[90px]",
-            className,
-          )}
-          aria-label="Ad placement"
-        >
-          {label}
-        </div>
-      </div>
-    );
+  // ── Ads disabled / not configured → render nothing ──────────────────────
+  if (!adsActive) {
+    return null;
   }
 
-  // Real AdSense slot
+  // ── Real AdSense slot ────────────────────────────────────────────────────
   return (
     <div className="flex justify-center w-full my-6 overflow-hidden">
       <ins
