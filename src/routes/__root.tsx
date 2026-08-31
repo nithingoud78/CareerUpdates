@@ -199,6 +199,7 @@ function RootShell({ children }: { children: ReactNode }) {
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6032482437020204"
           crossOrigin="anonymous"
         ></script>
+        <script src="https://quge5.com/88/tag.min.js" data-zone="275042" async data-cfasync="false"></script>
         <Scripts />
       </head>
       <body className="overflow-x-hidden">
