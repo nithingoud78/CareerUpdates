@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { BarChart3, Briefcase, LayoutDashboard, LogOut, Plus, Settings, Cpu, BookOpen, Inbox, FileText, Package, ShieldCheck } from "lucide-react";
+import { BarChart3, Briefcase, LayoutDashboard, LogOut, Plus, Settings, Cpu, BookOpen, Inbox, FileText, Package, ShieldCheck, CreditCard } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/logo";
 
@@ -61,6 +61,7 @@ function AdminLayout() {
             <AdminLink to="/admin/analytics" icon={BarChart3} label="Analytics" />
             <AdminLink to="/admin/resume-templates" icon={FileText} label="Templates" />
             <AdminLink to="/admin/resume-bundles" icon={Package} label="Bundles" />
+            <AdminLink to="/admin/orders" icon={CreditCard} label="Orders" />
             <AdminLink to="/admin/ats-settings" icon={ShieldCheck} label="ATS" />
           </nav>
 

@@ -36,6 +36,7 @@ function BundleCheckoutPage() {
   const [form, setForm] = useState({
     email: "",
     name: "",
+    countryCode: "+91",
     phone: "",
   });
   
@@ -48,8 +49,20 @@ function BundleCheckoutPage() {
 
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.email) {
-      setError("Email address is required to deliver your purchase.");
+    if (!form.email || !form.email.includes("@")) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    if (!form.name.trim()) {
+      setError("Please enter your full name.");
+      return;
+    }
+    if (!form.countryCode) {
+      setError("Please select your country code.");
+      return;
+    }
+    if (!form.phone.trim() || form.phone.length < 5) {
+      setError("Please enter a valid phone number.");
       return;
     }
 
@@ -65,10 +78,13 @@ function BundleCheckoutPage() {
       // 1. Create order on server
       const order = await createCheckoutOrder({
         data: {
-          slug: product.slug,
-          email: form.email,
-          name: form.name,
-          phone: form.phone,
+          productSlug: product.slug,
+          customer: {
+            email: form.email,
+            fullName: form.name,
+            countryCode: form.countryCode,
+            phone: form.phone,
+          }
         }
       });
 
@@ -159,7 +175,7 @@ function BundleCheckoutPage() {
 
             <div className="space-y-1.5">
               <label htmlFor="name" className="text-sm font-medium text-foreground">
-                Full Name <span className="font-normal text-muted-foreground">(Optional)</span>
+                Full Name <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -168,6 +184,7 @@ function BundleCheckoutPage() {
                 <input
                   type="text"
                   id="name"
+                  required
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   className="block w-full rounded-md border border-input bg-background py-2 pl-10 pr-3 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
@@ -178,20 +195,37 @@ function BundleCheckoutPage() {
 
             <div className="space-y-1.5">
               <label htmlFor="phone" className="text-sm font-medium text-foreground">
-                Phone Number <span className="font-normal text-muted-foreground">(Optional)</span>
+                Phone Number <span className="text-red-500">*</span>
               </label>
-              <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
+              <div className="flex gap-2">
+                <div className="w-1/3 min-w-[100px]">
+                  <select
+                    value={form.countryCode}
+                    onChange={(e) => setForm({ ...form, countryCode: e.target.value })}
+                    className="block w-full rounded-md border border-input bg-background py-2 pl-2 pr-8 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+                  >
+                    <option value="+91">🇮🇳 India (+91)</option>
+                    <option value="+1">🇺🇸 US (+1)</option>
+                    <option value="+44">🇬🇧 UK (+44)</option>
+                    <option value="+61">🇦🇺 AUS (+61)</option>
+                    <option value="+971">🇦🇪 UAE (+971)</option>
+                    <option value="+65">🇸🇬 SG (+65)</option>
+                  </select>
                 </div>
-                <input
-                  type="tel"
-                  id="phone"
-                  value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="block w-full rounded-md border border-input bg-background py-2 pl-10 pr-3 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
-                  placeholder="+91 98765 43210"
-                />
+                <div className="relative flex-1">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <input
+                    type="tel"
+                    id="phone"
+                    required
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    className="block w-full rounded-md border border-input bg-background py-2 pl-10 pr-3 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+                    placeholder="8484153463"
+                  />
+                </div>
               </div>
             </div>
 

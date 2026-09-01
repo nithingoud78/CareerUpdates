@@ -6,7 +6,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
 // Service role client to bypass RLS securely on server
-function getAdminSupabase() {
+export function getAdminSupabase() {
   const url = process.env.SUPABASE_URL!;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY!;
   return createClient<Database>(url, key);
@@ -17,7 +17,8 @@ function getRazorpay() {
   const key_id = process.env.RAZORPAY_KEY_ID;
   const key_secret = process.env.RAZORPAY_KEY_SECRET;
   if (!key_id || !key_secret) {
-    throw new Error("Razorpay configuration is missing.");
+    console.error("[Checkout] Razorpay credentials missing");
+    throw new Error("Payment service is temporarily unavailable.");
   }
   return new Razorpay({ key_id, key_secret });
 }
@@ -25,10 +26,13 @@ function getRazorpay() {
 // ─── Shared Schemas ──────────────────────────────────────────────────────────
 
 const CreateOrderInput = z.object({
-  slug: z.string(),
-  email: z.string().email(),
-  name: z.string().optional(),
-  phone: z.string().optional(),
+  productSlug: z.string().min(1, "Product slug is required"),
+  customer: z.object({
+    email: z.string().email("Invalid email address"),
+    fullName: z.string().min(1, "Full name is required"),
+    countryCode: z.string().min(1, "Country code is required"),
+    phone: z.string().min(1, "Phone number is required"),
+  })
 });
 
 const VerifyPaymentInput = z.object({
@@ -45,17 +49,23 @@ export const createCheckoutOrder = createServerFn({ method: "POST" })
     const supabase = getAdminSupabase();
 
     // 1. Fetch the product using the slug
+    console.log(`[Checkout] Initializing for slug: ${data.productSlug}`);
+    
     const { data: product, error } = await supabase
       .from("career_tool_products")
       .select("id, title, current_price, status, file_url, product_type")
-      .eq("slug", data.slug)
+      .eq("slug", data.productSlug)
       .single();
 
     if (error || !product) {
+      console.error(`[Checkout] Product not found for slug: ${data.productSlug}`);
       throw new Error("Product not found");
     }
 
+    console.log(`[Checkout] Product found: ${product.title}, Status: ${product.status}, Price: ${product.current_price}`);
+
     if (product.status !== "published") {
+      console.error(`[Checkout] Product is not published. Status: ${product.status}`);
       throw new Error("Product is not currently available for purchase");
     }
 
@@ -65,25 +75,43 @@ export const createCheckoutOrder = createServerFn({ method: "POST" })
     }
 
     // 2. Amount in paise
-    const amountPaise = product.current_price * 100;
-    if (amountPaise <= 0) {
+    // Ensure we parse to number and round to prevent any float issues
+    const amountPaise = Math.round(Number(product.current_price) * 100);
+    if (amountPaise <= 0 || isNaN(amountPaise)) {
+      console.error(`[Checkout] Invalid amount calculated: ${amountPaise} (from ${product.current_price})`);
       throw new Error("Invalid product price");
     }
 
+    console.log(`[Checkout] Keys: ID=${!!process.env.RAZORPAY_KEY_ID}, SECRET=${!!process.env.RAZORPAY_KEY_SECRET}`);
+
     // 3. Create Razorpay order
     const rzp = getRazorpay();
-    const rzpOrder = await rzp.orders.create({
-      amount: amountPaise,
-      currency: "INR",
-      receipt: `rcpt_${Date.now()}`,
-      notes: {
-        product_id: product.id,
-        email: data.email,
-      },
-    });
+    let rzpOrder;
+    try {
+      console.log(`[Checkout] Creating Razorpay order: ${amountPaise} paise`);
+      rzpOrder = await rzp.orders.create({
+        amount: amountPaise,
+        currency: "INR",
+        receipt: `career_${Date.now().toString().slice(-8)}`,
+        notes: {
+          product_id: product.id.slice(0, 40), // max length safe
+          email: data.customer.email.slice(0, 40),
+        },
+      });
+      console.log(`[Checkout] Razorpay order created: ${rzpOrder.id}`);
+    } catch (rzpErr: any) {
+      console.error("[Checkout] Razorpay API Error:", rzpErr?.statusCode, rzpErr?.error);
+      
+      const devDetails = process.env.NODE_ENV === "development" || process.env.NODE_ENV === undefined
+        ? `|DEV_ERR|Razorpay API Error [${rzpErr?.statusCode || 'Unknown'}]: ${rzpErr?.error?.code || 'N/A'} - ${rzpErr?.error?.description || rzpErr?.message || 'Unknown error'}`
+        : "";
+        
+      throw new Error(`Unable to start payment. Please try again.${devDetails}`);
+    }
 
     if (!rzpOrder || !rzpOrder.id) {
-      throw new Error("Failed to initialize payment gateway");
+      console.error("[Checkout] Razorpay returned null or empty order ID");
+      throw new Error("Unable to start payment. Please try again.");
     }
 
     // 4. Create local order record
@@ -91,9 +119,10 @@ export const createCheckoutOrder = createServerFn({ method: "POST" })
       .from("career_tool_orders")
       .insert({
         product_id: product.id,
-        buyer_email: data.email,
-        buyer_name: data.name || null,
-        buyer_phone: data.phone || null,
+        buyer_email: data.customer.email,
+        buyer_name: data.customer.fullName,
+        country_code: data.customer.countryCode,
+        buyer_phone: data.customer.phone,
         amount: amountPaise,
         currency: "INR",
         status: "created",
@@ -103,7 +132,10 @@ export const createCheckoutOrder = createServerFn({ method: "POST" })
       .single();
 
     if (orderError || !order) {
-      throw new Error("Failed to create local order record");
+      const devDetails = process.env.NODE_ENV === "development" || process.env.NODE_ENV === undefined
+        ? `|DEV_ERR|Supabase DB Error: ${orderError?.code} - ${orderError?.message || orderError?.details || 'Unknown'}`
+        : "";
+      throw new Error(`Failed to create local order record.${devDetails}`);
     }
 
     return {
@@ -137,10 +169,10 @@ export const verifyRazorpayPayment = createServerFn({ method: "POST" })
 
     const supabase = getAdminSupabase();
 
-    // 2. Fetch the local order
+    // 2. Fetch the local order by Razorpay order ID to get original order details
     const { data: order, error: orderError } = await supabase
       .from("career_tool_orders")
-      .select("id, status")
+      .select("id, status, amount")
       .eq("razorpay_order_id", data.razorpay_order_id)
       .single();
 
@@ -148,12 +180,40 @@ export const verifyRazorpayPayment = createServerFn({ method: "POST" })
       throw new Error("Order not found");
     }
 
-    // 3. If already paid, just return success
+    // 3. If already paid, just return success idempotently
     if (order.status === "paid") {
       return { ok: true, orderId: order.id };
     }
 
-    // 4. Update order to paid
+    // 4. Verify payment explicitly with Razorpay server-side
+    const rzp = getRazorpay();
+    const payment = await rzp.payments.fetch(data.razorpay_payment_id);
+    
+    if (!payment) {
+      throw new Error("Payment record could not be fetched from Razorpay.");
+    }
+    
+    // Verify it belongs to the same order
+    if (payment.order_id !== data.razorpay_order_id) {
+      throw new Error("Payment order ID mismatch.");
+    }
+    
+    // Verify the amount
+    if (payment.amount !== order.amount) {
+      throw new Error("Payment amount mismatch.");
+    }
+    
+    // Verify currency
+    if (payment.currency !== "INR") {
+      throw new Error("Payment currency mismatch.");
+    }
+    
+    // Check if it is actually captured or paid
+    if (payment.status !== "captured" && payment.status !== "authorized") {
+      throw new Error(`Payment is in an incomplete state: ${payment.status}`);
+    }
+
+    // 5. Update order to paid
     const { error: updateError } = await supabase
       .from("career_tool_orders")
       .update({
@@ -256,4 +316,49 @@ export const getOrderStatus = createServerFn({ method: "GET" })
       productTitle: product?.title || "Unknown Product",
       productImage: product?.preview_image_url || null,
     };
+  });
+
+// ─── 5. Admin Orders ────────────────────────────────────────────────────────
+
+export const getAdminOrders = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const supabase = getAdminSupabase();
+
+    const { data: orders, error } = await supabase
+      .from("career_tool_orders")
+      .select(`
+        id,
+        buyer_email,
+        buyer_name,
+        country_code,
+        buyer_phone,
+        amount,
+        currency,
+        status,
+        razorpay_order_id,
+        razorpay_payment_id,
+        created_at,
+        paid_at,
+        product_id,
+        career_tool_products (
+          title
+        )
+      `)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    // Process the joined product title
+    return orders.map((order) => {
+      const product = Array.isArray(order.career_tool_products) 
+        ? order.career_tool_products[0] 
+        : order.career_tool_products;
+      
+      return {
+        ...order,
+        productTitle: product?.title || "Unknown Product"
+      };
+    });
   });
