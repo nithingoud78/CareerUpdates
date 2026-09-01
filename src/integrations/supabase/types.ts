@@ -316,6 +316,10 @@ export type Database = {
           whatsapp_url: string | null
           instagram_url: string | null
           updated_at: string
+          // Ads control (added by 20260901120000_ads_config.sql)
+          ads_enabled: boolean
+          ads_disabled_at: string | null
+          ads_auto_enable_at: string | null
         }
         Insert: {
           id?: string
@@ -325,6 +329,9 @@ export type Database = {
           whatsapp_url?: string | null
           instagram_url?: string | null
           updated_at?: string
+          ads_enabled?: boolean
+          ads_disabled_at?: string | null
+          ads_auto_enable_at?: string | null
         }
         Update: {
           id?: string
@@ -334,6 +341,9 @@ export type Database = {
           whatsapp_url?: string | null
           instagram_url?: string | null
           updated_at?: string
+          ads_enabled?: boolean
+          ads_disabled_at?: string | null
+          ads_auto_enable_at?: string | null
         }
         Relationships: []
       }
