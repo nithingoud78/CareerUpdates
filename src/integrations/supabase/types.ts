@@ -443,6 +443,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      auto_enable_ads: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "editor"
