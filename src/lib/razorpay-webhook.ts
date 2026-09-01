@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { getAdminSupabase } from "@/lib/payments.functions";
+// Removed getAdminSupabase import
 
 export async function handleRazorpayWebhook(request: Request): Promise<Response> {
   try {
@@ -49,7 +49,8 @@ export async function handleRazorpayWebhook(request: Request): Promise<Response>
       });
     }
 
-    const supabase = getAdminSupabase();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabase = supabaseAdmin;
 
     // 1. Fetch our internal order
     const { data: internalOrder, error: orderError } = await supabase

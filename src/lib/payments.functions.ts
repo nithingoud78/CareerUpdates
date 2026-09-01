@@ -5,12 +5,7 @@ import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
-// Service role client to bypass RLS securely on server
-export function getAdminSupabase() {
-  const url = process.env.SUPABASE_URL!;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-  return createClient<Database>(url, key);
-}
+// Shared service role client is imported dynamically inside handlers to avoid client bundling
 
 // Ensure Razorpay keys exist
 function getRazorpay() {
@@ -46,7 +41,8 @@ const VerifyPaymentInput = z.object({
 export const createCheckoutOrder = createServerFn({ method: "POST" })
   .validator((i: unknown) => CreateOrderInput.parse(i))
   .handler(async ({ data }) => {
-    const supabase = getAdminSupabase();
+    // 1. Fetch the product using standard anonymous client for public read RLS enforcement
+    const { supabase } = await import("@/integrations/supabase/client");
 
     // 1. Fetch the product using the slug
     console.log(`[Checkout] Initializing for slug: ${data.productSlug}`);
@@ -114,8 +110,11 @@ export const createCheckoutOrder = createServerFn({ method: "POST" })
       throw new Error("Unable to start payment. Please try again.");
     }
 
-    // 4. Create local order record
-    const { data: order, error: orderError } = await supabase
+    // 4. Create local order record using the service role client (bypasses RLS)
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const adminClient = supabaseAdmin;
+
+    const { data: order, error: orderError } = await adminClient
       .from("career_tool_orders")
       .insert({
         product_id: product.id,
@@ -132,6 +131,9 @@ export const createCheckoutOrder = createServerFn({ method: "POST" })
       .single();
 
     if (orderError || !order) {
+      console.error("[Checkout] Failed to create local order record:", orderError);
+      // Mark the Razorpay order as abandoned or note it in logs since local DB failed
+      
       const devDetails = process.env.NODE_ENV === "development" || process.env.NODE_ENV === undefined
         ? `|DEV_ERR|Supabase DB Error: ${orderError?.code} - ${orderError?.message || orderError?.details || 'Unknown'}`
         : "";
@@ -167,7 +169,8 @@ export const verifyRazorpayPayment = createServerFn({ method: "POST" })
       throw new Error("Invalid payment signature");
     }
 
-    const supabase = getAdminSupabase();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabase = supabaseAdmin;
 
     // 2. Fetch the local order by Razorpay order ID to get original order details
     const { data: order, error: orderError } = await supabase
@@ -236,7 +239,8 @@ export const verifyRazorpayPayment = createServerFn({ method: "POST" })
 export const getPaidOrderDownloadUrl = createServerFn({ method: "POST" })
   .validator((i: unknown) => z.object({ orderId: z.string().uuid() }).parse(i))
   .handler(async ({ data }) => {
-    const supabase = getAdminSupabase();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabase = supabaseAdmin;
 
     // 1. Fetch the order and join product details
     const { data: order, error: orderError } = await supabase
@@ -292,7 +296,8 @@ export const getPaidOrderDownloadUrl = createServerFn({ method: "POST" })
 export const getOrderStatus = createServerFn({ method: "GET" })
   .validator((i: unknown) => z.object({ orderId: z.string().uuid() }).parse(i))
   .handler(async ({ data }) => {
-    const supabase = getAdminSupabase();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabase = supabaseAdmin;
     // Use maybeSingle and explicitly select the join
     const { data: order, error } = await supabase
       .from("career_tool_orders")
@@ -322,7 +327,8 @@ export const getOrderStatus = createServerFn({ method: "GET" })
 
 export const getAdminOrders = createServerFn({ method: "GET" })
   .handler(async () => {
-    const supabase = getAdminSupabase();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabase = supabaseAdmin;
 
     const { data: orders, error } = await supabase
       .from("career_tool_orders")
