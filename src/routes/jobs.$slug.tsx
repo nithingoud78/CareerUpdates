@@ -17,6 +17,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { StickySocial } from "@/components/sticky-social";
 import { JobCard } from "@/components/job-card";
 import { CompanyLogo } from "@/components/company-logo";
+import { AdSlot } from "@/components/ads/ad-slot";
 import { track } from "@/lib/analytics-tracking";
 
 async function fetchJob(slug: string) {
@@ -306,6 +307,8 @@ function JobDetails() {
             Apply on Official Site <ExternalLink className="h-4 w-4" />
           </a>
         </section>
+
+        <AdSlot placement="jobDetail" />
 
         {/* Related Blogs */}
         {data.relatedBlogs.length > 0 && (

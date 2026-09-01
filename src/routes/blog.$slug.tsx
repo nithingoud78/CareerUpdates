@@ -11,6 +11,7 @@ import { StickySocial } from "@/components/sticky-social";
 import { JobCard } from "@/components/job-card";
 import { getBlogBySlug, getRelatedBlogs, getRelatedJobsForBlog } from "@/lib/blog.functions";
 import { track } from "@/lib/analytics-tracking";
+import { AdSlot } from "@/components/ads/ad-slot";
 
 
 export const Route = createFileRoute("/blog/$slug")({
@@ -214,7 +215,6 @@ function BlogDetail() {
               )}
 
 
-              {/* Content */}
               <div
                 className="prose prose-sm sm:prose-base dark:prose-invert mt-8 max-w-none
                   prose-headings:font-bold prose-headings:tracking-tight
@@ -228,6 +228,10 @@ function BlogDetail() {
                   prose-blockquote:border-brand/50 prose-blockquote:text-muted-foreground"
                 dangerouslySetInnerHTML={{ __html: renderedContent }}
               />
+
+              <div className="mt-8">
+                <AdSlot placement="blogDetail" />
+              </div>
 
 
               {/* Back link */}

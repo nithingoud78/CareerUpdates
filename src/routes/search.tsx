@@ -8,8 +8,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { JobCard } from "@/components/job-card";
+import { AdSlot } from "@/components/ads/ad-slot";
 import { StickySocial } from "@/components/sticky-social";
 import { track } from "@/lib/analytics-tracking";
+import React from "react";
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -220,7 +222,16 @@ function SearchPage() {
             </div>
           )}
           <div className="grid gap-4 sm:grid-cols-2">
-            {filteredJobs.map((job) => <JobCard key={job.id} job={job} />)}
+            {filteredJobs.map((job, index) => (
+              <React.Fragment key={job.id}>
+                <JobCard job={job} />
+                {index > 0 && index % 6 === 5 && (
+                  <div className="col-span-full">
+                    <AdSlot placement="jobsList" />
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
           </div>
         </div>
       </main>

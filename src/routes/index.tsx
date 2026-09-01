@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { JobCard } from "@/components/job-card";
+import { AdSlot } from "@/components/ads/ad-slot";
 
 import { StickySocial } from "@/components/sticky-social";
 
@@ -138,6 +139,8 @@ function Home() {
       </section>
 
       <main className="mx-auto max-w-7xl space-y-12 px-4 pb-16 sm:px-6 lg:px-8">
+        <AdSlot placement="homeTop" className="mt-8" />
+        
         {/* LATEST */}
         <section>
           <SectionHeading title="Latest Opportunities" link="/search" />
@@ -147,6 +150,8 @@ function Home() {
             ))}
           </div>
         </section>
+
+        <AdSlot placement="homeMiddle" />
 
         {/* GOV + INTERN */}
         <div className="grid gap-8 lg:grid-cols-2">

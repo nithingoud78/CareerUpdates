@@ -13,6 +13,8 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { GoogleAnalytics } from "../components/google-analytics";
 import { AnalyticsTracker } from "../components/analytics-tracker";
+import { AdProvider } from "../components/ads/ad-provider";
+import { AdBlockNotice } from "../components/ads/adblock-notice";
 
 function NotFoundComponent() {
   return (
@@ -189,23 +191,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
-function AdScripts() {
-  const router = useRouter();
-  const pathname = router.state.location.pathname;
-  if (pathname === "/auth" || pathname === "/admin" || pathname.startsWith("/admin/")) {
-    return null;
-  }
-  return (
-    <>
-      <script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6032482437020204"
-        crossOrigin="anonymous"
-      ></script>
-      <script src="https://quge5.com/88/tag.min.js" data-zone="275042" async data-cfasync="false"></script>
-    </>
-  );
-}
+
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
@@ -213,7 +199,6 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
         <GoogleAnalytics />
-        <AdScripts />
         <Scripts />
       </head>
       <body className="overflow-x-hidden">
@@ -228,10 +213,14 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Global analytics page_view tracker — fires once per navigation */}
-      <AnalyticsTracker />
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <AdProvider>
+        {/* Global analytics page_view tracker — fires once per navigation */}
+        <AnalyticsTracker />
+        {/* Ad block notice conditionally renders if ads blocked */}
+        <AdBlockNotice />
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+      </AdProvider>
     </QueryClientProvider>
   );
 }

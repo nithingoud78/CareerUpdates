@@ -7,6 +7,8 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { StickySocial } from "@/components/sticky-social";
 import { getPublishedBlogs, getFeaturedBlog, getBlogCategories } from "@/lib/blog.functions";
+import { AdSlot } from "@/components/ads/ad-slot";
+import React from "react";
 
 export const Route = createFileRoute("/blog/")({
   head: () => {
@@ -177,8 +179,15 @@ function BlogIndex() {
               </div>
             ) : (
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {blogs.map((blog: any) => (
-                  <BlogCard key={blog.id} blog={blog} />
+                {blogs.map((blog: any, index: number) => (
+                  <React.Fragment key={blog.id}>
+                    <BlogCard blog={blog} />
+                    {index > 0 && index % 6 === 5 && (
+                      <div className="col-span-full">
+                        <AdSlot placement="blogList" />
+                      </div>
+                    )}
+                  </React.Fragment>
                 ))}
               </div>
             )}
