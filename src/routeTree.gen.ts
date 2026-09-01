@@ -34,10 +34,13 @@ import { Route as ResumeBundlesSlugRouteImport } from './routes/resume-bundles.$
 import { Route as LocationSlugRouteImport } from './routes/location.$slug'
 import { Route as JobsSlugRouteImport } from './routes/jobs.$slug'
 import { Route as CompanySlugRouteImport } from './routes/company.$slug'
+import { Route as CheckoutSlugRouteImport } from './routes/checkout.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as PaymentSuccessOrderIdRouteImport } from './routes/payment.success.$orderId'
+import { Route as CheckoutBundleSlugRouteImport } from './routes/checkout.bundle.$slug'
 import { Route as AuthenticatedAdminSiteSettingsRouteImport } from './routes/_authenticated/admin.site-settings'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminFeedbackRouteImport } from './routes/_authenticated/admin.feedback'
@@ -183,6 +186,11 @@ const CompanySlugRoute = CompanySlugRouteImport.update({
   path: '/company/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutSlugRoute = CheckoutSlugRouteImport.update({
+  id: '/checkout/$slug',
+  path: '/checkout/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CategorySlugRoute = CategorySlugRouteImport.update({
   id: '/category/$slug',
   path: '/category/$slug',
@@ -202,6 +210,16 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const PaymentSuccessOrderIdRoute = PaymentSuccessOrderIdRouteImport.update({
+  id: '/payment/success/$orderId',
+  path: '/payment/success/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutBundleSlugRoute = CheckoutBundleSlugRouteImport.update({
+  id: '/checkout/bundle/$slug',
+  path: '/checkout/bundle/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminSiteSettingsRoute =
   AuthenticatedAdminSiteSettingsRouteImport.update({
@@ -343,6 +361,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/checkout/$slug': typeof CheckoutSlugRoute
   '/company/$slug': typeof CompanySlugRoute
   '/jobs/$slug': typeof JobsSlugRoute
   '/location/$slug': typeof LocationSlugRoute
@@ -357,6 +376,8 @@ export interface FileRoutesByFullPath {
   '/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
+  '/checkout/bundle/$slug': typeof CheckoutBundleSlugRoute
+  '/payment/success/$orderId': typeof PaymentSuccessOrderIdRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
@@ -392,6 +413,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/checkout/$slug': typeof CheckoutSlugRoute
   '/company/$slug': typeof CompanySlugRoute
   '/jobs/$slug': typeof JobsSlugRoute
   '/location/$slug': typeof LocationSlugRoute
@@ -406,6 +428,8 @@ export interface FileRoutesByTo {
   '/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
+  '/checkout/bundle/$slug': typeof CheckoutBundleSlugRoute
+  '/payment/success/$orderId': typeof PaymentSuccessOrderIdRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
@@ -444,6 +468,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/checkout/$slug': typeof CheckoutSlugRoute
   '/company/$slug': typeof CompanySlugRoute
   '/jobs/$slug': typeof JobsSlugRoute
   '/location/$slug': typeof LocationSlugRoute
@@ -458,6 +483,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
+  '/checkout/bundle/$slug': typeof CheckoutBundleSlugRoute
+  '/payment/success/$orderId': typeof PaymentSuccessOrderIdRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
   '/_authenticated/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
@@ -496,6 +523,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/blog/$slug'
     | '/category/$slug'
+    | '/checkout/$slug'
     | '/company/$slug'
     | '/jobs/$slug'
     | '/location/$slug'
@@ -510,6 +538,8 @@ export interface FileRouteTypes {
     | '/admin/feedback'
     | '/admin/settings'
     | '/admin/site-settings'
+    | '/checkout/bundle/$slug'
+    | '/payment/success/$orderId'
     | '/admin/'
     | '/admin/blog/new'
     | '/admin/jobs/audit'
@@ -545,6 +575,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/blog/$slug'
     | '/category/$slug'
+    | '/checkout/$slug'
     | '/company/$slug'
     | '/jobs/$slug'
     | '/location/$slug'
@@ -559,6 +590,8 @@ export interface FileRouteTypes {
     | '/admin/feedback'
     | '/admin/settings'
     | '/admin/site-settings'
+    | '/checkout/bundle/$slug'
+    | '/payment/success/$orderId'
     | '/admin'
     | '/admin/blog/new'
     | '/admin/jobs/audit'
@@ -596,6 +629,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/blog/$slug'
     | '/category/$slug'
+    | '/checkout/$slug'
     | '/company/$slug'
     | '/jobs/$slug'
     | '/location/$slug'
@@ -610,6 +644,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/feedback'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/site-settings'
+    | '/checkout/bundle/$slug'
+    | '/payment/success/$orderId'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/blog/new'
     | '/_authenticated/admin/jobs/audit'
@@ -647,6 +683,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   BlogSlugRoute: typeof BlogSlugRoute
   CategorySlugRoute: typeof CategorySlugRoute
+  CheckoutSlugRoute: typeof CheckoutSlugRoute
   CompanySlugRoute: typeof CompanySlugRoute
   JobsSlugRoute: typeof JobsSlugRoute
   LocationSlugRoute: typeof LocationSlugRoute
@@ -656,6 +693,8 @@ export interface RootRouteChildren {
   BlogIndexRoute: typeof BlogIndexRoute
   ResumeBundlesIndexRoute: typeof ResumeBundlesIndexRoute
   ResumeTemplatesIndexRoute: typeof ResumeTemplatesIndexRoute
+  CheckoutBundleSlugRoute: typeof CheckoutBundleSlugRoute
+  PaymentSuccessOrderIdRoute: typeof PaymentSuccessOrderIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -835,6 +874,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompanySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkout/$slug': {
+      id: '/checkout/$slug'
+      path: '/checkout/$slug'
+      fullPath: '/checkout/$slug'
+      preLoaderRoute: typeof CheckoutSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/category/$slug': {
       id: '/category/$slug'
       path: '/category/$slug'
@@ -862,6 +908,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/payment/success/$orderId': {
+      id: '/payment/success/$orderId'
+      path: '/payment/success/$orderId'
+      fullPath: '/payment/success/$orderId'
+      preLoaderRoute: typeof PaymentSuccessOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout/bundle/$slug': {
+      id: '/checkout/bundle/$slug'
+      path: '/checkout/bundle/$slug'
+      fullPath: '/checkout/bundle/$slug'
+      preLoaderRoute: typeof CheckoutBundleSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/site-settings': {
       id: '/_authenticated/admin/site-settings'
@@ -1096,6 +1156,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   BlogSlugRoute: BlogSlugRoute,
   CategorySlugRoute: CategorySlugRoute,
+  CheckoutSlugRoute: CheckoutSlugRoute,
   CompanySlugRoute: CompanySlugRoute,
   JobsSlugRoute: JobsSlugRoute,
   LocationSlugRoute: LocationSlugRoute,
@@ -1105,6 +1166,8 @@ const rootRouteChildren: RootRouteChildren = {
   BlogIndexRoute: BlogIndexRoute,
   ResumeBundlesIndexRoute: ResumeBundlesIndexRoute,
   ResumeTemplatesIndexRoute: ResumeTemplatesIndexRoute,
+  CheckoutBundleSlugRoute: CheckoutBundleSlugRoute,
+  PaymentSuccessOrderIdRoute: PaymentSuccessOrderIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

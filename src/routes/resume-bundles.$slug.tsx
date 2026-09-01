@@ -53,29 +53,9 @@ export const Route = createFileRoute("/resume-bundles/$slug")({
 function BundleDetail() {
   const { slug } = Route.useParams();
   const getBundle = useServerFn(getBundleBySlug);
-  const downloadFn = useServerFn(getPublicDownloadUrl);
-
-  const [downloadError, setDownloadError] = useState<string | null>(null);
-  const [downloadSuccess, setDownloadSuccess] = useState(false);
-
   const { data, isLoading, error } = useQuery({
     queryKey: ["bundle-detail", slug],
     queryFn: () => getBundle({ data: { slug } }),
-  });
-
-  const downloadMut = useMutation({
-    mutationFn: () => downloadFn({ data: { slug } }),
-    onSuccess: (res: any) => {
-      if (res?.url) {
-        window.open(res.url, "_blank", "noopener,noreferrer");
-        setDownloadSuccess(true);
-        setTimeout(() => setDownloadSuccess(false), 4000);
-      }
-    },
-    onError: (err: any) => {
-      setDownloadError(err.message || "Download failed. Please try again.");
-      setTimeout(() => setDownloadError(null), 5000);
-    },
   });
 
   if (isLoading) {
@@ -128,10 +108,6 @@ function BundleDetail() {
           product={product}
           resources={resources}
           relatedBundles={relatedBundles}
-          onDownload={() => downloadMut.mutate()}
-          downloadPending={downloadMut.isPending}
-          downloadSuccess={downloadSuccess}
-          downloadError={downloadError}
         />
       </main>
       <SiteFooter />

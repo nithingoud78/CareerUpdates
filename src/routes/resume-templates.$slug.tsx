@@ -50,29 +50,9 @@ export const Route = createFileRoute("/resume-templates/$slug")({
 function TemplateDetail() {
   const { slug } = Route.useParams();
   const getTemplate = useServerFn(getTemplateBySlug);
-  const downloadFn = useServerFn(getPublicDownloadUrl);
-
-  const [downloadError, setDownloadError] = useState<string | null>(null);
-  const [downloadSuccess, setDownloadSuccess] = useState(false);
-
   const { data, isLoading, error } = useQuery({
     queryKey: ["template-detail", slug],
     queryFn: () => getTemplate({ data: { slug } }),
-  });
-
-  const downloadMut = useMutation({
-    mutationFn: () => downloadFn({ data: { slug } }),
-    onSuccess: (res: any) => {
-      if (res?.url) {
-        window.open(res.url, "_blank", "noopener,noreferrer");
-        setDownloadSuccess(true);
-        setTimeout(() => setDownloadSuccess(false), 4000);
-      }
-    },
-    onError: (err: any) => {
-      setDownloadError(err.message || "Download failed. Please try again.");
-      setTimeout(() => setDownloadError(null), 5000);
-    },
   });
 
   if (isLoading) {
@@ -126,10 +106,6 @@ function TemplateDetail() {
           product={product}
           related={related}
           relatedBundles={relatedBundles}
-          onDownload={() => downloadMut.mutate()}
-          downloadPending={downloadMut.isPending}
-          downloadSuccess={downloadSuccess}
-          downloadError={downloadError}
         />
       </main>
       <SiteFooter />

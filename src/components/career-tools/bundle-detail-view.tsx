@@ -147,32 +147,19 @@ export function BundleDetailView({
 
           {/* CTA */}
           <div className="space-y-2">
-            {product.file_url ? (
-              <>
-                <button
-                  id="download-bundle-btn"
-                  onClick={() => onDownload?.()}
-                  disabled={downloadPending}
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3 text-sm font-semibold text-brand-foreground transition-transform hover:scale-[1.02] disabled:opacity-60"
-                >
-                  <Download className="h-4 w-4" />
-                  {downloadPending ? "Preparing download…" : "Download Bundle"}
-                </button>
-                {downloadSuccess && (
-                  <p className="flex items-center gap-1.5 text-xs text-green-600">
-                    <CheckCircle2 className="h-3.5 w-3.5" /> Download started in a new tab.
-                  </p>
-                )}
-                {downloadError && (
-                  <p className="flex items-center gap-1.5 text-xs text-red-600">
-                    <AlertCircle className="h-3.5 w-3.5" /> {downloadError}
-                  </p>
-                )}
-              </>
+            {product.file_url || resources.length > 0 ? (
+              <Link
+                to="/checkout/bundle/$slug"
+                params={{ slug: product.slug }}
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3 text-sm font-semibold text-brand-foreground transition-transform hover:scale-[1.02]"
+              >
+                <Download className="h-4 w-4" />
+                Get Bundle — ₹{product.current_price}
+              </Link>
             ) : (
               <div className="rounded-xl border border-border bg-muted/30 p-4 text-center">
-                <p className="text-sm font-medium">Download Unavailable</p>
-                <p className="mt-1 text-xs text-muted-foreground">This bundle does not currently have a file attached.</p>
+                <p className="text-sm font-medium">Currently Unavailable</p>
+                <p className="mt-1 text-xs text-muted-foreground">This item is not available for purchase.</p>
               </div>
             )}
             <Link

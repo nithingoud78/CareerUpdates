@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -362,6 +362,110 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      career_tool_orders: {
+        Row: {
+          id: string
+          product_id: string | null
+          buyer_email: string
+          buyer_name: string | null
+          buyer_phone: string | null
+          amount: number
+          currency: string
+          status: string
+          razorpay_order_id: string | null
+          razorpay_payment_id: string | null
+          razorpay_signature: string | null
+          created_at: string
+          paid_at: string | null
+          failed_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          product_id?: string | null
+          buyer_email: string
+          buyer_name?: string | null
+          buyer_phone?: string | null
+          amount: number
+          currency?: string
+          status?: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          razorpay_signature?: string | null
+          created_at?: string
+          paid_at?: string | null
+          failed_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          product_id?: string | null
+          buyer_email?: string
+          buyer_name?: string | null
+          buyer_phone?: string | null
+          amount?: number
+          currency?: string
+          status?: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          razorpay_signature?: string | null
+          created_at?: string
+          paid_at?: string | null
+          failed_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "career_tool_orders_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "career_tool_products"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      career_tool_download_events: {
+        Row: {
+          id: string
+          order_id: string | null
+          product_id: string | null
+          downloaded_at: string
+          ip_address: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          id?: string
+          order_id?: string | null
+          product_id?: string | null
+          downloaded_at?: string
+          ip_address?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          id?: string
+          order_id?: string | null
+          product_id?: string | null
+          downloaded_at?: string
+          ip_address?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "career_tool_download_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "career_tool_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "career_tool_download_events_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "career_tool_products"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       company_sources: {
         Row: {
