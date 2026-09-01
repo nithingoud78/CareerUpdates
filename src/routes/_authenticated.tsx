@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { BarChart3, Briefcase, LayoutDashboard, LogOut, Plus, Settings, Cpu, BookOpen, Inbox } from "lucide-react";
+import { BarChart3, Briefcase, LayoutDashboard, LogOut, Plus, Settings, Cpu, BookOpen, Inbox, FileText, Package, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Logo } from "@/components/logo";
 
@@ -45,25 +45,32 @@ function AdminLayout() {
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-7xl items-center gap-2 px-4 sm:px-6">
-          <Link to="/admin" className="mr-4 flex items-center gap-2 font-semibold">
+        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
+          <Link to="/admin" className="flex shrink-0 items-center gap-2 font-semibold">
             <Logo className="h-8 w-8 rounded-lg" iconClassName="h-7 w-7" />
-            <span className="hidden sm:inline">Career Updates · Admin</span>
+            <span className="hidden lg:inline whitespace-nowrap">Career Updates · Admin</span>
           </Link>
-          <AdminLink to="/admin" icon={LayoutDashboard} label="Dashboard" />
-          <AdminLink to="/admin/jobs/new" icon={Plus} label="New Job" />
-          <AdminLink to="/admin/site-settings" icon={Settings} label="Site Settings" />
-          <AdminLink to="/admin/settings" icon={Cpu} label="AI Settings" />
-          <AdminLink to="/admin/blog" icon={BookOpen} label="Blog" />
-          <AdminLink to="/admin/feedback" icon={Inbox} label="Feedback" />
-          <AdminLink to="/admin/analytics" icon={BarChart3} label="Analytics" />
-          <div className="ml-auto flex items-center gap-2">
-            <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">View site →</Link>
+          
+          <nav className="mx-4 flex flex-1 items-center gap-1 overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <AdminLink to="/admin" icon={LayoutDashboard} label="Dashboard" />
+            <AdminLink to="/admin/jobs/new" icon={Plus} label="New Job" />
+            <AdminLink to="/admin/site-settings" icon={Settings} label="Site Settings" />
+            <AdminLink to="/admin/settings" icon={Cpu} label="AI Settings" />
+            <AdminLink to="/admin/blog" icon={BookOpen} label="Blog" />
+            <AdminLink to="/admin/feedback" icon={Inbox} label="Feedback" />
+            <AdminLink to="/admin/analytics" icon={BarChart3} label="Analytics" />
+            <AdminLink to="/admin/resume-templates" icon={FileText} label="Templates" />
+            <AdminLink to="/admin/resume-bundles" icon={Package} label="Bundles" />
+            <AdminLink to="/admin/ats-settings" icon={ShieldCheck} label="ATS" />
+          </nav>
+
+          <div className="flex shrink-0 items-center gap-2">
+            <Link to="/" className="hidden sm:inline text-xs text-muted-foreground hover:text-foreground whitespace-nowrap">View site →</Link>
             <button
               onClick={signOut}
-              className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-accent"
+              className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-accent whitespace-nowrap"
             >
-              <LogOut className="h-3 w-3" /> Sign out
+              <LogOut className="h-3 w-3" /> <span className="hidden sm:inline">Sign out</span>
             </button>
           </div>
         </div>
@@ -81,9 +88,9 @@ function AdminLink({ to, icon: Icon, label }: { to: string; icon: any; label: st
       to={to as any}
       activeProps={{ className: "bg-accent text-foreground" }}
       activeOptions={{ exact: to === "/admin" }}
-      className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground"
+      className="inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground whitespace-nowrap"
     >
-      <Icon className="h-3.5 w-3.5" /> <span className="hidden sm:inline">{label}</span>
+      <Icon className="h-3.5 w-3.5" /> <span className="hidden xl:inline">{label}</span>
     </Link>
   );
 }

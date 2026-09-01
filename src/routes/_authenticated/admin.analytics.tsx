@@ -1,4 +1,4 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useMemo } from "react";
@@ -41,7 +41,7 @@ export const Route = createFileRoute("/_authenticated/admin/analytics")({
   component: AnalyticsDashboard,
 });
 
-// ─── Date range presets ───────────────────────────────────────────────────────
+// --- Date range presets -------------------------------------------------------
 
 type Preset = "today" | "yesterday" | "7d" | "30d";
 
@@ -85,15 +85,15 @@ function getRange(preset: Preset): { from: string; to: string; label: string } {
   };
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// --- Helpers ------------------------------------------------------------------
 
 function fmt(n: number | null | undefined): string {
-  if (n == null) return "—";
+  if (n == null) return "�";
   return n.toLocaleString("en-IN");
 }
 
 function fmtPct(n: number | null | undefined): string {
-  if (n == null) return "—";
+  if (n == null) return "�";
   return `${n.toFixed(2)}%`;
 }
 
@@ -110,7 +110,7 @@ const EVENT_LABELS: Record<string, string> = {
   page_view: "Page View",
 };
 
-// ─── Chart line options ───────────────────────────────────────────────────────
+// --- Chart line options -------------------------------------------------------
 
 const CHART_LINES: { key: string; label: string; color: string }[] = [
   { key: "visitors", label: "Visitors", color: "#8b5cf6" },
@@ -120,7 +120,7 @@ const CHART_LINES: { key: string; label: string; color: string }[] = [
   { key: "apply_clicks", label: "Apply Clicks", color: "#ef4444" },
 ];
 
-// ─── Components ───────────────────────────────────────────────────────────────
+// --- Components ---------------------------------------------------------------
 
 function StatCard({
   icon: Icon,
@@ -161,7 +161,7 @@ function EmptyState({ message }: { message: string }) {
   );
 }
 
-// ─── Main Dashboard ───────────────────────────────────────────────────────────
+// --- Main Dashboard -----------------------------------------------------------
 
 function AnalyticsDashboard() {
   const [preset, setPreset] = useState<Preset>("7d");
@@ -255,7 +255,7 @@ function AnalyticsDashboard() {
             <BarChart3 className="h-6 w-6 text-brand" /> Analytics
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Anonymous visitor and engagement metrics. Visitors are estimated — not guaranteed counts of distinct humans.
+            Anonymous visitor and engagement metrics. Visitors are estimated � not guaranteed counts of distinct humans.
           </p>
         </div>
         {/* Date Range */}
@@ -281,33 +281,33 @@ function AnalyticsDashboard() {
         <StatCard
           icon={Users}
           label="Visitors"
-          value={summaryLoading ? "…" : fmt(summary?.visitors)}
+          value={summaryLoading ? "�" : fmt(summary?.visitors)}
           sub="Est. unique visitors"
           color="text-violet-500"
         />
         <StatCard
           icon={Eye}
           label="Page Views"
-          value={summaryLoading ? "…" : fmt(summary?.page_views)}
+          value={summaryLoading ? "�" : fmt(summary?.page_views)}
           color="text-cyan-500"
         />
         <StatCard
           icon={Activity}
           label="Sessions"
-          value={summaryLoading ? "…" : fmt(summary?.sessions)}
+          value={summaryLoading ? "�" : fmt(summary?.sessions)}
           sub="Tab sessions"
           color="text-emerald-500"
         />
         <StatCard
           icon={Briefcase}
           label="Job Views"
-          value={summaryLoading ? "…" : fmt(summary?.job_views)}
+          value={summaryLoading ? "�" : fmt(summary?.job_views)}
           color="text-amber-500"
         />
         <StatCard
           icon={MousePointerClick}
           label="Apply Clicks"
-          value={summaryLoading ? "…" : fmt(summary?.apply_clicks)}
+          value={summaryLoading ? "�" : fmt(summary?.apply_clicks)}
           sub="Not applications"
           color="text-red-500"
         />
@@ -316,18 +316,18 @@ function AnalyticsDashboard() {
           label="Apply CTR"
           value={
             summaryLoading
-              ? "…"
+              ? "�"
               : summary?.apply_ctr == null
-              ? "—"
+              ? "�"
               : fmtPct(summary.apply_ctr)
           }
-          sub="Clicks ÷ Job Views"
+          sub="Clicks � Job Views"
           color="text-orange-500"
         />
         <StatCard
           icon={BookOpen}
           label="Blog Views"
-          value={summaryLoading ? "…" : fmt(summary?.blog_views)}
+          value={summaryLoading ? "�" : fmt(summary?.blog_views)}
           color="text-indigo-500"
         />
       </div>
@@ -555,7 +555,7 @@ function AnalyticsDashboard() {
 
       {/* Privacy note */}
       <div className="rounded-xl border border-border/50 bg-surface/50 p-4 text-xs text-muted-foreground">
-        <strong>Privacy:</strong> Analytics use anonymous visitor IDs (localStorage) and session IDs (sessionStorage). No names, emails, IP addresses, or personally identifiable information are stored. Visitor counts are estimates — not guaranteed counts of distinct human beings. Device classification is coarse (by screen width). Bot filtering is best-effort only.
+        <strong>Privacy:</strong> Analytics use anonymous visitor IDs (localStorage) and session IDs (sessionStorage). No names, emails, IP addresses, or personally identifiable information are stored. Visitor counts are estimates � not guaranteed counts of distinct human beings. Device classification is coarse (by screen width). Bot filtering is best-effort only.
       </div>
     </div>
   );

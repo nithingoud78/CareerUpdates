@@ -6,7 +6,7 @@ export function SiteFooter() {
 
   return (
     <footer className="mt-20 border-t border-border bg-surface pb-24 sm:pb-0">
-      <div className="mx-auto flex flex-col gap-10 px-4 py-12 text-center sm:px-6 md:grid md:grid-cols-4 md:text-left lg:px-8">
+      <div className="mx-auto flex flex-col gap-10 px-4 py-12 text-center sm:px-6 md:grid md:grid-cols-5 md:text-left lg:px-8">
         <div className="flex flex-col items-center md:col-span-2 md:items-start">
           <div className="flex items-center gap-2 font-semibold">
             <Logo className="h-8 w-8 rounded-lg" iconClassName="h-7 w-7" />
@@ -25,6 +25,14 @@ export function SiteFooter() {
             <li><Link to="/blog" className="hover:text-foreground">Blog</Link></li>
             <li><Link to="/faq" className="hover:text-foreground">FAQ</Link></li>
             <li><Link to="/about" className="hover:text-foreground">About</Link></li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="text-sm font-semibold">Resume Tools</h4>
+          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+            <li><Link to="/ats-checker" className="hover:text-foreground">ATS Checker</Link></li>
+            <li><Link to="/resume-templates" className="hover:text-foreground">Resume Templates</Link></li>
+            <li><Link to="/resume-bundles" className="hover:text-foreground">Resume Bundles</Link></li>
           </ul>
         </div>
         <div>

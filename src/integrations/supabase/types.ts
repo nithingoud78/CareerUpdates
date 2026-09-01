@@ -431,6 +431,180 @@ export type Database = {
         }
         Relationships: []
       }
+      career_tool_products: {
+        Row: {
+          id: string
+          slug: string
+          title: string
+          short_description: string | null
+          description: string | null
+          product_type: 'single_template' | 'bundle'
+          resource_type: 'resume' | 'cover_letter' | 'referral_message' | 'cold_email'
+          category: string | null
+          tags: string[]
+          suitable_for: string[]
+          features: string[]
+          ats_friendly: boolean
+          file_format: string | null
+          file_url: string | null
+          preview_image_url: string | null
+          original_price: number
+          current_price: number
+          status: 'draft' | 'published' | 'archived'
+          pinned: boolean
+          sort_order: number
+          seo_title: string | null
+          seo_description: string | null
+          og_image: string | null
+          source_url: string | null
+          license: string | null
+          license_url: string | null
+          attribution_required: boolean
+          attribution_text: string | null
+          imported_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          title: string
+          short_description?: string | null
+          description?: string | null
+          product_type?: 'single_template' | 'bundle'
+          resource_type?: 'resume' | 'cover_letter' | 'referral_message' | 'cold_email'
+          category?: string | null
+          tags?: string[]
+          suitable_for?: string[]
+          features?: string[]
+          ats_friendly?: boolean
+          file_format?: string | null
+          file_url?: string | null
+          preview_image_url?: string | null
+          original_price?: number
+          current_price?: number
+          status?: 'draft' | 'published' | 'archived'
+          pinned?: boolean
+          sort_order?: number
+          seo_title?: string | null
+          seo_description?: string | null
+          og_image?: string | null
+          source_url?: string | null
+          license?: string | null
+          license_url?: string | null
+          attribution_required?: boolean
+          attribution_text?: string | null
+          imported_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          title?: string
+          short_description?: string | null
+          description?: string | null
+          product_type?: 'single_template' | 'bundle'
+          resource_type?: 'resume' | 'cover_letter' | 'referral_message' | 'cold_email'
+          category?: string | null
+          tags?: string[]
+          suitable_for?: string[]
+          features?: string[]
+          ats_friendly?: boolean
+          file_format?: string | null
+          file_url?: string | null
+          preview_image_url?: string | null
+          original_price?: number
+          current_price?: number
+          status?: 'draft' | 'published' | 'archived'
+          pinned?: boolean
+          sort_order?: number
+          seo_title?: string | null
+          seo_description?: string | null
+          og_image?: string | null
+          source_url?: string | null
+          license?: string | null
+          license_url?: string | null
+          attribution_required?: boolean
+          attribution_text?: string | null
+          imported_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bundle_resources: {
+        Row: {
+          id: string
+          bundle_product_id: string
+          resource_product_id: string
+          sort_order: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          bundle_product_id: string
+          resource_product_id: string
+          sort_order?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          bundle_product_id?: string
+          resource_product_id?: string
+          sort_order?: number
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bundle_resources_bundle_product_id_fkey"
+            columns: ["bundle_product_id"]
+            isOneToOne: false
+            referencedRelation: "career_tool_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bundle_resources_resource_product_id_fkey"
+            columns: ["resource_product_id"]
+            isOneToOne: false
+            referencedRelation: "career_tool_products"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      ats_settings: {
+        Row: {
+          id: string
+          provider: string
+          model: string
+          base_url: string | null
+          api_key: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          provider?: string
+          model?: string
+          base_url?: string | null
+          api_key?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          provider?: string
+          model?: string
+          base_url?: string | null
+          api_key?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -451,6 +625,9 @@ export type Database = {
     Enums: {
       app_role: "admin" | "editor"
       job_status: "draft" | "published" | "archived"
+      career_product_type: "single_template" | "bundle"
+      career_resource_type: "resume" | "cover_letter" | "referral_message" | "cold_email"
+      career_product_status: "draft" | "published" | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -580,6 +757,9 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "editor"],
       job_status: ["draft", "published", "archived"],
+      career_product_type: ["single_template", "bundle"],
+      career_resource_type: ["resume", "cover_letter", "referral_message", "cold_email"],
+      career_product_status: ["draft", "published", "archived"],
     },
   },
 } as const

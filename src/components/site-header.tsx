@@ -7,6 +7,7 @@ import { Logo } from "./logo";
 const nav = [
   { to: "/", label: "Home" },
   { to: "/search", label: "Latest Jobs" },
+  { to: "/resume-templates", label: "Resume Tools" },
   { to: "/blog", label: "Blog" },
   { to: "/faq", label: "FAQ" },
   { to: "/about", label: "About" },

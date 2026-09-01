@@ -21,11 +21,16 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DisclaimerRouteImport } from './routes/disclaimer'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AtsCheckerRouteImport } from './routes/ats-checker'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ResumeTemplatesIndexRouteImport } from './routes/resume-templates.index'
+import { Route as ResumeBundlesIndexRouteImport } from './routes/resume-bundles.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as SearchAdminRouteImport } from './routes/search_.admin'
+import { Route as ResumeTemplatesSlugRouteImport } from './routes/resume-templates.$slug'
+import { Route as ResumeBundlesSlugRouteImport } from './routes/resume-bundles.$slug'
 import { Route as LocationSlugRouteImport } from './routes/location.$slug'
 import { Route as JobsSlugRouteImport } from './routes/jobs.$slug'
 import { Route as CompanySlugRouteImport } from './routes/company.$slug'
@@ -36,12 +41,21 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminSiteSettingsRouteImport } from './routes/_authenticated/admin.site-settings'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminFeedbackRouteImport } from './routes/_authenticated/admin.feedback'
+import { Route as AuthenticatedAdminAtsSettingsRouteImport } from './routes/_authenticated/admin.ats-settings'
 import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
+import { Route as AuthenticatedAdminResumeTemplatesIndexRouteImport } from './routes/_authenticated/admin.resume-templates.index'
+import { Route as AuthenticatedAdminResumeBundlesIndexRouteImport } from './routes/_authenticated/admin.resume-bundles.index'
 import { Route as AuthenticatedAdminBlogIndexRouteImport } from './routes/_authenticated/admin.blog.index'
+import { Route as AuthenticatedAdminResumeTemplatesNewRouteImport } from './routes/_authenticated/admin.resume-templates.new'
+import { Route as AuthenticatedAdminResumeBundlesNewRouteImport } from './routes/_authenticated/admin.resume-bundles.new'
 import { Route as AuthenticatedAdminJobsNewRouteImport } from './routes/_authenticated/admin.jobs.new'
 import { Route as AuthenticatedAdminJobsBulkRouteImport } from './routes/_authenticated/admin.jobs.bulk'
 import { Route as AuthenticatedAdminJobsAuditRouteImport } from './routes/_authenticated/admin.jobs.audit'
 import { Route as AuthenticatedAdminBlogNewRouteImport } from './routes/_authenticated/admin.blog.new'
+import { Route as AuthenticatedAdminResumeTemplatesIdIndexRouteImport } from './routes/_authenticated/admin.resume-templates.$id.index'
+import { Route as AuthenticatedAdminResumeBundlesIdIndexRouteImport } from './routes/_authenticated/admin.resume-bundles.$id.index'
+import { Route as AuthenticatedAdminResumeTemplatesIdEditRouteImport } from './routes/_authenticated/admin.resume-templates.$id.edit'
+import { Route as AuthenticatedAdminResumeBundlesIdEditRouteImport } from './routes/_authenticated/admin.resume-bundles.$id.edit'
 import { Route as AuthenticatedAdminJobsSlugEditRouteImport } from './routes/_authenticated/admin.jobs.$slug.edit'
 import { Route as AuthenticatedAdminBlogIdEditRouteImport } from './routes/_authenticated/admin.blog.$id.edit'
 
@@ -105,6 +119,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AtsCheckerRoute = AtsCheckerRouteImport.update({
+  id: '/ats-checker',
+  path: '/ats-checker',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -119,6 +138,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResumeTemplatesIndexRoute = ResumeTemplatesIndexRouteImport.update({
+  id: '/resume-templates/',
+  path: '/resume-templates/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResumeBundlesIndexRoute = ResumeBundlesIndexRouteImport.update({
+  id: '/resume-bundles/',
+  path: '/resume-bundles/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
@@ -127,6 +156,16 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
 const SearchAdminRoute = SearchAdminRouteImport.update({
   id: '/search_/admin',
   path: '/search/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResumeTemplatesSlugRoute = ResumeTemplatesSlugRouteImport.update({
+  id: '/resume-templates/$slug',
+  path: '/resume-templates/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResumeBundlesSlugRoute = ResumeBundlesSlugRouteImport.update({
+  id: '/resume-bundles/$slug',
+  path: '/resume-bundles/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LocationSlugRoute = LocationSlugRouteImport.update({
@@ -182,16 +221,46 @@ const AuthenticatedAdminFeedbackRoute =
     path: '/feedback',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminAtsSettingsRoute =
+  AuthenticatedAdminAtsSettingsRouteImport.update({
+    id: '/ats-settings',
+    path: '/ats-settings',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminAnalyticsRoute =
   AuthenticatedAdminAnalyticsRouteImport.update({
     id: '/analytics',
     path: '/analytics',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminResumeTemplatesIndexRoute =
+  AuthenticatedAdminResumeTemplatesIndexRouteImport.update({
+    id: '/resume-templates/',
+    path: '/resume-templates/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminResumeBundlesIndexRoute =
+  AuthenticatedAdminResumeBundlesIndexRouteImport.update({
+    id: '/resume-bundles/',
+    path: '/resume-bundles/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminBlogIndexRoute =
   AuthenticatedAdminBlogIndexRouteImport.update({
     id: '/blog/',
     path: '/blog/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminResumeTemplatesNewRoute =
+  AuthenticatedAdminResumeTemplatesNewRouteImport.update({
+    id: '/resume-templates/new',
+    path: '/resume-templates/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminResumeBundlesNewRoute =
+  AuthenticatedAdminResumeBundlesNewRouteImport.update({
+    id: '/resume-bundles/new',
+    path: '/resume-bundles/new',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminJobsNewRoute =
@@ -218,6 +287,30 @@ const AuthenticatedAdminBlogNewRoute =
     path: '/blog/new',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminResumeTemplatesIdIndexRoute =
+  AuthenticatedAdminResumeTemplatesIdIndexRouteImport.update({
+    id: '/resume-templates/$id/',
+    path: '/resume-templates/$id/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminResumeBundlesIdIndexRoute =
+  AuthenticatedAdminResumeBundlesIdIndexRouteImport.update({
+    id: '/resume-bundles/$id/',
+    path: '/resume-bundles/$id/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminResumeTemplatesIdEditRoute =
+  AuthenticatedAdminResumeTemplatesIdEditRouteImport.update({
+    id: '/resume-templates/$id/edit',
+    path: '/resume-templates/$id/edit',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminResumeBundlesIdEditRoute =
+  AuthenticatedAdminResumeBundlesIdEditRouteImport.update({
+    id: '/resume-bundles/$id/edit',
+    path: '/resume-bundles/$id/edit',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminJobsSlugEditRoute =
   AuthenticatedAdminJobsSlugEditRouteImport.update({
     id: '/jobs/$slug/edit',
@@ -234,6 +327,7 @@ const AuthenticatedAdminBlogIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/ats-checker': typeof AtsCheckerRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
@@ -252,9 +346,14 @@ export interface FileRoutesByFullPath {
   '/company/$slug': typeof CompanySlugRoute
   '/jobs/$slug': typeof JobsSlugRoute
   '/location/$slug': typeof LocationSlugRoute
+  '/resume-bundles/$slug': typeof ResumeBundlesSlugRoute
+  '/resume-templates/$slug': typeof ResumeTemplatesSlugRoute
   '/search/admin': typeof SearchAdminRoute
   '/blog/': typeof BlogIndexRoute
+  '/resume-bundles/': typeof ResumeBundlesIndexRoute
+  '/resume-templates/': typeof ResumeTemplatesIndexRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
+  '/admin/ats-settings': typeof AuthenticatedAdminAtsSettingsRoute
   '/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
@@ -263,13 +362,22 @@ export interface FileRoutesByFullPath {
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
   '/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
+  '/admin/resume-bundles/new': typeof AuthenticatedAdminResumeBundlesNewRoute
+  '/admin/resume-templates/new': typeof AuthenticatedAdminResumeTemplatesNewRoute
   '/admin/blog/': typeof AuthenticatedAdminBlogIndexRoute
+  '/admin/resume-bundles/': typeof AuthenticatedAdminResumeBundlesIndexRoute
+  '/admin/resume-templates/': typeof AuthenticatedAdminResumeTemplatesIndexRoute
   '/admin/blog/$id/edit': typeof AuthenticatedAdminBlogIdEditRoute
   '/admin/jobs/$slug/edit': typeof AuthenticatedAdminJobsSlugEditRoute
+  '/admin/resume-bundles/$id/edit': typeof AuthenticatedAdminResumeBundlesIdEditRoute
+  '/admin/resume-templates/$id/edit': typeof AuthenticatedAdminResumeTemplatesIdEditRoute
+  '/admin/resume-bundles/$id/': typeof AuthenticatedAdminResumeBundlesIdIndexRoute
+  '/admin/resume-templates/$id/': typeof AuthenticatedAdminResumeTemplatesIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/ats-checker': typeof AtsCheckerRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
@@ -287,9 +395,14 @@ export interface FileRoutesByTo {
   '/company/$slug': typeof CompanySlugRoute
   '/jobs/$slug': typeof JobsSlugRoute
   '/location/$slug': typeof LocationSlugRoute
+  '/resume-bundles/$slug': typeof ResumeBundlesSlugRoute
+  '/resume-templates/$slug': typeof ResumeTemplatesSlugRoute
   '/search/admin': typeof SearchAdminRoute
   '/blog': typeof BlogIndexRoute
+  '/resume-bundles': typeof ResumeBundlesIndexRoute
+  '/resume-templates': typeof ResumeTemplatesIndexRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
+  '/admin/ats-settings': typeof AuthenticatedAdminAtsSettingsRoute
   '/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
@@ -298,15 +411,24 @@ export interface FileRoutesByTo {
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
   '/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
+  '/admin/resume-bundles/new': typeof AuthenticatedAdminResumeBundlesNewRoute
+  '/admin/resume-templates/new': typeof AuthenticatedAdminResumeTemplatesNewRoute
   '/admin/blog': typeof AuthenticatedAdminBlogIndexRoute
+  '/admin/resume-bundles': typeof AuthenticatedAdminResumeBundlesIndexRoute
+  '/admin/resume-templates': typeof AuthenticatedAdminResumeTemplatesIndexRoute
   '/admin/blog/$id/edit': typeof AuthenticatedAdminBlogIdEditRoute
   '/admin/jobs/$slug/edit': typeof AuthenticatedAdminJobsSlugEditRoute
+  '/admin/resume-bundles/$id/edit': typeof AuthenticatedAdminResumeBundlesIdEditRoute
+  '/admin/resume-templates/$id/edit': typeof AuthenticatedAdminResumeTemplatesIdEditRoute
+  '/admin/resume-bundles/$id': typeof AuthenticatedAdminResumeBundlesIdIndexRoute
+  '/admin/resume-templates/$id': typeof AuthenticatedAdminResumeTemplatesIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
+  '/ats-checker': typeof AtsCheckerRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/disclaimer': typeof DisclaimerRoute
@@ -325,9 +447,14 @@ export interface FileRoutesById {
   '/company/$slug': typeof CompanySlugRoute
   '/jobs/$slug': typeof JobsSlugRoute
   '/location/$slug': typeof LocationSlugRoute
+  '/resume-bundles/$slug': typeof ResumeBundlesSlugRoute
+  '/resume-templates/$slug': typeof ResumeTemplatesSlugRoute
   '/search_/admin': typeof SearchAdminRoute
   '/blog/': typeof BlogIndexRoute
+  '/resume-bundles/': typeof ResumeBundlesIndexRoute
+  '/resume-templates/': typeof ResumeTemplatesIndexRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
+  '/_authenticated/admin/ats-settings': typeof AuthenticatedAdminAtsSettingsRoute
   '/_authenticated/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
@@ -336,15 +463,24 @@ export interface FileRoutesById {
   '/_authenticated/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/_authenticated/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
   '/_authenticated/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
+  '/_authenticated/admin/resume-bundles/new': typeof AuthenticatedAdminResumeBundlesNewRoute
+  '/_authenticated/admin/resume-templates/new': typeof AuthenticatedAdminResumeTemplatesNewRoute
   '/_authenticated/admin/blog/': typeof AuthenticatedAdminBlogIndexRoute
+  '/_authenticated/admin/resume-bundles/': typeof AuthenticatedAdminResumeBundlesIndexRoute
+  '/_authenticated/admin/resume-templates/': typeof AuthenticatedAdminResumeTemplatesIndexRoute
   '/_authenticated/admin/blog/$id/edit': typeof AuthenticatedAdminBlogIdEditRoute
   '/_authenticated/admin/jobs/$slug/edit': typeof AuthenticatedAdminJobsSlugEditRoute
+  '/_authenticated/admin/resume-bundles/$id/edit': typeof AuthenticatedAdminResumeBundlesIdEditRoute
+  '/_authenticated/admin/resume-templates/$id/edit': typeof AuthenticatedAdminResumeTemplatesIdEditRoute
+  '/_authenticated/admin/resume-bundles/$id/': typeof AuthenticatedAdminResumeBundlesIdIndexRoute
+  '/_authenticated/admin/resume-templates/$id/': typeof AuthenticatedAdminResumeTemplatesIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/ats-checker'
     | '/auth'
     | '/contact'
     | '/disclaimer'
@@ -363,9 +499,14 @@ export interface FileRouteTypes {
     | '/company/$slug'
     | '/jobs/$slug'
     | '/location/$slug'
+    | '/resume-bundles/$slug'
+    | '/resume-templates/$slug'
     | '/search/admin'
     | '/blog/'
+    | '/resume-bundles/'
+    | '/resume-templates/'
     | '/admin/analytics'
+    | '/admin/ats-settings'
     | '/admin/feedback'
     | '/admin/settings'
     | '/admin/site-settings'
@@ -374,13 +515,22 @@ export interface FileRouteTypes {
     | '/admin/jobs/audit'
     | '/admin/jobs/bulk'
     | '/admin/jobs/new'
+    | '/admin/resume-bundles/new'
+    | '/admin/resume-templates/new'
     | '/admin/blog/'
+    | '/admin/resume-bundles/'
+    | '/admin/resume-templates/'
     | '/admin/blog/$id/edit'
     | '/admin/jobs/$slug/edit'
+    | '/admin/resume-bundles/$id/edit'
+    | '/admin/resume-templates/$id/edit'
+    | '/admin/resume-bundles/$id/'
+    | '/admin/resume-templates/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/ats-checker'
     | '/auth'
     | '/contact'
     | '/disclaimer'
@@ -398,9 +548,14 @@ export interface FileRouteTypes {
     | '/company/$slug'
     | '/jobs/$slug'
     | '/location/$slug'
+    | '/resume-bundles/$slug'
+    | '/resume-templates/$slug'
     | '/search/admin'
     | '/blog'
+    | '/resume-bundles'
+    | '/resume-templates'
     | '/admin/analytics'
+    | '/admin/ats-settings'
     | '/admin/feedback'
     | '/admin/settings'
     | '/admin/site-settings'
@@ -409,14 +564,23 @@ export interface FileRouteTypes {
     | '/admin/jobs/audit'
     | '/admin/jobs/bulk'
     | '/admin/jobs/new'
+    | '/admin/resume-bundles/new'
+    | '/admin/resume-templates/new'
     | '/admin/blog'
+    | '/admin/resume-bundles'
+    | '/admin/resume-templates'
     | '/admin/blog/$id/edit'
     | '/admin/jobs/$slug/edit'
+    | '/admin/resume-bundles/$id/edit'
+    | '/admin/resume-templates/$id/edit'
+    | '/admin/resume-bundles/$id'
+    | '/admin/resume-templates/$id'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/about'
+    | '/ats-checker'
     | '/auth'
     | '/contact'
     | '/disclaimer'
@@ -435,9 +599,14 @@ export interface FileRouteTypes {
     | '/company/$slug'
     | '/jobs/$slug'
     | '/location/$slug'
+    | '/resume-bundles/$slug'
+    | '/resume-templates/$slug'
     | '/search_/admin'
     | '/blog/'
+    | '/resume-bundles/'
+    | '/resume-templates/'
     | '/_authenticated/admin/analytics'
+    | '/_authenticated/admin/ats-settings'
     | '/_authenticated/admin/feedback'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/site-settings'
@@ -446,15 +615,24 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/jobs/audit'
     | '/_authenticated/admin/jobs/bulk'
     | '/_authenticated/admin/jobs/new'
+    | '/_authenticated/admin/resume-bundles/new'
+    | '/_authenticated/admin/resume-templates/new'
     | '/_authenticated/admin/blog/'
+    | '/_authenticated/admin/resume-bundles/'
+    | '/_authenticated/admin/resume-templates/'
     | '/_authenticated/admin/blog/$id/edit'
     | '/_authenticated/admin/jobs/$slug/edit'
+    | '/_authenticated/admin/resume-bundles/$id/edit'
+    | '/_authenticated/admin/resume-templates/$id/edit'
+    | '/_authenticated/admin/resume-bundles/$id/'
+    | '/_authenticated/admin/resume-templates/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AtsCheckerRoute: typeof AtsCheckerRoute
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   DisclaimerRoute: typeof DisclaimerRoute
@@ -472,8 +650,12 @@ export interface RootRouteChildren {
   CompanySlugRoute: typeof CompanySlugRoute
   JobsSlugRoute: typeof JobsSlugRoute
   LocationSlugRoute: typeof LocationSlugRoute
+  ResumeBundlesSlugRoute: typeof ResumeBundlesSlugRoute
+  ResumeTemplatesSlugRoute: typeof ResumeTemplatesSlugRoute
   SearchAdminRoute: typeof SearchAdminRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  ResumeBundlesIndexRoute: typeof ResumeBundlesIndexRoute
+  ResumeTemplatesIndexRoute: typeof ResumeTemplatesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -562,6 +744,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ats-checker': {
+      id: '/ats-checker'
+      path: '/ats-checker'
+      fullPath: '/ats-checker'
+      preLoaderRoute: typeof AtsCheckerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -583,6 +772,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/resume-templates/': {
+      id: '/resume-templates/'
+      path: '/resume-templates'
+      fullPath: '/resume-templates/'
+      preLoaderRoute: typeof ResumeTemplatesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resume-bundles/': {
+      id: '/resume-bundles/'
+      path: '/resume-bundles'
+      fullPath: '/resume-bundles/'
+      preLoaderRoute: typeof ResumeBundlesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/': {
       id: '/blog/'
       path: '/blog'
@@ -595,6 +798,20 @@ declare module '@tanstack/react-router' {
       path: '/search/admin'
       fullPath: '/search/admin'
       preLoaderRoute: typeof SearchAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resume-templates/$slug': {
+      id: '/resume-templates/$slug'
+      path: '/resume-templates/$slug'
+      fullPath: '/resume-templates/$slug'
+      preLoaderRoute: typeof ResumeTemplatesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resume-bundles/$slug': {
+      id: '/resume-bundles/$slug'
+      path: '/resume-bundles/$slug'
+      fullPath: '/resume-bundles/$slug'
+      preLoaderRoute: typeof ResumeBundlesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/location/$slug': {
@@ -667,6 +884,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminFeedbackRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/ats-settings': {
+      id: '/_authenticated/admin/ats-settings'
+      path: '/ats-settings'
+      fullPath: '/admin/ats-settings'
+      preLoaderRoute: typeof AuthenticatedAdminAtsSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/analytics': {
       id: '/_authenticated/admin/analytics'
       path: '/analytics'
@@ -674,11 +898,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAnalyticsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/resume-templates/': {
+      id: '/_authenticated/admin/resume-templates/'
+      path: '/resume-templates'
+      fullPath: '/admin/resume-templates/'
+      preLoaderRoute: typeof AuthenticatedAdminResumeTemplatesIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/resume-bundles/': {
+      id: '/_authenticated/admin/resume-bundles/'
+      path: '/resume-bundles'
+      fullPath: '/admin/resume-bundles/'
+      preLoaderRoute: typeof AuthenticatedAdminResumeBundlesIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/blog/': {
       id: '/_authenticated/admin/blog/'
       path: '/blog'
       fullPath: '/admin/blog/'
       preLoaderRoute: typeof AuthenticatedAdminBlogIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/resume-templates/new': {
+      id: '/_authenticated/admin/resume-templates/new'
+      path: '/resume-templates/new'
+      fullPath: '/admin/resume-templates/new'
+      preLoaderRoute: typeof AuthenticatedAdminResumeTemplatesNewRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/resume-bundles/new': {
+      id: '/_authenticated/admin/resume-bundles/new'
+      path: '/resume-bundles/new'
+      fullPath: '/admin/resume-bundles/new'
+      preLoaderRoute: typeof AuthenticatedAdminResumeBundlesNewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/jobs/new': {
@@ -709,6 +961,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBlogNewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/resume-templates/$id/': {
+      id: '/_authenticated/admin/resume-templates/$id/'
+      path: '/resume-templates/$id'
+      fullPath: '/admin/resume-templates/$id/'
+      preLoaderRoute: typeof AuthenticatedAdminResumeTemplatesIdIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/resume-bundles/$id/': {
+      id: '/_authenticated/admin/resume-bundles/$id/'
+      path: '/resume-bundles/$id'
+      fullPath: '/admin/resume-bundles/$id/'
+      preLoaderRoute: typeof AuthenticatedAdminResumeBundlesIdIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/resume-templates/$id/edit': {
+      id: '/_authenticated/admin/resume-templates/$id/edit'
+      path: '/resume-templates/$id/edit'
+      fullPath: '/admin/resume-templates/$id/edit'
+      preLoaderRoute: typeof AuthenticatedAdminResumeTemplatesIdEditRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/resume-bundles/$id/edit': {
+      id: '/_authenticated/admin/resume-bundles/$id/edit'
+      path: '/resume-bundles/$id/edit'
+      fullPath: '/admin/resume-bundles/$id/edit'
+      preLoaderRoute: typeof AuthenticatedAdminResumeBundlesIdEditRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/jobs/$slug/edit': {
       id: '/_authenticated/admin/jobs/$slug/edit'
       path: '/jobs/$slug/edit'
@@ -728,6 +1008,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
+  AuthenticatedAdminAtsSettingsRoute: typeof AuthenticatedAdminAtsSettingsRoute
   AuthenticatedAdminFeedbackRoute: typeof AuthenticatedAdminFeedbackRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminSiteSettingsRoute: typeof AuthenticatedAdminSiteSettingsRoute
@@ -736,13 +1017,22 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminJobsAuditRoute: typeof AuthenticatedAdminJobsAuditRoute
   AuthenticatedAdminJobsBulkRoute: typeof AuthenticatedAdminJobsBulkRoute
   AuthenticatedAdminJobsNewRoute: typeof AuthenticatedAdminJobsNewRoute
+  AuthenticatedAdminResumeBundlesNewRoute: typeof AuthenticatedAdminResumeBundlesNewRoute
+  AuthenticatedAdminResumeTemplatesNewRoute: typeof AuthenticatedAdminResumeTemplatesNewRoute
   AuthenticatedAdminBlogIndexRoute: typeof AuthenticatedAdminBlogIndexRoute
+  AuthenticatedAdminResumeBundlesIndexRoute: typeof AuthenticatedAdminResumeBundlesIndexRoute
+  AuthenticatedAdminResumeTemplatesIndexRoute: typeof AuthenticatedAdminResumeTemplatesIndexRoute
   AuthenticatedAdminBlogIdEditRoute: typeof AuthenticatedAdminBlogIdEditRoute
   AuthenticatedAdminJobsSlugEditRoute: typeof AuthenticatedAdminJobsSlugEditRoute
+  AuthenticatedAdminResumeBundlesIdEditRoute: typeof AuthenticatedAdminResumeBundlesIdEditRoute
+  AuthenticatedAdminResumeTemplatesIdEditRoute: typeof AuthenticatedAdminResumeTemplatesIdEditRoute
+  AuthenticatedAdminResumeBundlesIdIndexRoute: typeof AuthenticatedAdminResumeBundlesIdIndexRoute
+  AuthenticatedAdminResumeTemplatesIdIndexRoute: typeof AuthenticatedAdminResumeTemplatesIdIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
+  AuthenticatedAdminAtsSettingsRoute: AuthenticatedAdminAtsSettingsRoute,
   AuthenticatedAdminFeedbackRoute: AuthenticatedAdminFeedbackRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminSiteSettingsRoute: AuthenticatedAdminSiteSettingsRoute,
@@ -751,9 +1041,25 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminJobsAuditRoute: AuthenticatedAdminJobsAuditRoute,
   AuthenticatedAdminJobsBulkRoute: AuthenticatedAdminJobsBulkRoute,
   AuthenticatedAdminJobsNewRoute: AuthenticatedAdminJobsNewRoute,
+  AuthenticatedAdminResumeBundlesNewRoute:
+    AuthenticatedAdminResumeBundlesNewRoute,
+  AuthenticatedAdminResumeTemplatesNewRoute:
+    AuthenticatedAdminResumeTemplatesNewRoute,
   AuthenticatedAdminBlogIndexRoute: AuthenticatedAdminBlogIndexRoute,
+  AuthenticatedAdminResumeBundlesIndexRoute:
+    AuthenticatedAdminResumeBundlesIndexRoute,
+  AuthenticatedAdminResumeTemplatesIndexRoute:
+    AuthenticatedAdminResumeTemplatesIndexRoute,
   AuthenticatedAdminBlogIdEditRoute: AuthenticatedAdminBlogIdEditRoute,
   AuthenticatedAdminJobsSlugEditRoute: AuthenticatedAdminJobsSlugEditRoute,
+  AuthenticatedAdminResumeBundlesIdEditRoute:
+    AuthenticatedAdminResumeBundlesIdEditRoute,
+  AuthenticatedAdminResumeTemplatesIdEditRoute:
+    AuthenticatedAdminResumeTemplatesIdEditRoute,
+  AuthenticatedAdminResumeBundlesIdIndexRoute:
+    AuthenticatedAdminResumeBundlesIdIndexRoute,
+  AuthenticatedAdminResumeTemplatesIdIndexRoute:
+    AuthenticatedAdminResumeTemplatesIdIndexRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
@@ -775,6 +1081,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
+  AtsCheckerRoute: AtsCheckerRoute,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   DisclaimerRoute: DisclaimerRoute,
@@ -792,8 +1099,12 @@ const rootRouteChildren: RootRouteChildren = {
   CompanySlugRoute: CompanySlugRoute,
   JobsSlugRoute: JobsSlugRoute,
   LocationSlugRoute: LocationSlugRoute,
+  ResumeBundlesSlugRoute: ResumeBundlesSlugRoute,
+  ResumeTemplatesSlugRoute: ResumeTemplatesSlugRoute,
   SearchAdminRoute: SearchAdminRoute,
   BlogIndexRoute: BlogIndexRoute,
+  ResumeBundlesIndexRoute: ResumeBundlesIndexRoute,
+  ResumeTemplatesIndexRoute: ResumeTemplatesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Search, FileText, Package, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -140,6 +140,65 @@ function Home() {
 
       <main className="mx-auto max-w-7xl space-y-12 px-4 pb-16 sm:px-6 lg:px-8">
         <AdSlot placement="homeTop" className="mt-8" />
+
+        {/* RESUME TOOLS */}
+        <section>
+          <div className="mb-4 flex items-end justify-between">
+            <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+              <span className="text-brand">Resume</span> Tools
+            </h2>
+            <Link to="/resume-templates" className="text-sm font-medium text-brand hover:underline">
+              View all →
+            </Link>
+          </div>
+          <div className="flex snap-x snap-mandatory overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0 gap-4 scrollbar-hide">
+            <Link
+              to="/ats-checker"
+              className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
+                <ShieldCheck className="h-5 w-5 text-brand" />
+              </span>
+              <div>
+                <p className="font-semibold text-foreground leading-tight">ATS Resume Checker</p>
+                <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
+                  Check how well your resume matches a job description.
+                </p>
+                <p className="mt-1.5 text-[11px] font-semibold text-brand">Free →</p>
+              </div>
+            </Link>
+            <Link
+              to="/resume-templates"
+              className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
+                <FileText className="h-5 w-5 text-brand" />
+              </span>
+              <div>
+                <p className="font-semibold text-foreground leading-tight">Resume Templates</p>
+                <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
+                  ATS-friendly templates for freshers and experienced professionals.
+                </p>
+                <p className="mt-1.5 text-[11px] font-semibold text-brand">From ₹29 →</p>
+              </div>
+            </Link>
+            <Link
+              to="/resume-bundles"
+              className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
+                <Package className="h-5 w-5 text-brand" />
+              </span>
+              <div>
+                <p className="font-semibold text-foreground leading-tight">Resume Bundles</p>
+                <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
+                  Resume + cover letter + referral message templates in one bundle.
+                </p>
+                <p className="mt-1.5 text-[11px] font-semibold text-brand">From ₹79 →</p>
+              </div>
+            </Link>
+          </div>
+        </section>
         
         {/* LATEST */}
         <section>
@@ -151,7 +210,7 @@ function Home() {
           </div>
         </section>
 
-        <AdSlot placement="homeMiddle" />
+
 
         {/* GOV + INTERN */}
         <div className="grid gap-8 lg:grid-cols-2">
