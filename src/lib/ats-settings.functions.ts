@@ -83,6 +83,14 @@ export const saveAtsSettings = createServerFn({ method: "POST" })
   .validator((i: unknown) => AtsSettingsInput.parse(i))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
+    // Fetch previous active record FIRST
+    const { data: previous } = await context.supabase
+      .from("ats_settings")
+      .select("api_key")
+      .eq("is_active", true)
+      .limit(1)
+      .maybeSingle();
+
     // Deactivate previous active record
     await context.supabase
       .from("ats_settings")
@@ -91,6 +99,9 @@ export const saveAtsSettings = createServerFn({ method: "POST" })
 
     // Get existing key if not providing a new one
     let apiKey = data.api_key || null;
+    if (!apiKey && previous?.api_key) {
+      apiKey = previous.api_key;
+    }
 
     const { data: row, error } = await context.supabase
       .from("ats_settings")

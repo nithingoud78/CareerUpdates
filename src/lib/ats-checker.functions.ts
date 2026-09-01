@@ -167,13 +167,13 @@ export const analyzeResume = createServerFn({ method: "POST" })
     const resumeText = sanitizeInput(data.resume_text);
     const jobDescription = sanitizeInput(data.job_description);
 
-    // Get ATS provider config (isolated from global ai_settings)
+    // Get ATS provider config using service role key (bypasses RLS since this is a server-side only call, and the API key is never sent to the client)
     const SUPABASE_URL = process.env.SUPABASE_URL!;
-    const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY!;
+    const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
     let config;
     try {
-      const sc = createClient<Database>(SUPABASE_URL, SUPABASE_KEY);
+      const sc = createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_KEY);
       config = await getAtsProviderConfig(sc);
     } catch (err: any) {
       throw new Error(err.message || "ATS checker is not configured. Please contact support.");
@@ -366,7 +366,8 @@ export const extractResumeText = createServerFn({ method: "POST" })
           // pdf-parse >= 2.x class API
           const parser = new pdfModule.PDFParse(new Uint8Array(buffer));
           await parser.load();
-          text = await parser.getText();
+          const extracted = await parser.getText();
+          text = typeof extracted === "string" ? extracted : (extracted?.text || "");
         } else {
           // Legacy pdf-parse 1.x function API
           const parser = pdfModule.default || pdfModule;

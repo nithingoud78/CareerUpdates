@@ -34,6 +34,7 @@ export interface CareerProduct {
   ats_friendly: boolean;
   file_format: string | null;
   file_url: string | null;
+  download_file_name: string | null;
   preview_image_url: string | null;
   original_price: number;
   current_price: number;
@@ -77,6 +78,7 @@ const CareerProductInput = z.object({
   ats_friendly: z.boolean().default(false),
   file_format: z.string().nullable().optional(),
   file_url: z.string().nullable().optional(),
+  download_file_name: z.string().nullable().optional(),
   preview_image_url: z.string().nullable().optional(),
   original_price: z.number().min(0).default(299),
   current_price: z.number().min(0).default(29),
@@ -311,6 +313,7 @@ export const upsertCareerProduct = createServerFn({ method: "POST" })
           ats_friendly: data.ats_friendly,
           file_format: data.file_format,
           file_url: data.file_url,
+          download_file_name: data.download_file_name,
           preview_image_url: data.preview_image_url,
           original_price: data.original_price,
           current_price: data.current_price,
@@ -349,6 +352,7 @@ export const upsertCareerProduct = createServerFn({ method: "POST" })
           ats_friendly: data.ats_friendly,
           file_format: data.file_format,
           file_url: data.file_url,
+          download_file_name: data.download_file_name,
           preview_image_url: data.preview_image_url,
           original_price: data.original_price,
           current_price: data.current_price,
@@ -466,7 +470,7 @@ export const getDownloadUrl = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { data: product } = await context.supabase
       .from("career_tool_products")
-      .select("file_url, status")
+      .select("file_url, status, download_file_name")
       .eq("id", data.product_id)
       .maybeSingle();
     if (!product?.file_url) throw new Error("No file uploaded for this product");
@@ -479,9 +483,17 @@ export const getDownloadUrl = createServerFn({ method: "POST" })
 
     const { createClient } = await import("@supabase/supabase-js");
     const adminClient = createClient(SUPABASE_URL, SERVICE_KEY);
+    
+    // Extract extension to append to custom filename
+    const extMatch = product.file_url.match(/\.([a-z0-9]+)$/i);
+    const ext = extMatch ? `.${extMatch[1]}` : "";
+    const downloadParam = product.download_file_name 
+      ? `${product.download_file_name.replace(/[^a-zA-Z0-9_-]/g, "_")}${ext}`
+      : true;
+
     const { data: signedData, error } = await adminClient.storage
       .from("career-tools")
-      .createSignedUrl(product.file_url, 300); // 5 minute signed URL
+      .createSignedUrl(product.file_url, 300, { download: downloadParam }); // 5 minute signed URL
 
     if (error) throw new Error("Failed to generate download link");
     return { url: signedData.signedUrl };
@@ -496,7 +508,7 @@ export const getPublicDownloadUrl = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { data: product } = await supabase
       .from("career_tool_products")
-      .select("file_url, status, title")
+      .select("file_url, status, title, download_file_name")
       .eq("slug", data.slug)
       .eq("status", "published")
       .maybeSingle();
@@ -509,9 +521,16 @@ export const getPublicDownloadUrl = createServerFn({ method: "POST" })
 
     const { createClient } = await import("@supabase/supabase-js");
     const adminClient = createClient(SUPABASE_URL, SERVICE_KEY);
+    
+    const extMatch = product.file_url.match(/\.([a-z0-9]+)$/i);
+    const ext = extMatch ? `.${extMatch[1]}` : "";
+    const downloadParam = product.download_file_name 
+      ? `${product.download_file_name.replace(/[^a-zA-Z0-9_-]/g, "_")}${ext}`
+      : true;
+
     const { data: signedData, error } = await adminClient.storage
       .from("career-tools")
-      .createSignedUrl(product.file_url, 300);
+      .createSignedUrl(product.file_url, 300, { download: downloadParam });
 
     if (error) throw new Error("Failed to generate download link");
     return { url: signedData.signedUrl, title: product.title };

@@ -9,6 +9,7 @@ import { useState, useRef } from "react";
 import { X, Plus, Upload, Loader2 } from "lucide-react";
 import type { CareerProduct, CareerProductType, CareerResourceType } from "@/lib/career-tools.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage } from "@/lib/image-compressor";
 
 export interface ProductFormData {
   id?: string;
@@ -25,6 +26,7 @@ export interface ProductFormData {
   ats_friendly: boolean;
   file_format: string;
   file_url: string | null;
+  download_file_name: string | null;
   preview_image_url: string | null;
   original_price: number;
   current_price: number;
@@ -55,6 +57,7 @@ export const defaultProductFormData: ProductFormData = {
   ats_friendly: false,
   file_format: "DOCX",
   file_url: null,
+  download_file_name: null,
   preview_image_url: null,
   original_price: 299,
   current_price: 29,
@@ -182,11 +185,13 @@ function FileUploadField({
     setError(null);
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop();
+      // Compress if it's an image
+      const processedFile = await compressImage(file);
+      const ext = processedFile.name.split(".").pop();
       const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
       const { error: uploadError } = await supabase.storage
         .from("career-tools")
-        .upload(path, file, { upsert: true });
+        .upload(path, processedFile, { upsert: true });
       if (uploadError) throw new Error(uploadError.message);
       onUpload(path);
     } catch (err: any) {
@@ -451,7 +456,7 @@ export function AdminProductForm({
           {form.preview_image_url && (
             <div>
               <img
-                src={supabase.storage.from("career-tools").getPublicUrl(form.preview_image_url).data.publicUrl}
+                src={form.preview_image_url.startsWith("http") ? form.preview_image_url : supabase.storage.from("career-tools").getPublicUrl(form.preview_image_url).data.publicUrl}
                 alt="Preview"
                 className="h-24 w-auto rounded border border-border object-cover"
               />
@@ -475,6 +480,18 @@ export function AdminProductForm({
                 onRemove={() => set({ file_url: null })}
                 description="DOCX or PDF — used for the download link on the product page"
               />
+              <Field label="Custom Download Filename (Optional)" id="p-download-file-name">
+                <input
+                  id="p-download-file-name"
+                  value={form.download_file_name || ""}
+                  onChange={(e) => set({ download_file_name: e.target.value })}
+                  className={inputCls}
+                  placeholder="e.g. Minimalist_Resume_Template"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  The downloaded file will be renamed to this (the original extension is automatically preserved).
+                </p>
+              </Field>
             </div>
           </>
         )}

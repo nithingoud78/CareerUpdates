@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { upsertCareerProduct } from "@/lib/career-tools.functions";
 import { defaultProductFormData } from "./admin-product-form";
+import { compressImage } from "@/lib/image-compressor";
 
 const RESOURCE_TYPE_LABELS: Record<string, string> = {
   resume: "Resume",
@@ -31,9 +32,11 @@ function FileUploadButton({
     if (!file) return;
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop();
+      const isImage = file.type.startsWith("image/");
+      const processedFile = isImage ? await compressImage(file) : file;
+      const ext = processedFile.name.split(".").pop();
       const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage.from("career-tools").upload(path, file, { upsert: true });
+      const { error } = await supabase.storage.from("career-tools").upload(path, processedFile, { upsert: true });
       if (error) throw new Error(error.message);
       onUpload(path);
     } catch (err: any) {
@@ -167,7 +170,7 @@ export function BundleResourcesManager({
                   </div>
                   {p?.preview_image_url ? (
                     <img
-                      src={supabase.storage.from("career-tools").getPublicUrl(p.preview_image_url).data.publicUrl}
+                      src={p.preview_image_url?.startsWith("http") ? p.preview_image_url : supabase.storage.from("career-tools").getPublicUrl(p.preview_image_url).data.publicUrl}
                       alt=""
                       className="h-10 w-10 shrink-0 rounded object-cover"
                     />
