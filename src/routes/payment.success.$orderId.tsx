@@ -13,7 +13,8 @@ export const Route = createFileRoute("/payment/success/$orderId")({
 
 function PaymentSuccessPage() {
   const { order } = Route.useLoaderData();
-  const [downloading, setDownloading] = useState(false);
+  const [isPreparingDownload, setIsPreparingDownload] = useState(false);
+  const [isPreparingView, setIsPreparingView] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
   // Auto-download on mount if paid
@@ -24,15 +25,15 @@ function PaymentSuccessPage() {
   }, [order.status]);
 
   const handleDownload = async (isAuto = false) => {
-    if (downloading) return;
-    setDownloading(true);
+    if (isPreparingDownload) return;
+    setIsPreparingDownload(true);
     setError(null);
     try {
       const res = await getPaidOrderDownloadUrl({ data: { orderId: order.id } });
-      if (res.url) {
+      if (res.downloadUrl) {
         // Trigger download
         const a = document.createElement("a");
-        a.href = res.url;
+        a.href = res.downloadUrl;
         // The signed url is returned with download parameter, so clicking it triggers download
         document.body.appendChild(a);
         a.click();
@@ -40,30 +41,27 @@ function PaymentSuccessPage() {
       }
     } catch (err: any) {
       if (!isAuto) {
-        setError(err.message || "Failed to generate download link.");
+        setError("Unable to prepare the download. Please try again.");
       }
     } finally {
-      setDownloading(false);
+      setIsPreparingDownload(false);
     }
   };
 
   const handleViewFile = async () => {
-    if (downloading) return;
-    setDownloading(true);
+    if (isPreparingView) return;
+    setIsPreparingView(true);
     setError(null);
     try {
       const res = await getPaidOrderDownloadUrl({ data: { orderId: order.id } });
-      if (res.url) {
+      if (res.viewUrl) {
         // Open in new tab for viewing
-        // Remove the `download=` query param if we just want to view it.
-        const viewUrl = new URL(res.url);
-        viewUrl.searchParams.delete("download");
-        window.open(viewUrl.toString(), "_blank", "noopener,noreferrer");
+        window.open(res.viewUrl, "_blank", "noopener,noreferrer");
       }
     } catch (err: any) {
-      setError(err.message || "Failed to generate view link.");
+      setError("Unable to open the file. Please try again.");
     } finally {
-      setDownloading(false);
+      setIsPreparingView(false);
     }
   };
 
@@ -129,19 +127,19 @@ function PaymentSuccessPage() {
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
             <button
               onClick={() => handleDownload(false)}
-              disabled={downloading}
+              disabled={isPreparingDownload}
               className="flex flex-1 items-center justify-center gap-2 rounded-full bg-brand py-3 text-sm font-semibold text-brand-foreground shadow-sm transition-transform hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100"
             >
               <Download className="h-4 w-4" />
-              {downloading ? "Preparing..." : "Download File"}
+              {isPreparingDownload ? "Preparing..." : "Download File"}
             </button>
             <button
               onClick={handleViewFile}
-              disabled={downloading}
+              disabled={isPreparingView}
               className="flex flex-1 items-center justify-center gap-2 rounded-full border border-border bg-background py-3 text-sm font-medium text-foreground shadow-sm transition-transform hover:bg-accent disabled:opacity-70"
             >
               <ExternalLink className="h-4 w-4" />
-              View File
+              {isPreparingView ? "Preparing..." : "View File"}
             </button>
           </div>
           <p className="mt-4 text-center text-xs text-muted-foreground">

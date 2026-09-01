@@ -48,14 +48,14 @@ ALTER TABLE public.career_tool_orders ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Orders are viewable by admin users"
   ON public.career_tool_orders FOR SELECT
   USING (
-    (SELECT is_admin FROM public.users WHERE id = auth.uid()) = true
+    EXISTS (SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin')
   );
 
 -- Admins can update all orders (if needed for refunds etc.)
 CREATE POLICY "Orders are updatable by admin users"
   ON public.career_tool_orders FOR UPDATE
   USING (
-    (SELECT is_admin FROM public.users WHERE id = auth.uid()) = true
+    EXISTS (SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin')
   );
 
 -- Note: 
@@ -84,5 +84,5 @@ ALTER TABLE public.career_tool_download_events ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Download events viewable by admin"
   ON public.career_tool_download_events FOR SELECT
   USING (
-    (SELECT is_admin FROM public.users WHERE id = auth.uid()) = true
+    EXISTS (SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin')
   );

@@ -271,15 +271,34 @@ export const getPaidOrderDownloadUrl = createServerFn({ method: "POST" })
       throw new Error("No downloadable file associated with this product.");
     }
 
-    // 2. Generate signed URL
-    const { data: urlData, error: urlError } = await supabase.storage
-      .from("career_tools")
+    // Determine download filename
+    let downloadName: string | boolean = true;
+    if (product.download_file_name) {
+      // Append original extension if not present in download_file_name
+      const origExt = product.file_url.split('.').pop() || '';
+      if (origExt && !product.download_file_name.endsWith(`.${origExt}`)) {
+        downloadName = `${product.download_file_name}.${origExt}`;
+      } else {
+        downloadName = product.download_file_name;
+      }
+    }
+
+    // 2. Generate signed URLs (bucket is 'career-tools')
+    // View URL (no download parameter)
+    const { data: viewUrlData, error: viewUrlError } = await supabase.storage
+      .from("career-tools")
+      .createSignedUrl(product.file_url, 60);
+
+    // Download URL (with download parameter)
+    const { data: downloadUrlData, error: downloadUrlError } = await supabase.storage
+      .from("career-tools")
       .createSignedUrl(product.file_url, 60, {
-        download: product.download_file_name || true,
+        download: downloadName,
       });
 
-    if (urlError || !urlData?.signedUrl) {
-      throw new Error("Failed to generate secure download link.");
+    if (viewUrlError || downloadUrlError || !viewUrlData?.signedUrl || !downloadUrlData?.signedUrl) {
+      console.error("[Storage] Failed to generate signed URLs:", { viewUrlError, downloadUrlError });
+      throw new Error(`Download access failed (Code: STORAGE_OBJECT_NOT_FOUND, Bucket: career-tools, Path: ${product.file_url})`);
     }
 
     // 3. Log the download event
@@ -288,7 +307,10 @@ export const getPaidOrderDownloadUrl = createServerFn({ method: "POST" })
       product_id: order.product_id,
     });
 
-    return { url: urlData.signedUrl };
+    return { 
+      viewUrl: viewUrlData.signedUrl,
+      downloadUrl: downloadUrlData.signedUrl
+    };
   });
 
 // ─── 4. Get Order Status ────────────────────────────────────────────────────
