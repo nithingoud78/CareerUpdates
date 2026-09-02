@@ -172,9 +172,9 @@ function Home() {
             <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               <span className="text-brand">Resume</span> Tools
             </h2>
-            <a href="/ats-resumes-pack" className="text-sm font-medium text-brand hover:underline">
+            <Link to="/ats-resumes-pack" className="text-sm font-medium text-brand hover:underline">
               View all →
-            </a>
+            </Link>
           </div>
           <div className="flex snap-x snap-mandatory overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0 gap-4 scrollbar-hide">
             <Link
