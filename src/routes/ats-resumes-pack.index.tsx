@@ -88,24 +88,6 @@ function ResumeBundles() {
       <main className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
         <AdSlot placement="homeTop" className="mb-8" />
 
-        {/* What's in a pack */}
-        <section className="mb-10 rounded-2xl border border-border bg-surface p-6">
-          <h2 className="mb-4 text-lg font-bold">What's Included in a Pack?</h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { label: "Resume Templates", desc: "ATS-friendly, recruiter-tested formats", icon: "📄" },
-              { label: "Cover Letter Templates", desc: "Professional, role-specific cover letter structure", icon: "✉️" },
-              { label: "Referral Message Scripts", desc: "LinkedIn and email outreach for employee referrals", icon: "🤝" },
-              { label: "Cold Email Templates", desc: "Direct outreach to hiring managers and recruiters", icon: "📬" },
-            ].map((item) => (
-              <div key={item.label} className="glass rounded-xl p-4 text-center">
-                <div className="mb-2 text-2xl">{item.icon}</div>
-                <p className="text-sm font-semibold">{item.label}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
 
         {/* Loading */}
         {isLoading && (
