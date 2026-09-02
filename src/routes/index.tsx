@@ -208,11 +208,10 @@ function Home() {
                 </p>
                 {data.atsPrice != null && data.atsPrice > 0 ? (
                   <p className="mt-1.5 text-[11px] font-semibold text-brand">
-                    <span className="text-muted-foreground line-through mr-1">₹299</span>
-                    ₹{data.atsPrice} →
+                    From ₹{data.atsPrice} →
                   </p>
                 ) : (
-                  <p className="mt-1.5 text-[11px] font-semibold text-brand">Free →</p>
+                  <p className="mt-1.5 text-[11px] font-semibold text-brand">Try for free →</p>
                 )}
               </div>
             </Link>

@@ -61,6 +61,7 @@ function AtsSettingsPage() {
 
   const [pricingForm, setPricingForm] = useState({
     price: 5,
+    original_price: 299,
     is_free: false,
   });
 
@@ -74,6 +75,7 @@ function AtsSettingsPage() {
       });
       setPricingForm({
         price: data.actual_price ?? 5,
+        original_price: data.original_price ?? 299,
         is_free: !!data.is_free,
       });
     }
@@ -100,6 +102,7 @@ function AtsSettingsPage() {
       savePricing({
         data: {
           price: pricingForm.price,
+          original_price: pricingForm.original_price,
           is_free: pricingForm.is_free,
         },
       }),
@@ -157,59 +160,73 @@ function AtsSettingsPage() {
               <p className="text-xs text-muted-foreground">Connection health for the ATS checker</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             {isCheckingHealth ? (
               <span className="text-sm text-muted-foreground">Checking…</span>
-            ) : (health?.status || data?.connection_status) === "Not Configured" ? (
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                <Info className="h-4 w-4" /> Not Configured
-              </div>
-            ) : (health?.status || data?.connection_status) ? (
-              <div className="flex items-start gap-1.5 text-sm">
-                {(health?.status || data?.connection_status)?.startsWith("Connected to") ? (
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
-                ) : (
-                  <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
-                )}
-                <div 
-                  className={`whitespace-pre-line ${
-                    (health?.status || data?.connection_status)?.startsWith("Connected to") 
-                      ? "text-emerald-700 dark:text-emerald-400" 
-                      : "text-red-700 dark:text-red-400"
-                  }`}
-                >
-                  {health?.status || data?.connection_status}
+            ) : (() => {
+              const status = health?.status || data?.connection_status;
+              
+              if (status === "Not Configured" || !status || status === "unknown") {
+                return (
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <Info className="h-4 w-4" /> Not Configured
+                  </div>
+                );
+              }
+              
+              const isSuccess = status === "success" || status === "Connected" || status?.startsWith("Connected to");
+              const provider = health?.provider || data?.last_tested_provider || data?.provider;
+              const model = health?.model || data?.last_tested_model || data?.model;
+              const timestampIso = health?.timestamp || data?.last_tested_at;
+              const errorMsg = health?.error || data?.last_error;
+              
+              const formatTime = (isoString?: string) => {
+                if (!isoString) return "";
+                return new Intl.DateTimeFormat("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
+                }).format(new Date(isoString));
+              };
+
+              return (
+                <div className="flex flex-col gap-1 text-sm text-left">
+                  <div className="flex items-center gap-1.5">
+                    {isSuccess ? (
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+                    ) : (
+                      <XCircle className="h-4 w-4 shrink-0 text-red-600" />
+                    )}
+                    <span className={isSuccess ? "text-emerald-700 dark:text-emerald-400 font-medium" : "text-red-700 dark:text-red-400 font-medium"}>
+                      {isSuccess ? "Connected to" : "Connection disconnected to"} {provider} / {model}
+                    </span>
+                  </div>
+                  {timestampIso && (
+                    <div className="text-[11px] text-muted-foreground ml-5.5">
+                      Last test connection: {formatTime(timestampIso)}
+                    </div>
+                  )}
+                  {!isSuccess && errorMsg && (
+                    <div className="text-[11px] text-red-600 dark:text-red-400 ml-5.5 mt-0.5">
+                      {errorMsg}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ) : (
-              <span className="text-sm text-muted-foreground">Unknown</span>
-            )}
+              );
+            })()}
             <button
               id="test-ats-connection-btn"
               onClick={() => refetchHealth()}
               disabled={isCheckingHealth}
-              className="rounded-full border border-border px-3 py-1 text-xs font-medium hover:bg-accent disabled:opacity-50"
+              className="rounded-full border border-border px-3 py-1 text-xs font-medium hover:bg-accent disabled:opacity-50 h-fit"
             >
               Test Connection
             </button>
           </div>
         </div>
-
-        {(health?.error || data?.last_error) && (
-          <p className={`rounded-lg p-2 text-xs ${
-            (health?.status || data?.connection_status) === 'Rate Limited' || (health?.status || data?.connection_status) === 'Invalid Key' 
-              ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/30' 
-              : 'bg-red-50 text-red-600 dark:bg-red-950/30'
-          }`}>
-            {health?.error || data?.last_error}
-          </p>
-        )}
-
-        {health?.status === "Connected" && (
-          <p className="rounded-lg bg-green-50 p-2 text-xs text-green-700 dark:bg-green-950/30">
-            Connected to {health.provider} / {health.model}
-          </p>
-        )}
 
         {/* Provider select */}
         <div>
@@ -305,19 +322,35 @@ function AtsSettingsPage() {
       <section className="glass space-y-5 rounded-2xl p-5">
         <h2 className="font-semibold">ATS Checker Pricing</h2>
         <div className="flex flex-col gap-4">
-          <div>
-            <label htmlFor="ats-price" className="text-xs font-medium text-muted-foreground">
-              ATS Checker Price (₹)
-            </label>
-            <input
-              id="ats-price"
-              type="number"
-              min="1"
-              value={pricingForm.price}
-              onChange={(e) => setPricingForm({ ...pricingForm, price: parseInt(e.target.value) || 0 })}
-              className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-              disabled={pricingForm.is_free}
-            />
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <label htmlFor="ats-original-price" className="text-xs font-medium text-muted-foreground">
+                Original Price (₹)
+              </label>
+              <input
+                id="ats-original-price"
+                type="number"
+                min="1"
+                value={pricingForm.original_price}
+                onChange={(e) => setPricingForm({ ...pricingForm, original_price: parseInt(e.target.value) || 0 })}
+                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                disabled={pricingForm.is_free}
+              />
+            </div>
+            <div className="flex-1">
+              <label htmlFor="ats-price" className="text-xs font-medium text-muted-foreground">
+                ATS Checker Price (₹)
+              </label>
+              <input
+                id="ats-price"
+                type="number"
+                min="1"
+                value={pricingForm.price}
+                onChange={(e) => setPricingForm({ ...pricingForm, price: parseInt(e.target.value) || 0 })}
+                className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                disabled={pricingForm.is_free}
+              />
+            </div>
           </div>
 
           <label className="flex items-center gap-2 cursor-pointer">

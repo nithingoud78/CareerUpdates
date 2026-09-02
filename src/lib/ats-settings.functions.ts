@@ -62,7 +62,7 @@ export const getAtsSettings = createServerFn({ method: "GET" })
     await assertAdmin(context);
     const { data } = await context.supabase
       .from("ats_settings")
-      .select("id, provider, model, base_url, api_key, is_active, created_at, updated_at, original_price, current_price, connection_status, last_tested_at, last_success_at, last_error")
+      .select("id, provider, model, base_url, api_key, is_active, created_at, updated_at, original_price, current_price, connection_status, last_tested_at, last_success_at, last_error, last_tested_provider, last_tested_model")
       .eq("is_active", true)
       .order("updated_at", { ascending: false })
       .limit(1)
@@ -130,6 +130,7 @@ export const saveAtsSettings = createServerFn({ method: "POST" })
 
 const AtsPricingInput = z.object({
   price: z.number().min(1),
+  original_price: z.number().min(1),
   is_free: z.boolean(),
 });
 
@@ -144,7 +145,10 @@ export const saveAtsPricingSettings = createServerFn({ method: "POST" })
 
     const { error } = await context.supabase
       .from("ats_settings")
-      .update({ current_price: finalPrice })
+      .update({ 
+        current_price: finalPrice,
+        original_price: data.original_price
+      })
       .eq("is_active", true);
 
     if (error) throw new Error(error.message);
@@ -240,56 +244,51 @@ export const checkAtsHealth = createServerFn({ method: "GET" })
         }
       }
 
-      const timestampStr = new Intl.DateTimeFormat("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      }).format(new Date());
-
-      const formattedStatus = respOk 
-        ? `Connected to ${settings.provider} / ${settings.model}\nLast test connection: ${timestampStr}`
-        : `Connection disconnected to ${settings.provider} / ${settings.model}\nLast test connection: ${timestampStr}`;
+      const currentIsoTime = new Date().toISOString();
+      const statusValue = respOk ? "success" : "error";
 
       // Persist the real connection status
       await context.supabase
         .from("ats_settings")
         .update({
-          connection_status: formattedStatus,
+          connection_status: statusValue,
           last_error: errorMsg,
-          last_tested_at: new Date().toISOString(),
-          ...(respOk && { last_success_at: new Date().toISOString() }),
+          last_tested_at: currentIsoTime,
+          last_tested_provider: settings.provider,
+          last_tested_model: settings.model,
+          ...(respOk && { last_success_at: currentIsoTime }),
         })
         .eq("id", settings.id);
 
-      if (!respOk) {
-        return { status: formattedStatus, error: errorMsg };
-      }
-      return { status: "Connected", provider: settings.provider, model: settings.model };
+      return { 
+        status: statusValue, 
+        error: errorMsg,
+        provider: settings.provider,
+        model: settings.model,
+        timestamp: currentIsoTime
+      };
     } catch (err: any) {
       const errorMsg = err.name === "TimeoutError" ? "Connection timed out." : "Could not reach provider.";
-      const timestampStr = new Intl.DateTimeFormat("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      }).format(new Date());
-
-      const formattedStatus = `Connection disconnected to ${settings.provider} / ${settings.model}\nLast test connection: ${timestampStr}`;
+      const currentIsoTime = new Date().toISOString();
 
       await context.supabase
         .from("ats_settings")
         .update({
-          connection_status: formattedStatus,
+          connection_status: "error",
           last_error: errorMsg,
-          last_tested_at: new Date().toISOString(),
+          last_tested_at: currentIsoTime,
+          last_tested_provider: settings.provider,
+          last_tested_model: settings.model,
         })
         .eq("id", settings.id);
-      return { status: formattedStatus, error: errorMsg };
+        
+      return { 
+        status: "error", 
+        error: errorMsg,
+        provider: settings.provider,
+        model: settings.model,
+        timestamp: currentIsoTime
+      };
     }
   });
 

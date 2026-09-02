@@ -62,6 +62,10 @@ function BundleCheckoutPage() {
       setError("Please select your country code.");
       return;
     }
+    if (form.countryCode === "+91" && form.phone.length !== 10) {
+      setError("Phone number must be exactly 10 digits for India (+91).");
+      return;
+    }
     if (!form.phone.trim() || form.phone.length < 5) {
       setError("Please enter a valid phone number.");
       return;
@@ -222,7 +226,13 @@ function BundleCheckoutPage() {
                     id="phone"
                     required
                     value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    onChange={(e) => {
+                      let val = e.target.value;
+                      if (form.countryCode === "+91") {
+                        val = val.replace(/\D/g, "").slice(0, 10);
+                      }
+                      setForm({ ...form, phone: val });
+                    }}
                     className="block w-full rounded-md border border-input bg-background py-2 pl-10 pr-3 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
                     placeholder="8484153463"
                   />

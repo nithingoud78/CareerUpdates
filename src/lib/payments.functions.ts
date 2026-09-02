@@ -154,7 +154,8 @@ const CreateAtsOrderInput = z.object({
   customer: z.object({
     fullName: z.string().min(1, "Name is required"),
     email: z.string().email("Invalid email address"),
-    phone: z.string().min(10, "Phone number is required"),
+    countryCode: z.string().min(1, "Country code is required"),
+    phone: z.string().min(1, "Phone number is required"),
   }),
 });
 
@@ -210,6 +211,7 @@ export const createAtsCheckoutOrder = createServerFn({ method: "POST" })
       .insert({
         buyer_email: data.customer.email,
         buyer_name: data.customer.fullName,
+        country_code: data.customer.countryCode,
         buyer_phone: data.customer.phone,
         amount: amountPaise,
         currency: "INR",

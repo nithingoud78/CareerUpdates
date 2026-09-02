@@ -145,6 +145,8 @@ export type Database = {
           last_tested_at: string | null
           last_success_at: string | null
           last_error: string | null
+          last_tested_provider: string | null
+          last_tested_model: string | null
         }
         Insert: {
           api_key?: string | null
@@ -161,6 +163,8 @@ export type Database = {
           last_tested_at?: string | null
           last_success_at?: string | null
           last_error?: string | null
+          last_tested_provider?: string | null
+          last_tested_model?: string | null
         }
         Update: {
           api_key?: string | null
@@ -177,6 +181,8 @@ export type Database = {
           last_tested_at?: string | null
           last_success_at?: string | null
           last_error?: string | null
+          last_tested_provider?: string | null
+          last_tested_model?: string | null
         }
         Relationships: []
       }

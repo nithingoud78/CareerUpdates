@@ -11,6 +11,10 @@ import {
   Loader2,
   CheckCircle2,
   Info,
+  Mail,
+  User,
+  Phone,
+  Lock,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -116,7 +120,7 @@ function AtsChecker() {
   const { data: pricing } = useQuery({
     queryKey: ["ats-pricing"],
     queryFn: getPublicAtsPricing,
-    initialData: { price: 5, is_free: true }, // safe fallback
+    initialData: { price: 5, original_price: 299, is_free: true }, // safe fallback
   });
 
   const analyze = useServerFn(analyzeResume);
@@ -131,8 +135,14 @@ function AtsChecker() {
   const [result, setResult] = useState<AtsResult | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
   
-  const [customer, setCustomer] = useState({ fullName: "", email: "", phone: "" });
+  const [customer, setCustomer] = useState({
+    fullName: "",
+    email: "",
+    countryCode: "+91",
+    phone: "",
+  });
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
@@ -216,16 +226,47 @@ function AtsChecker() {
   const canSubmit =
     resumeText.trim().length >= 50 &&
     jobDesc.trim().length >= 30 &&
-    customer.fullName.trim().length > 0 &&
-    customer.email.includes("@") &&
-    customer.phone.trim().length >= 10 &&
     !mutation.isPending;
 
-  async function handleCheckoutAndAnalyze() {
+  const handleMainButtonClick = () => {
+    setCheckoutError(null);
+    if (!canSubmit) return;
+    
+    if (pricing.is_free) {
+      mutation.mutate();
+    } else {
+      setShowCheckoutModal(true);
+    }
+  };
+
+  async function handleCheckoutAndAnalyze(e: React.FormEvent) {
+    e.preventDefault();
     setCheckoutError(null);
     if (!canSubmit) return;
 
+    if (!customer.email || !customer.email.includes("@")) {
+      setCheckoutError("Please enter a valid email address.");
+      return;
+    }
+    if (!customer.fullName.trim()) {
+      setCheckoutError("Please enter your full name.");
+      return;
+    }
+    if (!customer.countryCode) {
+      setCheckoutError("Please select your country code.");
+      return;
+    }
+    if (customer.countryCode === "+91" && customer.phone.length !== 10) {
+      setCheckoutError("Phone number must be exactly 10 digits for India (+91).");
+      return;
+    }
+    if (!customer.phone.trim() || customer.phone.length < 5) {
+      setCheckoutError("Please enter a valid phone number.");
+      return;
+    }
+
     if (pricing.is_free) {
+      setShowCheckoutModal(false);
       mutation.mutate();
       return;
     }
@@ -258,6 +299,7 @@ function AtsChecker() {
               },
             });
             // Payment successful, run analysis
+            setShowCheckoutModal(false);
             mutation.mutate();
           } catch (err: any) {
             setCheckoutError(err.message || "Payment verification failed.");
@@ -412,59 +454,8 @@ function AtsChecker() {
             </p>
           </section>
 
-          {/* Customer Details */}
-          {resumeText.trim().length >= 50 && jobDesc.trim().length >= 30 && (
-            <section className="glass rounded-2xl p-5 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h2 className="font-semibold text-foreground">Your Details</h2>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <div>
-                  <label htmlFor="customer-name" className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                    Full Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="customer-name"
-                    type="text"
-                    value={customer.fullName}
-                    onChange={(e) => setCustomer({ ...customer, fullName: e.target.value })}
-                    className="w-full rounded-xl border border-input bg-background p-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30"
-                    placeholder="John Doe"
-                    disabled={mutation.isPending}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="customer-email" className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                    Email <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="customer-email"
-                    type="email"
-                    value={customer.email}
-                    onChange={(e) => setCustomer({ ...customer, email: e.target.value })}
-                    className="w-full rounded-xl border border-input bg-background p-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30"
-                    placeholder="john@example.com"
-                    disabled={mutation.isPending}
-                  />
-                </div>
-                <div className="sm:col-span-2 lg:col-span-1">
-                  <label htmlFor="customer-phone" className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                    Mobile Number <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="customer-phone"
-                    type="tel"
-                    value={customer.phone}
-                    onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
-                    className="w-full rounded-xl border border-input bg-background p-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30"
-                    placeholder="9876543210"
-                    disabled={mutation.isPending}
-                  />
-                </div>
-              </div>
-            </section>
-          )}
-
           {/* Submit */}
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center gap-3 mt-6">
             {(mutation.error || checkoutError) && (
               <p
                 role="alert"
@@ -477,10 +468,10 @@ function AtsChecker() {
 
             <button
               id="check-resume-btn"
-              onClick={handleCheckoutAndAnalyze}
+              onClick={handleMainButtonClick}
               disabled={!canSubmit}
               aria-busy={mutation.isPending}
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-sm font-semibold text-brand-foreground transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-64"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 px-6 sm:px-8 whitespace-nowrap min-w-[280px] text-sm font-semibold text-brand-foreground transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               {mutation.isPending || (progress.step > 0 && !result) ? (
                 <>
@@ -489,12 +480,12 @@ function AtsChecker() {
                 </>
               ) : (
                 <>
-                  <CheckCircle2 className="h-4 w-4" />
+                  <CheckCircle2 className="h-4 w-4 shrink-0" />
                   {pricing.is_free || !(resumeText.trim().length >= 50 && jobDesc.trim().length >= 30) ? (
                     "Check My Resume"
                   ) : (
                     <span>
-                      Pay <span className="line-through mx-1 text-brand-foreground/70">₹299</span> ₹{pricing.price} & Check My Resume
+                      Pay <span className="line-through mx-1 text-brand-foreground/70">₹{pricing.original_price}</span> ₹{pricing.price} & Check My Resume
                     </span>
                   )}
                 </>
@@ -604,7 +595,134 @@ function AtsChecker() {
             Career Updates does not store or share resume content submitted through this tool.
           </p>
         </div>
-      </main>
+
+      {/* Checkout Modal Overlay */}
+      {showCheckoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-background w-full max-w-md rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-xl font-bold text-foreground">Complete Your Purchase</h2>
+                  <p className="text-xs text-muted-foreground mt-1">Enter your details to proceed with the ATS check.</p>
+                </div>
+                <button 
+                  onClick={() => setShowCheckoutModal(false)}
+                  className="p-2 rounded-full hover:bg-muted text-muted-foreground transition-colors"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleCheckoutAndAnalyze} className="space-y-4">
+                {/* Error Message inside Modal */}
+                {checkoutError && (
+                  <div className="rounded-md bg-red-50 p-3 mb-4 flex items-start gap-2 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
+                    <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                    <p>{checkoutError}</p>
+                  </div>
+                )}
+
+                <div className="space-y-1.5">
+                  <label htmlFor="email" className="text-sm font-medium text-foreground">
+                    Email Address <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                      <Mail className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <input
+                      type="email"
+                      id="email"
+                      required
+                      value={customer.email}
+                      onChange={(e) => setCustomer({ ...customer, email: e.target.value })}
+                      className="block w-full rounded-md border border-input bg-background py-2 pl-10 pr-3 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+                      placeholder="you@example.com"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label htmlFor="name" className="text-sm font-medium text-foreground">
+                    Full Name <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <input
+                      type="text"
+                      id="name"
+                      required
+                      value={customer.fullName}
+                      onChange={(e) => setCustomer({ ...customer, fullName: e.target.value })}
+                      className="block w-full rounded-md border border-input bg-background py-2 pl-10 pr-3 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+                      placeholder="John Doe"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label htmlFor="phone" className="text-sm font-medium text-foreground">
+                    Phone Number <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <div className="w-1/3 min-w-[100px]">
+                      <select
+                        value={customer.countryCode}
+                        onChange={(e) => setCustomer({ ...customer, countryCode: e.target.value })}
+                        className="block w-full rounded-md border border-input bg-background py-2 pl-2 pr-8 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+                      >
+                        <option value="+91">🇮🇳 India (+91)</option>
+                        <option value="+1">🇺🇸 US (+1)</option>
+                        <option value="+44">🇬🇧 UK (+44)</option>
+                        <option value="+61">🇦🇺 AUS (+61)</option>
+                        <option value="+971">🇦🇪 UAE (+971)</option>
+                        <option value="+65">🇸🇬 SG (+65)</option>
+                      </select>
+                    </div>
+                    <div className="relative flex-1">
+                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <Phone className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      <input
+                        type="tel"
+                        id="phone"
+                        required
+                        value={customer.phone}
+                        onChange={(e) => {
+                          let val = e.target.value;
+                          if (customer.countryCode === "+91") {
+                            val = val.replace(/\D/g, "").slice(0, 10);
+                          }
+                          setCustomer({ ...customer, phone: val });
+                        }}
+                        className="block w-full rounded-md border border-input bg-background py-2 pl-10 pr-3 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+                        placeholder="8484153463"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={mutation.isPending}
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-sm font-bold text-brand-foreground shadow-sm transition-transform hover:scale-[1.02] disabled:scale-100 disabled:opacity-70"
+                >
+                  {mutation.isPending ? "Processing..." : `PAY ₹${pricing.price} & CHECK ATS`}
+                </button>
+                
+                <div className="mt-4 flex items-center justify-center gap-4 text-[11px] text-muted-foreground">
+                  <span className="flex items-center gap-1"><Lock className="h-3 w-3" /> Secure checkout</span>
+                  <span className="flex items-center gap-1"><ShieldCheck className="h-3 w-3" /> Instant result</span>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+    </main>
 
       <SiteFooter />
       <StickySocial />
