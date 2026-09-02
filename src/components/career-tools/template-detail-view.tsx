@@ -104,11 +104,11 @@ export function TemplateDetailView({
         <div className="order-2 lg:order-1">
           <div className="glass overflow-hidden rounded-2xl">
             {product.preview_image_url ? (
-              <div className="relative aspect-[4/5] w-full md:aspect-[3/4]">
+              <div className="relative w-full">
                 <PreviewImage
                   src={resolvePreviewImageUrl(product.preview_image_url) || ""}
-                  alt={`${product.title} preview`}
-                  className="absolute inset-0 h-full w-full object-cover"
+                  alt={product.title}
+                  className="w-full h-auto object-contain"
                   fallback={
                     <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-muted/20">
                       <FileText className="h-10 w-10 text-muted-foreground/30" />

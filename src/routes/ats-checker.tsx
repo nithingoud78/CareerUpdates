@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import {
   Upload,
   FileText,
@@ -15,6 +15,7 @@ import {
   User,
   Phone,
   Lock,
+  Download,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -146,6 +147,9 @@ function AtsChecker() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
+  const reportRef = useRef<HTMLDivElement>(null);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [hasDownloaded, setHasDownloaded] = useState(false);
   const progress = useProgressSimulator(false);
   const sessionId = useRef(Math.random().toString(36).slice(2));
 
@@ -161,6 +165,7 @@ function AtsChecker() {
     onMutate: () => {
       progress.start();
       setResult(null);
+      setHasDownloaded(false);
     },
     onSuccess: (data: AtsResult) => {
       progress.stop();
@@ -337,6 +342,78 @@ function AtsChecker() {
     text.length > MAX_TEXT_LENGTH
       ? `${text.length}/${MAX_TEXT_LENGTH} — too long`
       : `${text.length}/${MAX_TEXT_LENGTH}`;
+
+  const generatePdf = useCallback(async (isAuto = false) => {
+    if (!reportRef.current) return;
+    try {
+      setIsGeneratingPdf(true);
+      
+      const { toPng } = await import("html-to-image");
+      const jsPdfModule = await import("jspdf");
+      const jsPDF = jsPdfModule.jsPDF || jsPdfModule.default;
+
+      // Small delay to ensure styles are painted and images are loaded, especially if automatic
+      await new Promise(resolve => setTimeout(resolve, isAuto ? 1000 : 300));
+
+      const imgData = await toPng(reportRef.current, {
+        pixelRatio: 2,
+        backgroundColor: "#ffffff",
+        style: {
+          margin: "0",
+          padding: "20px",
+        }
+      });
+
+      // Get natural dimensions from image to maintain aspect ratio
+      const img = new Image();
+      img.src = imgData;
+      await new Promise(resolve => { img.onload = resolve; });
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "pt",
+        format: "a4",
+      });
+
+      const margin = 20;
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const printableWidth = pdfWidth - margin * 2;
+      const imgHeight = (img.height * printableWidth) / img.width;
+      
+      let heightLeft = imgHeight;
+      let position = margin;
+
+      pdf.addImage(imgData, "PNG", margin, position, printableWidth, imgHeight);
+      heightLeft -= (pdfHeight - margin * 2);
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight + margin;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", margin, position, printableWidth, imgHeight);
+        heightLeft -= (pdfHeight - margin * 2);
+      }
+
+      const candidateName = customer.fullName ? `-${customer.fullName.replace(/[^a-z0-9]/gi, '_')}` : "";
+      pdf.save(`ATS-Resume-Checker-Report${candidateName}.pdf`);
+    } catch (error) {
+      console.error("Failed to generate PDF", error);
+      if (!isAuto) {
+        alert("Failed to generate PDF. Please try again.");
+      }
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  }, [customer.fullName]);
+
+  useEffect(() => {
+    if (result && !hasDownloaded && reportRef.current) {
+      setHasDownloaded(true);
+      generatePdf(true);
+    }
+  }, [result, hasDownloaded, generatePdf]);
+
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -536,7 +613,29 @@ function AtsChecker() {
                 New Analysis
               </button>
             </div>
-            <AtsResultDisplay result={result} />
+            <div ref={reportRef} className="bg-background">
+              <AtsResultDisplay result={result} />
+            </div>
+            
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={() => generatePdf(false)}
+                disabled={isGeneratingPdf}
+                className="flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground transition-all hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isGeneratingPdf ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Generating PDF...
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4" />
+                    Download Complete Report
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         )}
 
