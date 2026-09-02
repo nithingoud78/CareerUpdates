@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { TemplateCard } from "@/components/career-tools/template-card";
 import { PriceDisplay } from "@/components/career-tools/price-display";
+import { resolvePreviewImageUrl } from "@/lib/image-utils";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { ShareButton } from "@/components/career-tools/share-button";
 
@@ -97,7 +98,7 @@ export function TemplateDetailView({
             {product.preview_image_url ? (
               <div className="relative aspect-[4/5] w-full md:aspect-[3/4]">
                 <img
-                  src={product.preview_image_url}
+                  src={resolvePreviewImageUrl(product.preview_image_url) || ""}
                   alt={`${product.title} preview`}
                   className="absolute inset-0 h-full w-full object-cover"
                 />

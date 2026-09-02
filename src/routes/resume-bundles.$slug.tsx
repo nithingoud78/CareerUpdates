@@ -40,7 +40,7 @@ const RESOURCE_TYPE_LABELS: Record<string, string> = {
 export const Route = createFileRoute("/resume-bundles/$slug")({
   head: ({ params }) => ({
     meta: [
-      { title: `Resume Bundle — ${params.slug.replace(/-/g, " ")} | Career Updates` },
+      { title: `Resume Pack — ${params.slug.replace(/-/g, " ")} | Career Updates` },
       { name: "description", content: "Get a complete job application bundle with resume, cover letter, and outreach templates. Starting at ₹79." },
       { property: "og:type", content: "product" },
       { name: "robots", content: "index, follow" },

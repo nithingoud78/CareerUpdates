@@ -32,7 +32,7 @@ export function SiteFooter() {
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li><Link to="/ats-checker" className="hover:text-foreground">ATS Checker</Link></li>
             <li><Link to="/resume-templates" className="hover:text-foreground">Resume Templates</Link></li>
-            <li><Link to="/resume-bundles" className="hover:text-foreground">Resume Bundles</Link></li>
+            <li><Link to="/resume-bundles" className="hover:text-foreground">Resume Packs</Link></li>
           </ul>
         </div>
         <div>

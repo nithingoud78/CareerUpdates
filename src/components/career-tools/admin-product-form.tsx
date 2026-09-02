@@ -9,6 +9,7 @@ import { useState, useRef } from "react";
 import { X, Plus, Upload, Loader2 } from "lucide-react";
 import type { CareerProduct, CareerProductType, CareerResourceType } from "@/lib/career-tools.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { resolvePreviewImageUrl } from "@/lib/image-utils";
 import { compressImage } from "@/lib/image-compressor";
 
 export interface ProductFormData {
@@ -456,7 +457,7 @@ export function AdminProductForm({
           {form.preview_image_url && (
             <div>
               <img
-                src={form.preview_image_url.startsWith("http") ? form.preview_image_url : supabase.storage.from("career-tools").getPublicUrl(form.preview_image_url).data.publicUrl}
+                src={resolvePreviewImageUrl(form.preview_image_url) || ""}
                 alt="Preview"
                 className="h-24 w-auto rounded border border-border object-cover"
               />

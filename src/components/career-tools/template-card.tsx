@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { FileText, Star, CheckCircle2 } from "lucide-react";
+import { resolvePreviewImageUrl } from "@/lib/image-utils";
 import { PriceDisplay } from "./price-display";
 
 interface TemplateCardProps {
@@ -38,7 +39,7 @@ export function TemplateCard({ template, compact }: TemplateCardProps) {
       <div className="relative aspect-[3/2] w-full overflow-hidden bg-muted/30">
         {template.preview_image_url ? (
           <img
-            src={template.preview_image_url}
+            src={resolvePreviewImageUrl(template.preview_image_url) || ""}
             alt={`${template.title} preview`}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"

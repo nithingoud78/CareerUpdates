@@ -150,7 +150,7 @@ function ResumeTemplates() {
           >
             <Package className="h-8 w-8 shrink-0 text-brand" />
             <div>
-              <p className="font-semibold">Resume Bundles</p>
+              <p className="font-semibold">Resume Packs</p>
               <p className="text-sm text-muted-foreground">Get resume + cover letter + referral templates together</p>
             </div>
           </Link>

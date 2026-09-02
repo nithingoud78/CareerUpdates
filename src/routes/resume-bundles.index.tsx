@@ -14,9 +14,9 @@ const SITE_URL = "https://careerupdates.co.in";
 export const Route = createFileRoute("/resume-bundles/")({
   head: () => ({
     meta: [
-      { title: "Resume Bundles — Complete Career Toolkits | Career Updates" },
+      { title: "Resume Packs — Complete Career Toolkits | Career Updates" },
       { name: "description", content: "Get complete career toolkits: resume templates, cover letters, referral messages, and cold email templates in one bundle. Starting at ₹79." },
-      { property: "og:title", content: "Resume Bundles — Career Toolkits | Career Updates" },
+      { property: "og:title", content: "Resume Packs — Career Toolkits | Career Updates" },
       { property: "og:description", content: "Complete job application bundles with resume, cover letter, and outreach templates. Starting at ₹79." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${SITE_URL}/resume-bundles` },
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/resume-bundles/")({
           "@type": "BreadcrumbList",
           itemListElement: [
             { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-            { "@type": "ListItem", position: 2, name: "Resume Bundles", item: `${SITE_URL}/resume-bundles` },
+            { "@type": "ListItem", position: 2, name: "Resume Packs", item: `${SITE_URL}/resume-bundles` },
           ],
         }),
       },

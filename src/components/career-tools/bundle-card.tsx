@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Package, Star, FileText, CheckCircle2 } from "lucide-react";
+import { resolvePreviewImageUrl } from "@/lib/image-utils";
 import { PriceDisplay } from "./price-display";
 
 interface BundleCardProps {
@@ -30,7 +31,7 @@ export function BundleCard({ bundle, resourceCount }: BundleCardProps) {
       <div className="relative aspect-[3/2] w-full overflow-hidden bg-gradient-to-br from-brand/10 to-brand/5">
         {bundle.preview_image_url ? (
           <img
-            src={bundle.preview_image_url}
+            src={resolvePreviewImageUrl(bundle.preview_image_url) || ""}
             alt={`${bundle.title} preview`}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"

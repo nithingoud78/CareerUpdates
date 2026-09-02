@@ -153,6 +153,21 @@ function Home() {
           </div>
           <div className="flex snap-x snap-mandatory overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0 gap-4 scrollbar-hide">
             <Link
+              to="/resume-bundles"
+              className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
+                <Package className="h-5 w-5 text-brand" />
+              </span>
+              <div>
+                <p className="font-semibold text-foreground leading-tight">Resume Packs</p>
+                <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
+                  Resume + cover letter + referral message templates in one bundle.
+                </p>
+                <p className="mt-1.5 text-[11px] font-semibold text-brand">From ₹79 →</p>
+              </div>
+            </Link>
+            <Link
               to="/ats-checker"
               className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
             >
@@ -180,21 +195,6 @@ function Home() {
                   ATS-friendly templates for freshers and experienced professionals.
                 </p>
                 <p className="mt-1.5 text-[11px] font-semibold text-brand">From ₹29 →</p>
-              </div>
-            </Link>
-            <Link
-              to="/resume-bundles"
-              className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
-            >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
-                <Package className="h-5 w-5 text-brand" />
-              </span>
-              <div>
-                <p className="font-semibold text-foreground leading-tight">Resume Bundles</p>
-                <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
-                  Resume + cover letter + referral message templates in one bundle.
-                </p>
-                <p className="mt-1.5 text-[11px] font-semibold text-brand">From ₹79 →</p>
               </div>
             </Link>
           </div>

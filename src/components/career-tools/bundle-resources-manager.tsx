@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { X, Plus, GripVertical, Upload, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { resolvePreviewImageUrl } from "@/lib/image-utils";
 import { useServerFn } from "@tanstack/react-start";
 import { upsertCareerProduct } from "@/lib/career-tools.functions";
 import { defaultProductFormData } from "./admin-product-form";
@@ -170,7 +171,7 @@ export function BundleResourcesManager({
                   </div>
                   {p?.preview_image_url ? (
                     <img
-                      src={p.preview_image_url?.startsWith("http") ? p.preview_image_url : supabase.storage.from("career-tools").getPublicUrl(p.preview_image_url).data.publicUrl}
+                      src={resolvePreviewImageUrl(p.preview_image_url) || ""}
                       alt=""
                       className="h-10 w-10 shrink-0 rounded object-cover"
                     />

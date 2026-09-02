@@ -1,6 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { ShieldCheck, Mail, User, Phone, CheckCircle2, Lock } from "lucide-react";
+import { ShieldCheck, Mail, User, Phone, CheckCircle2, Lock, Loader2, AlertCircle, Shield, CreditCard, ChevronRight } from "lucide-react";
+import { resolvePreviewImageUrl } from "@/lib/image-utils";
 import { getPublishedTemplates } from "@/lib/career-tools.functions";
 import { createCheckoutOrder, verifyRazorpayPayment } from "@/lib/payments.functions";
 
@@ -282,7 +283,7 @@ function CheckoutPage() {
           <div className="mt-6 flex items-start gap-4 border-b border-border pb-6">
             {product.preview_image_url ? (
               <img 
-                src={product.preview_image_url} 
+                src={resolvePreviewImageUrl(product.preview_image_url) || ""} 
                 alt={product.title} 
                 className="h-20 w-16 rounded border border-border object-cover shadow-sm"
               />

@@ -399,7 +399,7 @@ function AtsChecker() {
             >
               <FileText className="h-8 w-8 shrink-0 text-brand" />
               <div>
-                <p className="font-semibold">Resume Bundles</p>
+                <p className="font-semibold">Resume Packs</p>
                 <p className="text-sm text-muted-foreground">Resume + cover letter + outreach templates</p>
               </div>
             </Link>

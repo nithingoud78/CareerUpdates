@@ -9,6 +9,7 @@ import {
   updateCareerProductStatus,
   togglePinCareerProduct,
 } from "@/lib/career-tools.functions";
+import { resolvePreviewImageUrl } from "@/lib/image-utils";
 
 export const Route = createFileRoute("/_authenticated/admin/resume-bundles/")({
   component: AdminResumeBundles,
@@ -63,7 +64,7 @@ function AdminResumeBundles() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Resume Bundles</h1>
+          <h1 className="text-2xl font-bold">Resume Packs</h1>
           <p className="text-sm text-muted-foreground">Manage bundle products and their contents.</p>
         </div>
         <Link
@@ -147,7 +148,7 @@ function AdminResumeBundles() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {b.preview_image_url ? (
-                        <img src={b.preview_image_url} alt="" className="h-10 w-12 shrink-0 rounded object-cover" />
+                        <img src={resolvePreviewImageUrl(b.preview_image_url) || ""} alt="" className="h-10 w-12 shrink-0 rounded object-cover" />
                       ) : (
                         <div className="flex h-10 w-12 shrink-0 items-center justify-center rounded bg-muted/50">
                           <Package className="h-4 w-4 text-muted-foreground/50" />

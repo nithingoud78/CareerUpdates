@@ -12,6 +12,7 @@ import {
   updateCareerProductStatus,
   togglePinCareerProduct,
 } from "@/lib/career-tools.functions";
+import { resolvePreviewImageUrl } from "@/lib/image-utils";
 
 export const Route = createFileRoute("/_authenticated/admin/resume-templates/")({
   component: AdminResumeTemplates,
@@ -164,7 +165,7 @@ function AdminResumeTemplates() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {p.preview_image_url ? (
-                        <img src={p.preview_image_url} alt="" className="h-10 w-8 shrink-0 rounded object-cover" />
+                        <img src={resolvePreviewImageUrl(p.preview_image_url) || ""} alt="" className="h-10 w-8 shrink-0 rounded object-cover" />
                       ) : (
                         <div className="flex h-10 w-8 shrink-0 items-center justify-center rounded bg-muted/50">
                           <FileText className="h-4 w-4 text-muted-foreground/50" />
