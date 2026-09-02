@@ -150,6 +150,91 @@ export const createCheckoutOrder = createServerFn({ method: "POST" })
     };
   });
 
+const CreateAtsOrderInput = z.object({
+  customer: z.object({
+    fullName: z.string().min(1, "Name is required"),
+    email: z.string().email("Invalid email address"),
+    phone: z.string().min(10, "Phone number is required"),
+  }),
+});
+
+export const createAtsCheckoutOrder = createServerFn({ method: "POST" })
+  .validator((i: unknown) => CreateAtsOrderInput.parse(i))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
+    // 1. Fetch current price from ATS settings
+    const { data: atsSettings, error: atsError } = await supabaseAdmin
+      .from("ats_settings")
+      .select("current_price")
+      .eq("is_active", true)
+      .limit(1)
+      .maybeSingle();
+
+    if (atsError || !atsSettings) {
+      throw new Error("Could not load ATS pricing settings");
+    }
+
+    if (atsSettings.current_price != null && atsSettings.current_price < 0) {
+      throw new Error("ATS Checker is currently free");
+    }
+
+    const price = atsSettings.current_price ?? 5;
+    const amountPaise = Math.round(price * 100);
+
+    // 2. Create Razorpay order
+    const rzp = getRazorpay();
+    let rzpOrder;
+    try {
+      rzpOrder = await rzp.orders.create({
+        amount: amountPaise,
+        currency: "INR",
+        receipt: `ats_${Date.now().toString().slice(-8)}`,
+        notes: {
+          email: data.customer.email.slice(0, 40),
+          type: "ats_check"
+        },
+      });
+    } catch (err: any) {
+      console.error("[Checkout] Razorpay API Error:", err);
+      throw new Error("Unable to start payment. Please try again.");
+    }
+
+    if (!rzpOrder || !rzpOrder.id) {
+      throw new Error("Unable to start payment. Please try again.");
+    }
+
+    // 3. Create local order record
+    const { data: order, error: orderError } = await supabaseAdmin
+      .from("career_tool_orders")
+      .insert({
+        buyer_email: data.customer.email,
+        buyer_name: data.customer.fullName,
+        buyer_phone: data.customer.phone,
+        amount: amountPaise,
+        currency: "INR",
+        status: "created",
+        razorpay_order_id: rzpOrder.id,
+        order_type: "ats_check"
+      })
+      .select("id")
+      .single();
+
+    if (orderError || !order) {
+      console.error("[Checkout] Failed to create local ATS order record:", orderError);
+      throw new Error("Failed to create local order record.");
+    }
+
+    return {
+      orderId: order.id,
+      rzpOrderId: rzpOrder.id,
+      amount: amountPaise,
+      currency: "INR",
+      keyId: process.env.RAZORPAY_KEY_ID,
+      productName: "ATS Resume Checker",
+    };
+  });
+
 // ─── 2. Verify Payment (Frontend Callback) ──────────────────────────────────
 
 export const verifyRazorpayPayment = createServerFn({ method: "POST" })

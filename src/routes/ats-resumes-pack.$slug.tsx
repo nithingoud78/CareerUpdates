@@ -37,14 +37,15 @@ const RESOURCE_TYPE_LABELS: Record<string, string> = {
   cold_email: "Cold Email Templates",
 };
 
-export const Route = createFileRoute("/resume-pack/$slug")({
+export const Route = createFileRoute("/ats-resumes-pack/$slug")({
   head: ({ params }) => ({
     meta: [
       { title: `ATS Resumes Pack — ${params.slug.replace(/-/g, " ")} | Career Updates` },
-      { name: "description", content: "Get a complete job application pack with resume, cover letter, and outreach templates. Starting at ₹79." },
+      { name: "description", content: "Get a complete job application pack with resume, cover letter, and outreach templates." },
       { property: "og:type", content: "product" },
       { name: "robots", content: "index, follow" },
-      { property: "og:url", content: `${SITE_URL}/resume-pack/${params.slug}` },],
+      { property: "og:url", content: `${SITE_URL}/ats-resumes-pack/${params.slug}` },
+    ],
   }),
   component: BundleDetail,
 });
@@ -86,10 +87,10 @@ function BundleDetail() {
         <div className="flex min-h-[60vh] items-center justify-center px-4">
           <div className="text-center">
             <Package className="mx-auto h-12 w-12 text-muted-foreground/30" />
-            <h1 className="mt-4 text-xl font-bold">Bundle not found</h1>
-            <p className="mt-2 text-sm text-muted-foreground">This bundle may have been removed or is not published.</p>
-            <Link to="/resume-bundles" className="mt-4 inline-block rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground">
-              View All Bundles
+            <h1 className="mt-4 text-xl font-bold">Pack not found</h1>
+            <p className="mt-2 text-sm text-muted-foreground">This pack may have been removed or is not published.</p>
+            <Link to="/ats-resumes-pack" className="mt-4 inline-block rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground">
+              View All Packs
             </Link>
           </div>
         </div>

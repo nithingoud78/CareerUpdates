@@ -11,20 +11,20 @@ import { getPublishedBundles } from "@/lib/career-tools.functions";
 
 const SITE_URL = "https://careerupdates.co.in";
 
-export const Route = createFileRoute("/resume-pack/")({
+export const Route = createFileRoute("/ats-resumes-pack/")({
   head: () => ({
     meta: [
-      { title: "ATS Resumes Pack — Complete Career Toolkits | Career Updates" },
-      { name: "description", content: "Get complete career toolkits: ATS friendly resumes, cover letters, referral messages, and cold email templates in one ATS Resumes Pack. Starting at ₹79." },
+      { title: "ATS Resumes Pack — Complete Job Application Kits | Career Updates" },
+      { name: "description", content: "Get complete career toolkits: ATS friendly resumes, cover letters, referral messages, and cold email templates in one pack." },
       { property: "og:title", content: "ATS Resumes Pack — Career Toolkits | Career Updates" },
-      { property: "og:description", content: "Complete job application packs with resume, cover letter, and outreach templates. Starting at ₹79." },
+      { property: "og:description", content: "Complete job application packs with resume, cover letter, and outreach templates." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: `${SITE_URL}/resume-pack` },
+      { property: "og:url", content: `${SITE_URL}/ats-resumes-pack` },
       { property: "og:image", content: `${SITE_URL}/careerupdates-share-2026.png` },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "index, follow" },
     ],
-    links: [{ rel: "canonical", href: `${SITE_URL}/resume-bundles` }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/ats-resumes-pack` }],
     scripts: [
       {
         type: "application/ld+json",
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/resume-pack/")({
           "@type": "BreadcrumbList",
           itemListElement: [
             { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-            { "@type": "ListItem", position: 2, name: "ATS Resumes Pack", item: `${SITE_URL}/resume-pack` },
+            { "@type": "ListItem", position: 2, name: "ATS Resumes Pack", item: `${SITE_URL}/ats-resumes-pack` },
           ],
         }),
       },
@@ -70,7 +70,7 @@ function ResumeBundles() {
           </p>
           <div className="mt-4 flex flex-wrap justify-center gap-3">
             <Link
-              to="/resume-templates"
+              to="/ats-friendly-resumes"
               className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-accent"
             >
               <FileText className="h-3.5 w-3.5" /> Individual Templates
@@ -88,12 +88,12 @@ function ResumeBundles() {
       <main className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
         <AdSlot placement="homeTop" className="mb-8" />
 
-        {/* What's in a bundle */}
+        {/* What's in a pack */}
         <section className="mb-10 rounded-2xl border border-border bg-surface p-6">
-          <h2 className="mb-4 text-lg font-bold">What's Included in a Bundle?</h2>
+          <h2 className="mb-4 text-lg font-bold">What's Included in a Pack?</h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { label: "ATS Friendly Resumes", desc: "ATS-friendly, recruiter-tested formats", icon: "📄" },
+              { label: "Resume Templates", desc: "ATS-friendly, recruiter-tested formats", icon: "📄" },
               { label: "Cover Letter Templates", desc: "Professional, role-specific cover letter structure", icon: "✉️" },
               { label: "Referral Message Scripts", desc: "LinkedIn and email outreach for employee referrals", icon: "🤝" },
               { label: "Cold Email Templates", desc: "Direct outreach to hiring managers and recruiters", icon: "📬" },
@@ -127,8 +127,9 @@ function ResumeBundles() {
           <div className="flex flex-col items-center gap-4 py-24 text-center">
             <Package className="h-12 w-12 text-muted-foreground/30" />
             <h2 className="text-lg font-semibold">No packs published yet</h2>
-            <p className="text-sm text-muted-foreground">Check back soon — packs are coming.</p>  <Link
-              to="/resume-templates"
+            <p className="text-sm text-muted-foreground">Check back soon — packs are coming.</p>
+            <Link
+              to="/ats-friendly-resumes"
               className="mt-2 rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground"
             >
               Browse Individual Templates
@@ -136,12 +137,12 @@ function ResumeBundles() {
           </div>
         )}
 
-        {/* Bundles grid */}
+        {/* Packs grid */}
         {!isLoading && bundles && bundles.length > 0 && (
           <>
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-xl font-bold text-foreground">
-                <span className="text-brand">{bundles.length}</span> Bundle{bundles.length !== 1 ? "s" : ""}
+                <span className="text-brand">{bundles.length}</span> Pack{bundles.length !== 1 ? "s" : ""}
               </h2>
             </div>
             <div className="grid gap-6 sm:grid-cols-2">
@@ -157,7 +158,7 @@ function ResumeBundles() {
         {/* Cross-links */}
         <div className="mt-12 grid gap-4 sm:grid-cols-2">
           <Link
-            to="/resume-templates"
+            to="/ats-friendly-resumes"
             className="glass flex items-center gap-4 rounded-2xl p-5 transition-all hover:shadow-sm hover:shadow-brand/10"
           >
             <FileText className="h-8 w-8 shrink-0 text-brand" />

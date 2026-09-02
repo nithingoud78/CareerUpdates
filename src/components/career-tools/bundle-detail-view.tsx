@@ -52,8 +52,8 @@ export function BundleDetailView({
 }) {
   const breadcrumbs = [
     { name: "Home", href: "/" },
-    { name: "Resume Packs", href: "/resume-bundles/" },
-    { name: product.title, href: `/resume-bundles/${product.slug}` },
+    { name: "ATS Resumes Pack", href: "/ats-resumes-pack/" },
+    { name: product.title, href: `/ats-resumes-pack/${product.slug}` },
   ];
 
   // Group resources by type for module display
@@ -85,7 +85,7 @@ export function BundleDetailView({
         "@type": "Product",
         name: product.title,
         description: product.short_description ?? "",
-        url: `${SITE_URL}/resume-bundles/${product.slug}`,
+        url: `${SITE_URL}/ats-resumes-pack/${product.slug}`,
         offers: { "@type": "Offer", price: product.current_price.toFixed(2), priceCurrency: "INR", availability: "https://schema.org/InStock" },
       }) }} />
 
@@ -166,7 +166,7 @@ export function BundleDetailView({
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3 text-sm font-semibold text-brand-foreground transition-transform hover:scale-[1.02]"
               >
                 <Download className="h-4 w-4" />
-                Get Bundle — ₹{product.current_price}
+                Get Pack — ₹{product.current_price}
               </Link>
             ) : (
               <div className="rounded-xl border border-border bg-muted/30 p-4 text-center">
@@ -180,7 +180,7 @@ export function BundleDetailView({
             >
               <ShieldCheck className="h-4 w-4" /> Check My Resume Against a Job
             </Link>
-            <ShareButton url={`${SITE_URL}/resume-bundles/${product.slug}`} />
+            <ShareButton url={`${SITE_URL}/ats-resumes-pack/${product.slug}`} />
           </div>
 
           {/* Suitable for */}
@@ -277,7 +277,7 @@ export function BundleDetailView({
         <section className="mt-12 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold">More Bundles</h2>
-            <Link to="/resume-bundles" className="text-sm font-medium text-brand hover:underline">View all →</Link>
+            <Link to="/ats-resumes-pack" className="text-sm font-medium text-brand hover:underline">View all →</Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {relatedBundles.map((b: any) => (

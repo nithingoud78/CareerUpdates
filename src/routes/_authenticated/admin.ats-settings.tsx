@@ -22,6 +22,7 @@ import {
 import {
   getAtsSettings,
   saveAtsSettings,
+  saveAtsPricingSettings,
   checkAtsHealth,
   ATS_PROVIDERS,
   ATS_DEFAULT_URLS,
@@ -35,6 +36,7 @@ export const Route = createFileRoute("/_authenticated/admin/ats-settings")({
 function AtsSettingsPage() {
   const get = useServerFn(getAtsSettings);
   const save = useServerFn(saveAtsSettings);
+  const savePricing = useServerFn(saveAtsPricingSettings);
   const check = useServerFn(checkAtsHealth);
   const qc = useQueryClient();
 
@@ -57,6 +59,11 @@ function AtsSettingsPage() {
     api_key: "",
   });
 
+  const [pricingForm, setPricingForm] = useState({
+    price: 5,
+    is_free: false,
+  });
+
   useEffect(() => {
     if (data) {
       setForm({
@@ -64,6 +71,10 @@ function AtsSettingsPage() {
         model: data.model,
         base_url: data.base_url ?? ATS_DEFAULT_URLS[data.provider] ?? "",
         api_key: "",
+      });
+      setPricingForm({
+        price: data.actual_price ?? 5,
+        is_free: !!data.is_free,
       });
     }
   }, [data]);
@@ -81,6 +92,19 @@ function AtsSettingsPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["ats-settings"] });
       qc.invalidateQueries({ queryKey: ["ats-health"] });
+    },
+  });
+
+  const savePricingMut = useMutation({
+    mutationFn: () =>
+      savePricing({
+        data: {
+          price: pricingForm.price,
+          is_free: pricingForm.is_free,
+        },
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["ats-settings"] });
     },
   });
 
@@ -136,26 +160,29 @@ function AtsSettingsPage() {
           <div className="flex items-center gap-2">
             {isCheckingHealth ? (
               <span className="text-sm text-muted-foreground">Checking…</span>
-            ) : health?.status === "Connected" ? (
-              <div className="flex items-center gap-1.5 text-sm font-medium text-emerald-600">
-                <CheckCircle2 className="h-4 w-4" /> Connected
-              </div>
-            ) : health?.status === "Rate Limited" ? (
-              <div className="flex items-center gap-1.5 text-sm font-medium text-amber-600">
-                <AlertTriangle className="h-4 w-4" /> Rate Limited
-              </div>
-            ) : health?.status === "Invalid Key" ? (
-              <div className="flex items-center gap-1.5 text-sm font-medium text-amber-600">
-                <AlertTriangle className="h-4 w-4" /> Invalid Key
-              </div>
-            ) : health?.status === "Not Configured" ? (
+            ) : (health?.status || data?.connection_status) === "Not Configured" ? (
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                 <Info className="h-4 w-4" /> Not Configured
               </div>
-            ) : (
-              <div className="flex items-center gap-1.5 text-sm font-medium text-red-600">
-                <XCircle className="h-4 w-4" /> {health?.status ?? "Unknown"}
+            ) : (health?.status || data?.connection_status) ? (
+              <div className="flex items-start gap-1.5 text-sm">
+                {(health?.status || data?.connection_status)?.startsWith("Connected to") ? (
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                ) : (
+                  <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
+                )}
+                <div 
+                  className={`whitespace-pre-line ${
+                    (health?.status || data?.connection_status)?.startsWith("Connected to") 
+                      ? "text-emerald-700 dark:text-emerald-400" 
+                      : "text-red-700 dark:text-red-400"
+                  }`}
+                >
+                  {health?.status || data?.connection_status}
+                </div>
               </div>
+            ) : (
+              <span className="text-sm text-muted-foreground">Unknown</span>
             )}
             <button
               id="test-ats-connection-btn"
@@ -168,13 +195,13 @@ function AtsSettingsPage() {
           </div>
         </div>
 
-        {health?.error && (
+        {(health?.error || data?.last_error) && (
           <p className={`rounded-lg p-2 text-xs ${
-            health.status === 'Rate Limited' || health.status === 'Invalid Key' 
+            (health?.status || data?.connection_status) === 'Rate Limited' || (health?.status || data?.connection_status) === 'Invalid Key' 
               ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/30' 
               : 'bg-red-50 text-red-600 dark:bg-red-950/30'
           }`}>
-            {health.error}
+            {health?.error || data?.last_error}
           </p>
         )}
 
@@ -263,14 +290,6 @@ function AtsSettingsPage() {
           >
             {saveMut.isPending ? "Saving…" : "Save Settings"}
           </button>
-          <button
-            id="test-ats-connection-btn-2"
-            onClick={() => refetchHealth()}
-            disabled={isCheckingHealth}
-            className="rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-accent disabled:opacity-50"
-          >
-            {isCheckingHealth ? "Testing…" : "Test Connection"}
-          </button>
         </div>
 
         {saveMut.isSuccess && (
@@ -281,6 +300,55 @@ function AtsSettingsPage() {
             {(saveMut.error as Error)?.message ?? "Failed to save settings."}
           </p>
         )}
+      </section>
+
+      <section className="glass space-y-5 rounded-2xl p-5">
+        <h2 className="font-semibold">ATS Checker Pricing</h2>
+        <div className="flex flex-col gap-4">
+          <div>
+            <label htmlFor="ats-price" className="text-xs font-medium text-muted-foreground">
+              ATS Checker Price (₹)
+            </label>
+            <input
+              id="ats-price"
+              type="number"
+              min="1"
+              value={pricingForm.price}
+              onChange={(e) => setPricingForm({ ...pricingForm, price: parseInt(e.target.value) || 0 })}
+              className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              disabled={pricingForm.is_free}
+            />
+          </div>
+
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={pricingForm.is_free}
+              onChange={(e) => setPricingForm({ ...pricingForm, is_free: e.target.checked })}
+              className="rounded border-input text-brand focus:ring-brand"
+            />
+            <span className="text-sm font-medium">Make ATS Checker Free</span>
+          </label>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => savePricingMut.mutate()}
+              disabled={savePricingMut.isPending}
+              className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-brand-foreground disabled:opacity-60"
+            >
+              {savePricingMut.isPending ? "Saving…" : "Save Pricing"}
+            </button>
+          </div>
+
+          {savePricingMut.isSuccess && (
+            <p className="text-xs text-brand">Pricing settings saved.</p>
+          )}
+          {savePricingMut.isError && (
+            <p className="text-xs text-red-600">
+              {(savePricingMut.error as Error)?.message ?? "Failed to save pricing settings."}
+            </p>
+          )}
+        </div>
       </section>
 
       {/* Info box */}

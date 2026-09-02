@@ -35,7 +35,7 @@ export const ATS_DEFAULT_MODELS: Record<string, string> = {
   openai: "gpt-4o-mini",
   openai_compatible: "gpt-4o-mini",
   anthropic: "claude-3-haiku-20240307",
-  openrouter: "google/gemini-flash-1.5",
+  openrouter: "google/gemini-1.5-flash",
   custom: "",
 };
 
@@ -62,7 +62,7 @@ export const getAtsSettings = createServerFn({ method: "GET" })
     await assertAdmin(context);
     const { data } = await context.supabase
       .from("ats_settings")
-      .select("id, provider, model, base_url, api_key, is_active, created_at, updated_at")
+      .select("id, provider, model, base_url, api_key, is_active, created_at, updated_at, original_price, current_price, connection_status, last_tested_at, last_success_at, last_error")
       .eq("is_active", true)
       .order("updated_at", { ascending: false })
       .limit(1)
@@ -73,6 +73,8 @@ export const getAtsSettings = createServerFn({ method: "GET" })
       ...data,
       api_key: data.api_key ? "••••••••" : null,
       _has_api_key: !!data.api_key,
+      is_free: data.current_price != null && data.current_price < 0,
+      actual_price: data.current_price != null ? Math.abs(data.current_price) : 5,
     };
   });
 
@@ -86,7 +88,7 @@ export const saveAtsSettings = createServerFn({ method: "POST" })
     // Fetch previous active record FIRST
     const { data: previous } = await context.supabase
       .from("ats_settings")
-      .select("api_key")
+      .select("api_key, current_price, original_price, connection_status, last_tested_at, last_success_at, last_error")
       .eq("is_active", true)
       .limit(1)
       .maybeSingle();
@@ -111,11 +113,42 @@ export const saveAtsSettings = createServerFn({ method: "POST" })
         base_url: data.base_url || null,
         api_key: apiKey,
         is_active: true,
+        current_price: previous?.current_price ?? 5,
+        original_price: previous?.original_price ?? 299,
+        connection_status: previous?.connection_status ?? null,
+        last_tested_at: previous?.last_tested_at ?? null,
+        last_success_at: previous?.last_success_at ?? null,
+        last_error: previous?.last_error ?? null,
       })
       .select()
       .single();
     if (error) throw new Error(error.message);
     return { ok: true, id: row.id };
+  });
+
+// ─── Admin: save ATS pricing ──────────────────────────────────────────────────
+
+const AtsPricingInput = z.object({
+  price: z.number().min(1),
+  is_free: z.boolean(),
+});
+
+export const saveAtsPricingSettings = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((i: unknown) => AtsPricingInput.parse(i))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    
+    // Convert is_free to a negative current_price
+    const finalPrice = data.is_free ? -Math.abs(data.price) : Math.abs(data.price);
+
+    const { error } = await context.supabase
+      .from("ats_settings")
+      .update({ current_price: finalPrice })
+      .eq("is_active", true);
+
+    if (error) throw new Error(error.message);
+    return { ok: true };
   });
 
 // ─── Admin: test ATS connection ───────────────────────────────────────────────
@@ -127,7 +160,7 @@ export const checkAtsHealth = createServerFn({ method: "GET" })
 
     const { data: settings } = await context.supabase
       .from("ats_settings")
-      .select("provider, model, base_url, api_key")
+      .select("id, provider, model, base_url, api_key")
       .eq("is_active", true)
       .order("updated_at", { ascending: false })
       .limit(1)
@@ -145,6 +178,10 @@ export const checkAtsHealth = createServerFn({ method: "GET" })
     try {
       const isAnthropic = settings.provider === "anthropic";
 
+      let status = "Unknown";
+      let errorMsg = null;
+      let respOk = false;
+
       if (isAnthropic) {
         // Anthropic uses a different API format
         const resp = await fetch(`${baseUrl}/messages`, {
@@ -161,10 +198,16 @@ export const checkAtsHealth = createServerFn({ method: "GET" })
           }),
           signal: AbortSignal.timeout(10000),
         });
-        if (resp.status === 401) return { status: "Invalid Key", error: "Invalid API key." };
-        if (resp.status === 429) return { status: "Rate Limited", error: "Rate limited by Anthropic. Try again later." };
-        if (!resp.ok) return { status: "Unavailable", error: `Provider responded with ${resp.status}` };
-        return { status: "Connected", provider: settings.provider, model: settings.model };
+        
+        if (resp.status === 401) {
+          status = "Invalid Key"; errorMsg = "Invalid API key.";
+        } else if (resp.status === 429) {
+          status = "Rate Limited"; errorMsg = "Rate limited by Anthropic. Try again later.";
+        } else if (!resp.ok) {
+          status = "Unavailable"; errorMsg = `Provider responded with ${resp.status} - ${await resp.text()}`;
+        } else {
+          status = "Connected"; respOk = true;
+        }
       } else {
         // OpenAI-compatible
         const isOpenRouter = settings.provider === "openrouter";
@@ -181,26 +224,72 @@ export const checkAtsHealth = createServerFn({ method: "GET" })
           body: JSON.stringify({
             model: settings.model,
             messages: [{ role: "user", content: "Hello" }],
-            max_tokens: 10,
           }),
           signal: AbortSignal.timeout(10000),
         });
-        if (resp.status === 401 || resp.status === 403)
-          return { status: "Invalid Key", error: "Invalid API key." };
-        if (resp.status === 429) {
-          return { 
-            status: "Rate Limited", 
-            error: isOpenRouter 
-              ? "OpenRouter is configured, but this model is currently rate-limited. Try another model." 
-              : "Rate limited by provider. Try again later." 
-          };
+
+        if (resp.status === 401 || resp.status === 403) {
+          status = "Invalid Key"; errorMsg = "Invalid API key.";
+        } else if (resp.status === 429) {
+          status = "Rate Limited"; 
+          errorMsg = isOpenRouter ? "OpenRouter is configured, but this model is currently rate-limited. Try another model." : "Rate limited by provider. Try again later.";
+        } else if (!resp.ok) {
+          status = "Unavailable"; errorMsg = `Provider responded with ${resp.status} - ${await resp.text()}`;
+        } else {
+          status = "Connected"; respOk = true;
         }
-        if (!resp.ok) return { status: "Unavailable", error: `Provider responded with ${resp.status}` };
-        return { status: "Connected", provider: settings.provider, model: settings.model };
       }
+
+      const timestampStr = new Intl.DateTimeFormat("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      }).format(new Date());
+
+      const formattedStatus = respOk 
+        ? `Connected to ${settings.provider} / ${settings.model}\nLast test connection: ${timestampStr}`
+        : `Connection disconnected to ${settings.provider} / ${settings.model}\nLast test connection: ${timestampStr}`;
+
+      // Persist the real connection status
+      await context.supabase
+        .from("ats_settings")
+        .update({
+          connection_status: formattedStatus,
+          last_error: errorMsg,
+          last_tested_at: new Date().toISOString(),
+          ...(respOk && { last_success_at: new Date().toISOString() }),
+        })
+        .eq("id", settings.id);
+
+      if (!respOk) {
+        return { status: formattedStatus, error: errorMsg };
+      }
+      return { status: "Connected", provider: settings.provider, model: settings.model };
     } catch (err: any) {
-      if (err.name === "TimeoutError") return { status: "Unavailable", error: "Connection timed out." };
-      return { status: "Unavailable", error: "Could not reach provider." };
+      const errorMsg = err.name === "TimeoutError" ? "Connection timed out." : "Could not reach provider.";
+      const timestampStr = new Intl.DateTimeFormat("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      }).format(new Date());
+
+      const formattedStatus = `Connection disconnected to ${settings.provider} / ${settings.model}\nLast test connection: ${timestampStr}`;
+
+      await context.supabase
+        .from("ats_settings")
+        .update({
+          connection_status: formattedStatus,
+          last_error: errorMsg,
+          last_tested_at: new Date().toISOString(),
+        })
+        .eq("id", settings.id);
+      return { status: formattedStatus, error: errorMsg };
     }
   });
 

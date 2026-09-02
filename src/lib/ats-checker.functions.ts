@@ -26,6 +26,23 @@ export interface AtsScoreBreakdown {
   jd_alignment: number;
 }
 
+export const getPublicAtsPricing = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data } = await supabaseAdmin
+      .from("ats_settings")
+      .select("current_price")
+      .eq("is_active", true)
+      .limit(1)
+      .maybeSingle();
+
+    const currentPrice = data?.current_price ?? 5;
+    return {
+      price: Math.abs(currentPrice),
+      is_free: currentPrice < 0,
+    };
+  });
+
 export interface AtsResult {
   overall_score: number;          // 0-100
   breakdown: AtsScoreBreakdown;

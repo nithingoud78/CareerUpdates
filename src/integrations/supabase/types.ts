@@ -139,6 +139,12 @@ export type Database = {
           model: string
           provider: string
           updated_at: string | null
+          current_price: number | null
+          original_price: number | null
+          connection_status: string | null
+          last_tested_at: string | null
+          last_success_at: string | null
+          last_error: string | null
         }
         Insert: {
           api_key?: string | null
@@ -149,6 +155,12 @@ export type Database = {
           model?: string
           provider?: string
           updated_at?: string | null
+          current_price?: number | null
+          original_price?: number | null
+          connection_status?: string | null
+          last_tested_at?: string | null
+          last_success_at?: string | null
+          last_error?: string | null
         }
         Update: {
           api_key?: string | null
@@ -159,6 +171,12 @@ export type Database = {
           model?: string
           provider?: string
           updated_at?: string | null
+          current_price?: number | null
+          original_price?: number | null
+          connection_status?: string | null
+          last_tested_at?: string | null
+          last_success_at?: string | null
+          last_error?: string | null
         }
         Relationships: []
       }
@@ -381,6 +399,7 @@ export type Database = {
           paid_at: string | null
           failed_at: string | null
           updated_at: string
+          order_type?: string | null
         }
         Insert: {
           id?: string
@@ -399,6 +418,7 @@ export type Database = {
           paid_at?: string | null
           failed_at?: string | null
           updated_at?: string
+          order_type?: string | null
         }
         Update: {
           id?: string
@@ -417,6 +437,7 @@ export type Database = {
           paid_at?: string | null
           failed_at?: string | null
           updated_at?: string
+          order_type?: string | null
         }
         Relationships: [
           {

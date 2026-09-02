@@ -32,7 +32,7 @@ const RESOURCE_TYPE_LABELS: Record<string, string> = {
 export function TemplateCard({ template, compact }: TemplateCardProps) {
   return (
     <Link
-      to="/resume-templates/$slug"
+      to="/ats-friendly-resumes/$slug"
       params={{ slug: template.slug }}
       className="group glass flex flex-col overflow-hidden rounded-2xl transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5"
     >

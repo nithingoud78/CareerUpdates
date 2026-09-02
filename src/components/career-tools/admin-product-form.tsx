@@ -5,7 +5,7 @@
  * - Bundle products (bundles also use BundleResourcesManager)
  */
 import { useState, useRef } from "react";
-import { Loader2, Plus, X, ArrowLeft, Save, Trash2, Link as LinkIcon, Image as ImageIcon } from "lucide-react";
+import { Loader2, Plus, X, ArrowLeft, Save, Trash2, Link as LinkIcon, Image as ImageIcon, Upload } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { CareerProduct, CareerProductType, CareerResourceType } from "@/lib/career-tools.functions";
 import { supabase } from "@/integrations/supabase/client";

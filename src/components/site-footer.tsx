@@ -31,8 +31,8 @@ export function SiteFooter() {
           <h4 className="text-sm font-semibold">Resume Tools</h4>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li><Link to="/ats-checker" className="hover:text-foreground">ATS Checker</Link></li>
-            <li><Link to="/resume-templates" className="hover:text-foreground">Resume Templates</Link></li>
-            <li><Link to="/resume-bundles" className="hover:text-foreground">Resume Packs</Link></li>
+            <li><Link to="/ats-friendly-resumes" className="hover:text-foreground">ATS Friendly Resumes</Link></li>
+            <li><Link to="/ats-resumes-pack" className="hover:text-foreground">ATS Resumes Pack</Link></li>
           </ul>
         </div>
         <div>

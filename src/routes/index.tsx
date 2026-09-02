@@ -15,7 +15,7 @@ const TRENDING = ["Infosys", "TCS", "Wipro", "Google", "Accenture", "Amazon"];
 async function fetchHomeJobs() {
   try {
     console.error("[DEBUG] Starting fetchHomeJobs");
-    const [latest, govt, intern] = await Promise.all([
+    const [latest, govt, intern, bundlePrice, templatePrice, atsSettings] = await Promise.all([
       supabase
         .from("jobs")
         .select("id, slug, title, company, company_logo, location, experience, salary, last_date, category")
@@ -36,12 +36,37 @@ async function fetchHomeJobs() {
         .eq("category", "Internship")
         .order("posted_date", { ascending: false })
         .limit(4),
+      supabase
+        .from("career_tool_products")
+        .select("current_price")
+        .eq("status", "published")
+        .eq("product_type", "bundle")
+        .not("current_price", "is", null)
+        .order("current_price", { ascending: true })
+        .limit(1),
+      supabase
+        .from("career_tool_products")
+        .select("current_price")
+        .eq("status", "published")
+        .eq("product_type", "single_template")
+        .not("current_price", "is", null)
+        .order("current_price", { ascending: true })
+        .limit(1),
+      supabase
+        .from("ats_settings")
+        .select("current_price")
+        .eq("is_active", true)
+        .limit(1)
+        .maybeSingle(),
     ]);
     console.error("[DEBUG] fetchHomeJobs complete", { latestLen: latest.data?.length });
     return {
       latest: latest.data ?? [],
       govt: govt.data ?? [],
       intern: intern.data ?? [],
+      minBundlePrice: bundlePrice.data?.[0]?.current_price ?? null,
+      minTemplatePrice: templatePrice.data?.[0]?.current_price ?? null,
+      atsPrice: atsSettings.data?.current_price ?? null,
     };
   } catch (err: any) {
     console.error("[DEBUG] SSR CRASH in fetchHomeJobs:", err.message);
@@ -147,24 +172,26 @@ function Home() {
             <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
               <span className="text-brand">Resume</span> Tools
             </h2>
-            <Link to="/resume-templates" className="text-sm font-medium text-brand hover:underline">
+            <Link to="/ats-resumes-pack" className="text-sm font-medium text-brand hover:underline">
               View all →
             </Link>
           </div>
           <div className="flex snap-x snap-mandatory overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0 gap-4 scrollbar-hide">
             <Link
-              to="/resume-bundles"
+              to="/ats-resumes-pack"
               className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
             >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
                 <Package className="h-5 w-5 text-brand" />
               </span>
               <div>
-                <p className="font-semibold text-foreground leading-tight">Resume Packs</p>
+                <p className="font-semibold text-foreground leading-tight">ATS Resumes Pack</p>
                 <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
-                  Resume + cover letter + referral message templates in one bundle.
+                  Resume + cover letter + referral message templates in one pack.
                 </p>
-                <p className="mt-1.5 text-[11px] font-semibold text-brand">From ₹79 →</p>
+                {data.minBundlePrice != null && (
+                  <p className="mt-1.5 text-[11px] font-semibold text-brand">From ₹{data.minBundlePrice} →</p>
+                )}
               </div>
             </Link>
             <Link
@@ -179,22 +206,31 @@ function Home() {
                 <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
                   Check how well your resume matches a job description.
                 </p>
-                <p className="mt-1.5 text-[11px] font-semibold text-brand">Free →</p>
+                {data.atsPrice != null && data.atsPrice > 0 ? (
+                  <p className="mt-1.5 text-[11px] font-semibold text-brand">
+                    <span className="text-muted-foreground line-through mr-1">₹299</span>
+                    ₹{data.atsPrice} →
+                  </p>
+                ) : (
+                  <p className="mt-1.5 text-[11px] font-semibold text-brand">Free →</p>
+                )}
               </div>
             </Link>
             <Link
-              to="/resume-templates"
+              to="/ats-friendly-resumes"
               className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
             >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
                 <FileText className="h-5 w-5 text-brand" />
               </span>
               <div>
-                <p className="font-semibold text-foreground leading-tight">Resume Templates</p>
+                <p className="font-semibold text-foreground leading-tight">ATS Friendly Resumes (Individual)</p>
                 <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
                   ATS-friendly templates for freshers and experienced professionals.
                 </p>
-                <p className="mt-1.5 text-[11px] font-semibold text-brand">From ₹29 →</p>
+                {data.minTemplatePrice != null && (
+                  <p className="mt-1.5 text-[11px] font-semibold text-brand">From ₹{data.minTemplatePrice} →</p>
+                )}
               </div>
             </Link>
           </div>

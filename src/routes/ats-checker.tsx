@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useRef, useState } from "react";
 import {
@@ -16,7 +16,8 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { StickySocial } from "@/components/sticky-social";
 import { AtsResultDisplay } from "@/components/career-tools/ats-result-display";
-import { analyzeResume, extractResumeText } from "@/lib/ats-checker.functions";
+import { analyzeResume, extractResumeText, getPublicAtsPricing } from "@/lib/ats-checker.functions";
+import { createAtsCheckoutOrder, verifyRazorpayPayment } from "@/lib/payments.functions";
 import type { AtsResult } from "@/lib/ats-checker.functions";
 
 const SITE_URL = "https://careerupdates.co.in";
@@ -53,8 +54,32 @@ export const Route = createFileRoute("/ats-checker")({
       },
     ],
   }),
+  loader: async ({ context }) => {
+    try {
+      await context.queryClient.ensureQueryData({
+        queryKey: ["ats-pricing"],
+        queryFn: getPublicAtsPricing,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  },
   component: AtsChecker,
 });
+
+function loadRazorpayScript() {
+  return new Promise((resolve) => {
+    if ((window as any).Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
 
 // Progress steps for loading state
 const PROGRESS_STEPS = [
@@ -88,14 +113,27 @@ function useProgressSimulator(active: boolean) {
 }
 
 function AtsChecker() {
+  const { data: pricing } = useQuery({
+    queryKey: ["ats-pricing"],
+    queryFn: getPublicAtsPricing,
+    initialData: { price: 5, is_free: true }, // safe fallback
+  });
+
   const analyze = useServerFn(analyzeResume);
   const extract = useServerFn(extractResumeText);
+  const createOrder = useServerFn(createAtsCheckoutOrder);
+  const verifyPayment = useServerFn(verifyRazorpayPayment);
+
   const [resumeText, setResumeText] = useState("");
   const [jobDesc, setJobDesc] = useState("");
   const [fileName, setFileName] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [result, setResult] = useState<AtsResult | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
+  
+  const [customer, setCustomer] = useState({ fullName: "", email: "", phone: "" });
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
   const progress = useProgressSimulator(false);
@@ -178,7 +216,80 @@ function AtsChecker() {
   const canSubmit =
     resumeText.trim().length >= 50 &&
     jobDesc.trim().length >= 30 &&
+    customer.fullName.trim().length > 0 &&
+    customer.email.includes("@") &&
+    customer.phone.trim().length >= 10 &&
     !mutation.isPending;
+
+  async function handleCheckoutAndAnalyze() {
+    setCheckoutError(null);
+    if (!canSubmit) return;
+
+    if (pricing.is_free) {
+      mutation.mutate();
+      return;
+    }
+
+    try {
+      progress.start();
+      const res = await loadRazorpayScript();
+      if (!res) {
+        throw new Error("Failed to load Razorpay SDK. Please check your internet connection.");
+      }
+
+      const orderData = await createOrder({
+        data: { customer },
+      });
+
+      const options = {
+        key: orderData.keyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "Career Updates",
+        description: orderData.productName,
+        order_id: orderData.rzpOrderId,
+        handler: async function (response: any) {
+          try {
+            await verifyPayment({
+              data: {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              },
+            });
+            // Payment successful, run analysis
+            mutation.mutate();
+          } catch (err: any) {
+            setCheckoutError(err.message || "Payment verification failed.");
+            progress.stop();
+          }
+        },
+        prefill: {
+          name: customer.fullName,
+          email: customer.email,
+          contact: customer.phone,
+        },
+        theme: {
+          color: "#4f46e5",
+        },
+        modal: {
+          ondismiss: function () {
+            progress.stop();
+          },
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on("payment.failed", function (response: any) {
+        setCheckoutError(response.error.description || "Payment failed.");
+        progress.stop();
+      });
+      rzp.open();
+    } catch (err: any) {
+      setCheckoutError(err.message || "Something went wrong.");
+      progress.stop();
+    }
+  }
 
   const charCount = (text: string) =>
     text.length > MAX_TEXT_LENGTH
@@ -301,34 +412,91 @@ function AtsChecker() {
             </p>
           </section>
 
+          {/* Customer Details */}
+          {resumeText.trim().length >= 50 && jobDesc.trim().length >= 30 && (
+            <section className="glass rounded-2xl p-5 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <h2 className="font-semibold text-foreground">Your Details</h2>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div>
+                  <label htmlFor="customer-name" className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                    Full Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="customer-name"
+                    type="text"
+                    value={customer.fullName}
+                    onChange={(e) => setCustomer({ ...customer, fullName: e.target.value })}
+                    className="w-full rounded-xl border border-input bg-background p-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30"
+                    placeholder="John Doe"
+                    disabled={mutation.isPending}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="customer-email" className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                    Email <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="customer-email"
+                    type="email"
+                    value={customer.email}
+                    onChange={(e) => setCustomer({ ...customer, email: e.target.value })}
+                    className="w-full rounded-xl border border-input bg-background p-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30"
+                    placeholder="john@example.com"
+                    disabled={mutation.isPending}
+                  />
+                </div>
+                <div className="sm:col-span-2 lg:col-span-1">
+                  <label htmlFor="customer-phone" className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                    Mobile Number <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="customer-phone"
+                    type="tel"
+                    value={customer.phone}
+                    onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
+                    className="w-full rounded-xl border border-input bg-background p-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30"
+                    placeholder="9876543210"
+                    disabled={mutation.isPending}
+                  />
+                </div>
+              </div>
+            </section>
+          )}
+
           {/* Submit */}
           <div className="flex flex-col items-center gap-3">
-            {mutation.error && (
+            {(mutation.error || checkoutError) && (
               <p
                 role="alert"
                 className="flex w-full items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950/30 dark:text-red-400"
               >
                 <AlertCircle className="h-4 w-4 shrink-0" />
-                {(mutation.error as Error).message}
+                {(mutation.error as Error)?.message || checkoutError}
               </p>
             )}
 
             <button
               id="check-resume-btn"
-              onClick={() => mutation.mutate()}
+              onClick={handleCheckoutAndAnalyze}
               disabled={!canSubmit}
               aria-busy={mutation.isPending}
               className="flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-sm font-semibold text-brand-foreground transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-64"
             >
-              {mutation.isPending ? (
+              {mutation.isPending || (progress.step > 0 && !result) ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Analysing…
+                  Processing…
                 </>
               ) : (
                 <>
                   <CheckCircle2 className="h-4 w-4" />
-                  Check My Resume
+                  {pricing.is_free || !(resumeText.trim().length >= 50 && jobDesc.trim().length >= 30) ? (
+                    "Check My Resume"
+                  ) : (
+                    <span>
+                      Pay <span className="line-through mx-1 text-brand-foreground/70">₹299</span> ₹{pricing.price} & Check My Resume
+                    </span>
+                  )}
                 </>
               )}
             </button>
@@ -336,13 +504,14 @@ function AtsChecker() {
             {!canSubmit && !mutation.isPending && (
               <p className="text-xs text-muted-foreground">
                 {resumeText.trim().length < 50 && "Resume is too short. "}
-                {jobDesc.trim().length < 30 && "Job description is too short."}
+                {jobDesc.trim().length < 30 && "Job description is too short. "}
+                {(resumeText.trim().length >= 50 && jobDesc.trim().length >= 30) && "Please fill all required details."}
               </p>
             )}
           </div>
 
           {/* Loading progress */}
-          {mutation.isPending && (
+          {(mutation.isPending || (progress.step > 0 && !result)) && (
             <div aria-live="polite" className="glass rounded-2xl p-6 text-center space-y-4">
               <Loader2 className="mx-auto h-8 w-8 animate-spin text-brand" />
               <p className="font-medium text-foreground">
@@ -384,22 +553,22 @@ function AtsChecker() {
         {!mutation.isPending && (
           <div className="mt-12 grid gap-4 sm:grid-cols-2">
             <Link
-              to="/resume-templates"
+              to="/ats-friendly-resumes"
               className="glass flex items-center gap-4 rounded-2xl p-5 transition-all hover:shadow-sm hover:shadow-brand/10"
             >
               <FileText className="h-8 w-8 shrink-0 text-brand" />
               <div>
-                <p className="font-semibold">Resume Templates</p>
-                <p className="text-sm text-muted-foreground">ATS-friendly templates starting at ₹29</p>
+                <p className="font-semibold">ATS Friendly Resumes</p>
+                <p className="text-sm text-muted-foreground">ATS-friendly resumes for freshers & professionals</p>
               </div>
             </Link>
             <Link
-              to="/resume-bundles"
+              to="/ats-resumes-pack"
               className="glass flex items-center gap-4 rounded-2xl p-5 transition-all hover:shadow-sm hover:shadow-brand/10"
             >
               <FileText className="h-8 w-8 shrink-0 text-brand" />
               <div>
-                <p className="font-semibold">Resume Packs</p>
+                <p className="font-semibold">ATS Resumes Pack</p>
                 <p className="text-sm text-muted-foreground">Resume + cover letter + outreach templates</p>
               </div>
             </Link>

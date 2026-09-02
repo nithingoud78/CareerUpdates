@@ -26,12 +26,12 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResumeTemplatesIndexRouteImport } from './routes/resume-templates.index'
-import { Route as ResumePackIndexRouteImport } from './routes/resume-pack.index'
 import { Route as ResumeBundlesIndexRouteImport } from './routes/resume-bundles.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as AtsResumesPackIndexRouteImport } from './routes/ats-resumes-pack.index'
+import { Route as AtsFriendlyResumesIndexRouteImport } from './routes/ats-friendly-resumes.index'
 import { Route as SearchAdminRouteImport } from './routes/search_.admin'
 import { Route as ResumeTemplatesSlugRouteImport } from './routes/resume-templates.$slug'
-import { Route as ResumePackSlugRouteImport } from './routes/resume-pack.$slug'
 import { Route as ResumeBundlesSlugRouteImport } from './routes/resume-bundles.$slug'
 import { Route as LocationSlugRouteImport } from './routes/location.$slug'
 import { Route as JobsSlugRouteImport } from './routes/jobs.$slug'
@@ -39,6 +39,8 @@ import { Route as CompanySlugRouteImport } from './routes/company.$slug'
 import { Route as CheckoutSlugRouteImport } from './routes/checkout.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as AtsResumesPackSlugRouteImport } from './routes/ats-resumes-pack.$slug'
+import { Route as AtsFriendlyResumesSlugRouteImport } from './routes/ats-friendly-resumes.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as PaymentSuccessOrderIdRouteImport } from './routes/payment.success.$orderId'
@@ -150,11 +152,6 @@ const ResumeTemplatesIndexRoute = ResumeTemplatesIndexRouteImport.update({
   path: '/resume-templates/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ResumePackIndexRoute = ResumePackIndexRouteImport.update({
-  id: '/resume-pack/',
-  path: '/resume-pack/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ResumeBundlesIndexRoute = ResumeBundlesIndexRouteImport.update({
   id: '/resume-bundles/',
   path: '/resume-bundles/',
@@ -165,6 +162,16 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   path: '/blog/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AtsResumesPackIndexRoute = AtsResumesPackIndexRouteImport.update({
+  id: '/ats-resumes-pack/',
+  path: '/ats-resumes-pack/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AtsFriendlyResumesIndexRoute = AtsFriendlyResumesIndexRouteImport.update({
+  id: '/ats-friendly-resumes/',
+  path: '/ats-friendly-resumes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchAdminRoute = SearchAdminRouteImport.update({
   id: '/search_/admin',
   path: '/search/admin',
@@ -173,11 +180,6 @@ const SearchAdminRoute = SearchAdminRouteImport.update({
 const ResumeTemplatesSlugRoute = ResumeTemplatesSlugRouteImport.update({
   id: '/resume-templates/$slug',
   path: '/resume-templates/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResumePackSlugRoute = ResumePackSlugRouteImport.update({
-  id: '/resume-pack/$slug',
-  path: '/resume-pack/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResumeBundlesSlugRoute = ResumeBundlesSlugRouteImport.update({
@@ -213,6 +215,16 @@ const CategorySlugRoute = CategorySlugRouteImport.update({
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/blog/$slug',
   path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AtsResumesPackSlugRoute = AtsResumesPackSlugRouteImport.update({
+  id: '/ats-resumes-pack/$slug',
+  path: '/ats-resumes-pack/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AtsFriendlyResumesSlugRoute = AtsFriendlyResumesSlugRouteImport.update({
+  id: '/ats-friendly-resumes/$slug',
+  path: '/ats-friendly-resumes/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -385,6 +397,8 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/ats-friendly-resumes/$slug': typeof AtsFriendlyResumesSlugRoute
+  '/ats-resumes-pack/$slug': typeof AtsResumesPackSlugRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/checkout/$slug': typeof CheckoutSlugRoute
@@ -392,12 +406,12 @@ export interface FileRoutesByFullPath {
   '/jobs/$slug': typeof JobsSlugRoute
   '/location/$slug': typeof LocationSlugRoute
   '/resume-bundles/$slug': typeof ResumeBundlesSlugRoute
-  '/resume-pack/$slug': typeof ResumePackSlugRoute
   '/resume-templates/$slug': typeof ResumeTemplatesSlugRoute
   '/search/admin': typeof SearchAdminRoute
+  '/ats-friendly-resumes/': typeof AtsFriendlyResumesIndexRoute
+  '/ats-resumes-pack/': typeof AtsResumesPackIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/resume-bundles/': typeof ResumeBundlesIndexRoute
-  '/resume-pack/': typeof ResumePackIndexRoute
   '/resume-templates/': typeof ResumeTemplatesIndexRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/ats-settings': typeof AuthenticatedAdminAtsSettingsRoute
@@ -441,6 +455,8 @@ export interface FileRoutesByTo {
   '/sitemap-jobs.xml': typeof SitemapJobsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/ats-friendly-resumes/$slug': typeof AtsFriendlyResumesSlugRoute
+  '/ats-resumes-pack/$slug': typeof AtsResumesPackSlugRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/checkout/$slug': typeof CheckoutSlugRoute
@@ -448,12 +464,12 @@ export interface FileRoutesByTo {
   '/jobs/$slug': typeof JobsSlugRoute
   '/location/$slug': typeof LocationSlugRoute
   '/resume-bundles/$slug': typeof ResumeBundlesSlugRoute
-  '/resume-pack/$slug': typeof ResumePackSlugRoute
   '/resume-templates/$slug': typeof ResumeTemplatesSlugRoute
   '/search/admin': typeof SearchAdminRoute
+  '/ats-friendly-resumes': typeof AtsFriendlyResumesIndexRoute
+  '/ats-resumes-pack': typeof AtsResumesPackIndexRoute
   '/blog': typeof BlogIndexRoute
   '/resume-bundles': typeof ResumeBundlesIndexRoute
-  '/resume-pack': typeof ResumePackIndexRoute
   '/resume-templates': typeof ResumeTemplatesIndexRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/ats-settings': typeof AuthenticatedAdminAtsSettingsRoute
@@ -500,6 +516,8 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/ats-friendly-resumes/$slug': typeof AtsFriendlyResumesSlugRoute
+  '/ats-resumes-pack/$slug': typeof AtsResumesPackSlugRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/checkout/$slug': typeof CheckoutSlugRoute
@@ -507,12 +525,12 @@ export interface FileRoutesById {
   '/jobs/$slug': typeof JobsSlugRoute
   '/location/$slug': typeof LocationSlugRoute
   '/resume-bundles/$slug': typeof ResumeBundlesSlugRoute
-  '/resume-pack/$slug': typeof ResumePackSlugRoute
   '/resume-templates/$slug': typeof ResumeTemplatesSlugRoute
   '/search_/admin': typeof SearchAdminRoute
+  '/ats-friendly-resumes/': typeof AtsFriendlyResumesIndexRoute
+  '/ats-resumes-pack/': typeof AtsResumesPackIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/resume-bundles/': typeof ResumeBundlesIndexRoute
-  '/resume-pack/': typeof ResumePackIndexRoute
   '/resume-templates/': typeof ResumeTemplatesIndexRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/ats-settings': typeof AuthenticatedAdminAtsSettingsRoute
@@ -559,6 +577,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/admin'
+    | '/ats-friendly-resumes/$slug'
+    | '/ats-resumes-pack/$slug'
     | '/blog/$slug'
     | '/category/$slug'
     | '/checkout/$slug'
@@ -566,12 +586,12 @@ export interface FileRouteTypes {
     | '/jobs/$slug'
     | '/location/$slug'
     | '/resume-bundles/$slug'
-    | '/resume-pack/$slug'
     | '/resume-templates/$slug'
     | '/search/admin'
+    | '/ats-friendly-resumes/'
+    | '/ats-resumes-pack/'
     | '/blog/'
     | '/resume-bundles/'
-    | '/resume-pack/'
     | '/resume-templates/'
     | '/admin/analytics'
     | '/admin/ats-settings'
@@ -615,6 +635,8 @@ export interface FileRouteTypes {
     | '/sitemap-jobs.xml'
     | '/sitemap.xml'
     | '/terms'
+    | '/ats-friendly-resumes/$slug'
+    | '/ats-resumes-pack/$slug'
     | '/blog/$slug'
     | '/category/$slug'
     | '/checkout/$slug'
@@ -622,12 +644,12 @@ export interface FileRouteTypes {
     | '/jobs/$slug'
     | '/location/$slug'
     | '/resume-bundles/$slug'
-    | '/resume-pack/$slug'
     | '/resume-templates/$slug'
     | '/search/admin'
+    | '/ats-friendly-resumes'
+    | '/ats-resumes-pack'
     | '/blog'
     | '/resume-bundles'
-    | '/resume-pack'
     | '/resume-templates'
     | '/admin/analytics'
     | '/admin/ats-settings'
@@ -673,6 +695,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/_authenticated/admin'
+    | '/ats-friendly-resumes/$slug'
+    | '/ats-resumes-pack/$slug'
     | '/blog/$slug'
     | '/category/$slug'
     | '/checkout/$slug'
@@ -680,12 +704,12 @@ export interface FileRouteTypes {
     | '/jobs/$slug'
     | '/location/$slug'
     | '/resume-bundles/$slug'
-    | '/resume-pack/$slug'
     | '/resume-templates/$slug'
     | '/search_/admin'
+    | '/ats-friendly-resumes/'
+    | '/ats-resumes-pack/'
     | '/blog/'
     | '/resume-bundles/'
-    | '/resume-pack/'
     | '/resume-templates/'
     | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/ats-settings'
@@ -731,6 +755,8 @@ export interface RootRouteChildren {
   SitemapJobsDotxmlRoute: typeof SitemapJobsDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  AtsFriendlyResumesSlugRoute: typeof AtsFriendlyResumesSlugRoute
+  AtsResumesPackSlugRoute: typeof AtsResumesPackSlugRoute
   BlogSlugRoute: typeof BlogSlugRoute
   CategorySlugRoute: typeof CategorySlugRoute
   CheckoutSlugRoute: typeof CheckoutSlugRoute
@@ -738,12 +764,12 @@ export interface RootRouteChildren {
   JobsSlugRoute: typeof JobsSlugRoute
   LocationSlugRoute: typeof LocationSlugRoute
   ResumeBundlesSlugRoute: typeof ResumeBundlesSlugRoute
-  ResumePackSlugRoute: typeof ResumePackSlugRoute
   ResumeTemplatesSlugRoute: typeof ResumeTemplatesSlugRoute
   SearchAdminRoute: typeof SearchAdminRoute
+  AtsFriendlyResumesIndexRoute: typeof AtsFriendlyResumesIndexRoute
+  AtsResumesPackIndexRoute: typeof AtsResumesPackIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
   ResumeBundlesIndexRoute: typeof ResumeBundlesIndexRoute
-  ResumePackIndexRoute: typeof ResumePackIndexRoute
   ResumeTemplatesIndexRoute: typeof ResumeTemplatesIndexRoute
   CheckoutBundleSlugRoute: typeof CheckoutBundleSlugRoute
   PaymentSuccessOrderIdRoute: typeof PaymentSuccessOrderIdRoute
@@ -870,13 +896,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResumeTemplatesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/resume-pack/': {
-      id: '/resume-pack/'
-      path: '/resume-pack'
-      fullPath: '/resume-pack/'
-      preLoaderRoute: typeof ResumePackIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/resume-bundles/': {
       id: '/resume-bundles/'
       path: '/resume-bundles'
@@ -891,6 +910,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ats-resumes-pack/': {
+      id: '/ats-resumes-pack/'
+      path: '/ats-resumes-pack'
+      fullPath: '/ats-resumes-pack/'
+      preLoaderRoute: typeof AtsResumesPackIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ats-friendly-resumes/': {
+      id: '/ats-friendly-resumes/'
+      path: '/ats-friendly-resumes'
+      fullPath: '/ats-friendly-resumes/'
+      preLoaderRoute: typeof AtsFriendlyResumesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search_/admin': {
       id: '/search_/admin'
       path: '/search/admin'
@@ -903,13 +936,6 @@ declare module '@tanstack/react-router' {
       path: '/resume-templates/$slug'
       fullPath: '/resume-templates/$slug'
       preLoaderRoute: typeof ResumeTemplatesSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/resume-pack/$slug': {
-      id: '/resume-pack/$slug'
-      path: '/resume-pack/$slug'
-      fullPath: '/resume-pack/$slug'
-      preLoaderRoute: typeof ResumePackSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/resume-bundles/$slug': {
@@ -959,6 +985,20 @@ declare module '@tanstack/react-router' {
       path: '/blog/$slug'
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ats-resumes-pack/$slug': {
+      id: '/ats-resumes-pack/$slug'
+      path: '/ats-resumes-pack/$slug'
+      fullPath: '/ats-resumes-pack/$slug'
+      preLoaderRoute: typeof AtsResumesPackSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ats-friendly-resumes/$slug': {
+      id: '/ats-friendly-resumes/$slug'
+      path: '/ats-friendly-resumes/$slug'
+      fullPath: '/ats-friendly-resumes/$slug'
+      preLoaderRoute: typeof AtsFriendlyResumesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -1237,6 +1277,8 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapJobsDotxmlRoute: SitemapJobsDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  AtsFriendlyResumesSlugRoute: AtsFriendlyResumesSlugRoute,
+  AtsResumesPackSlugRoute: AtsResumesPackSlugRoute,
   BlogSlugRoute: BlogSlugRoute,
   CategorySlugRoute: CategorySlugRoute,
   CheckoutSlugRoute: CheckoutSlugRoute,
@@ -1244,12 +1286,12 @@ const rootRouteChildren: RootRouteChildren = {
   JobsSlugRoute: JobsSlugRoute,
   LocationSlugRoute: LocationSlugRoute,
   ResumeBundlesSlugRoute: ResumeBundlesSlugRoute,
-  ResumePackSlugRoute: ResumePackSlugRoute,
   ResumeTemplatesSlugRoute: ResumeTemplatesSlugRoute,
   SearchAdminRoute: SearchAdminRoute,
+  AtsFriendlyResumesIndexRoute: AtsFriendlyResumesIndexRoute,
+  AtsResumesPackIndexRoute: AtsResumesPackIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
   ResumeBundlesIndexRoute: ResumeBundlesIndexRoute,
-  ResumePackIndexRoute: ResumePackIndexRoute,
   ResumeTemplatesIndexRoute: ResumeTemplatesIndexRoute,
   CheckoutBundleSlugRoute: CheckoutBundleSlugRoute,
   PaymentSuccessOrderIdRoute: PaymentSuccessOrderIdRoute,
