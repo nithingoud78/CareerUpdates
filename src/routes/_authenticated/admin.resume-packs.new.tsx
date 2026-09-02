@@ -7,13 +7,13 @@ import { upsertCareerProduct, upsertBundleResources, listSingleProducts } from "
 import { AdminProductForm, defaultProductFormData, type ProductFormData } from "@/components/career-tools/admin-product-form";
 import { BundleResourcesManager } from "@/components/career-tools/bundle-resources-manager";
 
-export const Route = createFileRoute("/_authenticated/admin/resume-bundles/new")({
-  component: NewBundle,
+export const Route = createFileRoute("/_authenticated/admin/resume-packs/new")({
+  component: NewPack,
 });
 
 
 
-function NewBundle() {
+function NewPack() {
   const navigate = useNavigate();
   const save = useServerFn(upsertCareerProduct);
   const saveResources = useServerFn(upsertBundleResources);
@@ -59,15 +59,15 @@ function NewBundle() {
       }
       return row;
     },
-    onSuccess: () => navigate({ to: "/admin/resume-bundles" }),
-    onError: (err: any) => setError(err.message || "Failed to create bundle."),
+    onSuccess: () => navigate({ to: "/admin/resume-packs" }),
+    onError: (err: any) => setError(err.message || "Failed to create pack."),
   });
 
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">New Bundle</h1>
-        <p className="text-sm text-muted-foreground">Create a new product bundle.</p>
+        <h1 className="text-2xl font-bold">New Pack</h1>
+        <p className="text-sm text-muted-foreground">Create a new product pack.</p>
       </div>
 
       <BundleResourcesManager
@@ -84,12 +84,12 @@ function NewBundle() {
           product_type: "bundle",
           original_price: 499,
           current_price: 79,
-          category: "Bundle",
+          category: "Pack",
         }}
         isPending={mut.isPending}
         error={error}
         onSubmit={(data) => mut.mutate(data)}
-        backHref="/admin/resume-bundles"
+        backHref="/admin/resume-packs"
         backLabel="Cancel"
       />
     </div>

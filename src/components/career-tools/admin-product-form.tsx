@@ -4,12 +4,13 @@
  * - Single templates (resume, cover_letter, referral_message, cold_email)
  * - Bundle products (bundles also use BundleResourcesManager)
  */
-import { Link } from "@tanstack/react-router";
 import { useState, useRef } from "react";
-import { X, Plus, Upload, Loader2 } from "lucide-react";
+import { Loader2, Plus, X, ArrowLeft, Save, Trash2, Link as LinkIcon, Image as ImageIcon } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import type { CareerProduct, CareerProductType, CareerResourceType } from "@/lib/career-tools.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { resolvePreviewImageUrl } from "@/lib/image-utils";
+import { PreviewImage } from "./preview-image";
 import { compressImage } from "@/lib/image-compressor";
 
 export interface ProductFormData {
@@ -456,10 +457,11 @@ export function AdminProductForm({
           />
           {form.preview_image_url && (
             <div>
-              <img
+              <PreviewImage
                 src={resolvePreviewImageUrl(form.preview_image_url) || ""}
                 alt="Preview"
                 className="h-24 w-auto rounded border border-border object-cover"
+                fallback={<div className="flex h-24 w-24 items-center justify-center rounded border border-border bg-muted"><ImageIcon className="h-6 w-6 text-muted-foreground/30" /></div>}
               />
             </div>
           )}

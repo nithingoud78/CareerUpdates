@@ -12,8 +12,8 @@ import {
 import { AdminProductForm, type ProductFormData } from "@/components/career-tools/admin-product-form";
 import { BundleResourcesManager } from "@/components/career-tools/bundle-resources-manager";
 
-export const Route = createFileRoute("/_authenticated/admin/resume-bundles/$id/edit")({
-  component: EditBundle,
+export const Route = createFileRoute("/_authenticated/admin/resume-packs/$id/edit")({
+  component: EditPack,
 });
 
 const RESOURCE_TYPE_LABELS: Record<string, string> = {
@@ -23,7 +23,7 @@ const RESOURCE_TYPE_LABELS: Record<string, string> = {
   cold_email: "Cold Email",
 };
 
-function EditBundle() {
+function EditPack() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const getById = useServerFn(getCareerProductById);
@@ -84,8 +84,8 @@ function EditBundle() {
         },
       });
     },
-    onSuccess: () => navigate({ to: "/admin/resume-bundles" }),
-    onError: (err: any) => setError(err.message || "Failed to save bundle."),
+    onSuccess: () => navigate({ to: "/admin/resume-packs" }),
+    onError: (err: any) => setError(err.message || "Failed to save pack."),
   });
 
   if (isLoading) {
@@ -100,7 +100,7 @@ function EditBundle() {
   if (!data?.product) {
     return (
       <div className="max-w-3xl py-20 text-center text-muted-foreground">
-        <p>Bundle not found.</p>
+        <p>Pack not found.</p>
       </div>
     );
   }
@@ -141,7 +141,7 @@ function EditBundle() {
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Edit Bundle</h1>
+        <h1 className="text-2xl font-bold">Edit Pack</h1>
         <p className="text-sm text-muted-foreground truncate">{p.title}</p>
       </div>
 
@@ -158,7 +158,7 @@ function EditBundle() {
         isPending={mut.isPending}
         error={error}
         onSubmit={(formData) => mut.mutate(formData)}
-        backHref="/admin/resume-bundles"
+        backHref="/admin/resume-packs"
         backLabel="Cancel"
       />
     </div>

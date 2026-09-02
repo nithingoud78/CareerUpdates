@@ -17,6 +17,7 @@ import { PriceDisplay } from "@/components/career-tools/price-display";
 import { resolvePreviewImageUrl } from "@/lib/image-utils";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { ShareButton } from "@/components/career-tools/share-button";
+import { PreviewImage } from "@/components/career-tools/preview-image";
 
 const SITE_URL = "https://careerupdates.co.in";
 
@@ -97,10 +98,16 @@ export function TemplateDetailView({
           <div className="glass overflow-hidden rounded-2xl">
             {product.preview_image_url ? (
               <div className="relative aspect-[4/5] w-full md:aspect-[3/4]">
-                <img
+                <PreviewImage
                   src={resolvePreviewImageUrl(product.preview_image_url) || ""}
                   alt={`${product.title} preview`}
                   className="absolute inset-0 h-full w-full object-cover"
+                  fallback={
+                    <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-muted/20">
+                      <FileText className="h-10 w-10 text-muted-foreground/30" />
+                      <p className="text-xs text-muted-foreground">No preview image</p>
+                    </div>
+                  }
                 />
               </div>
             ) : (
@@ -247,7 +254,12 @@ export function TemplateDetailView({
                 className="glass flex items-center gap-4 rounded-2xl p-4 hover:shadow-sm hover:shadow-brand/10 transition-all"
               >
                 {b.preview_image_url ? (
-                  <img src={b.preview_image_url} alt={b.title} className="h-12 w-12 rounded-lg object-cover" />
+                  <PreviewImage 
+                    src={resolvePreviewImageUrl(b.preview_image_url) || ""} 
+                    alt={b.title} 
+                    className="h-12 w-12 rounded-lg object-cover" 
+                    fallback={<Package className="h-10 w-10 shrink-0 text-brand/30" />}
+                  />
                 ) : (
                   <Package className="h-10 w-10 shrink-0 text-brand/30" />
                 )}

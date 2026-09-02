@@ -3,6 +3,7 @@ import "./lib/error-capture";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { handleRazorpayWebhook } from "./lib/razorpay-webhook";
+import { handlePreviewImageRequest } from "./lib/preview-image";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -44,6 +45,9 @@ export default {
       const url = new URL(request.url);
       if (url.pathname === "/api/razorpay/webhook" && request.method === "POST") {
         return await handleRazorpayWebhook(request);
+      }
+      if (url.pathname === "/api/preview-image" && request.method === "GET") {
+        return await handlePreviewImageRequest(request);
       }
 
       const handler = await getServerEntry();

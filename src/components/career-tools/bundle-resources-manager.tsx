@@ -1,7 +1,9 @@
 import { useState, useRef } from "react";
 import { X, Plus, GripVertical, Upload, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { resolvePreviewImageUrl } from "@/lib/image-utils";
+import { PreviewImage } from "./preview-image";
 import { useServerFn } from "@tanstack/react-start";
 import { upsertCareerProduct } from "@/lib/career-tools.functions";
 import { defaultProductFormData } from "./admin-product-form";
@@ -170,10 +172,11 @@ export function BundleResourcesManager({
                     </button>
                   </div>
                   {p?.preview_image_url ? (
-                    <img
+                    <PreviewImage
                       src={resolvePreviewImageUrl(p.preview_image_url) || ""}
                       alt=""
                       className="h-10 w-10 shrink-0 rounded object-cover"
+                      fallback={<div className="h-10 w-10 shrink-0 rounded bg-muted" />}
                     />
                   ) : (
                     <div className="h-10 w-10 shrink-0 rounded bg-muted" />

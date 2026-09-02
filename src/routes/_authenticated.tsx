@@ -60,7 +60,7 @@ function AdminLayout() {
             <AdminLink to="/admin/feedback" icon={Inbox} label="Feedback" />
             <AdminLink to="/admin/analytics" icon={BarChart3} label="Analytics" />
             <AdminLink to="/admin/resume-templates" icon={FileText} label="Templates" />
-            <AdminLink to="/admin/resume-bundles" icon={Package} label="Bundles" />
+            <AdminLink to="/admin/resume-packs" icon={Package} label="Packs" />
             <AdminLink to="/admin/orders" icon={CreditCard} label="Orders" />
             <AdminLink to="/admin/ats-settings" icon={ShieldCheck} label="ATS" />
           </nav>

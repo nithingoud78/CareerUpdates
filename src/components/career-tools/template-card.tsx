@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { FileText, Star, CheckCircle2 } from "lucide-react";
 import { resolvePreviewImageUrl } from "@/lib/image-utils";
 import { PriceDisplay } from "./price-display";
+import { PreviewImage } from "./preview-image";
 
 interface TemplateCardProps {
   template: {
@@ -37,18 +38,17 @@ export function TemplateCard({ template, compact }: TemplateCardProps) {
     >
       {/* Preview image */}
       <div className="relative aspect-[3/2] w-full overflow-hidden bg-muted/30">
-        {template.preview_image_url ? (
-          <img
-            src={resolvePreviewImageUrl(template.preview_image_url) || ""}
-            alt={`${template.title} preview`}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <FileText className="h-12 w-12 text-muted-foreground/30" />
-          </div>
-        )}
+        <PreviewImage
+          src={resolvePreviewImageUrl(template.preview_image_url) || ""}
+          alt={`${template.title} preview`}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+          fallback={
+            <div className="flex h-full w-full items-center justify-center">
+              <FileText className="h-12 w-12 text-muted-foreground/30" />
+            </div>
+          }
+        />
         {/* Badges */}
         <div className="absolute left-2 top-2 flex flex-wrap gap-1">
           {template.pinned && (

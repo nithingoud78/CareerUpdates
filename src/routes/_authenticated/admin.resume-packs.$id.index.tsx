@@ -19,11 +19,11 @@ import {
 } from "@/lib/career-tools.functions";
 import { BundleDetailView } from "@/components/career-tools/bundle-detail-view";
 
-export const Route = createFileRoute("/_authenticated/admin/resume-bundles/$id/")({
-  component: AdminBundleOverview,
+export const Route = createFileRoute("/_authenticated/admin/resume-packs/$id/")({
+  component: AdminPackOverview,
 });
 
-function AdminBundleOverview() {
+function AdminPackOverview() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const get = useServerFn(getCareerProductById);
@@ -45,14 +45,14 @@ function AdminBundleOverview() {
 
   const remove = useMutation({
     mutationFn: () => del({ data: { id } }),
-    onSuccess: () => navigate({ to: "/admin/resume-bundles" }),
+    onSuccess: () => navigate({ to: "/admin/resume-packs" }),
   });
 
   if (isLoading) {
     return <div className="animate-pulse space-y-4 p-6"><div className="h-8 w-48 bg-muted rounded" /><div className="h-64 bg-muted rounded" /></div>;
   }
   if (!response || !response.product) {
-    return <div className="p-6">Bundle not found</div>;
+    return <div className="p-6">Pack not found</div>;
   }
 
   const bundle = response.product as any;
@@ -68,7 +68,7 @@ function AdminBundleOverview() {
   const adminActions = (
     <div className="flex flex-wrap items-center gap-3">
       <Link
-        to="/admin/resume-bundles/$id/edit"
+        to="/admin/resume-packs/$id/edit"
         params={{ id }}
         className="flex items-center gap-1.5 rounded-full bg-brand px-5 py-2 text-sm font-semibold text-brand-foreground hover:bg-brand/90"
       >
@@ -95,7 +95,7 @@ function AdminBundleOverview() {
         </button>
       )}
       
-      <button onClick={() => { if(confirm("Delete this bundle?")) remove.mutate(); }} className="flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-5 py-2 text-sm font-medium text-red-600 hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/20 dark:text-red-400">
+      <button onClick={() => { if(confirm("Delete this pack?")) remove.mutate(); }} className="flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-5 py-2 text-sm font-medium text-red-600 hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/20 dark:text-red-400">
         <Trash2 className="h-4 w-4" /> Delete
       </button>
       
@@ -113,12 +113,12 @@ function AdminBundleOverview() {
     <div className="space-y-6 max-w-5xl">
       <div className="flex items-center gap-3">
         <Link
-          to="/admin/resume-bundles"
+          to="/admin/resume-packs"
           className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-accent"
         >
           <ArrowLeft className="h-4 w-4" />
         </Link>
-        <h1 className="text-2xl font-bold">Bundle Preview</h1>
+        <h1 className="text-2xl font-bold">Pack Preview</h1>
         
         <div className="ml-auto flex items-center gap-2 text-sm">
           <span className="text-muted-foreground">Status:</span>

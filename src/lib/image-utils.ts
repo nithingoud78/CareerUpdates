@@ -1,5 +1,3 @@
-import { supabase } from "@/integrations/supabase/client";
-
 /**
  * Safely resolves a preview image URL.
  * Handles both absolute external URLs (http:// or https://)
@@ -10,6 +8,6 @@ export function resolvePreviewImageUrl(value: string | null | undefined): string
   if (value.startsWith("http://") || value.startsWith("https://")) {
     return value;
   }
-  const { data } = supabase.storage.from("career-tools").getPublicUrl(value);
-  return data.publicUrl;
+  // Use the secure API proxy for private bucket previews
+  return `/api/preview-image?path=${encodeURIComponent(value)}`;
 }

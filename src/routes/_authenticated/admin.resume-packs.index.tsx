@@ -11,8 +11,8 @@ import {
 } from "@/lib/career-tools.functions";
 import { resolvePreviewImageUrl } from "@/lib/image-utils";
 
-export const Route = createFileRoute("/_authenticated/admin/resume-bundles/")({
-  component: AdminResumeBundles,
+export const Route = createFileRoute("/_authenticated/admin/resume-packs/")({
+  component: AdminResumePacks,
 });
 
 const STATUS_COLORS: Record<string, string> = {
@@ -21,7 +21,7 @@ const STATUS_COLORS: Record<string, string> = {
   archived: "text-muted-foreground bg-muted",
 };
 
-function AdminResumeBundles() {
+function AdminResumePacks() {
   const list = useServerFn(listAllCareerProducts);
   const del = useServerFn(deleteCareerProduct);
   const setStatus = useServerFn(updateCareerProductStatus);
@@ -65,13 +65,13 @@ function AdminResumeBundles() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">Resume Packs</h1>
-          <p className="text-sm text-muted-foreground">Manage bundle products and their contents.</p>
+          <p className="text-sm text-muted-foreground">Manage pack products and their contents.</p>
         </div>
         <Link
-          to="/admin/resume-bundles/new"
+          to="/admin/resume-packs/new"
           className="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground"
         >
-          <Plus className="h-4 w-4" /> New Bundle
+          <Plus className="h-4 w-4" /> New Pack
         </Link>
       </div>
 
@@ -98,7 +98,7 @@ function AdminResumeBundles() {
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search bundles…"
+          placeholder="Search packs…"
           className="flex-1 rounded-full border border-input bg-background px-4 py-2 text-sm"
         />
         {(["all", "published", "draft", "archived"] as const).map((s) => (
@@ -123,9 +123,9 @@ function AdminResumeBundles() {
       {!isLoading && bundles.length === 0 && (
         <div className="flex flex-col items-center gap-3 py-20 text-center text-muted-foreground">
           <Package className="h-10 w-10 opacity-30" />
-          <p className="font-medium">No bundles yet</p>
-          <Link to="/admin/resume-bundles/new" className="text-sm text-brand hover:underline">
-            Create the first bundle →
+          <p className="font-medium">No packs yet</p>
+          <Link to="/admin/resume-packs/new" className="text-sm text-brand hover:underline">
+            Create the first pack →
           </Link>
         </div>
       )}
@@ -135,7 +135,7 @@ function AdminResumeBundles() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/30 text-xs text-muted-foreground">
-                <th className="px-4 py-3 text-left font-medium">Bundle</th>
+                <th className="px-4 py-3 text-left font-medium">Pack</th>
                 <th className="px-4 py-3 text-left font-medium">Price</th>
                 <th className="px-4 py-3 text-left font-medium">Status</th>
                 <th className="px-4 py-3 text-left font-medium">Pinned</th>
@@ -155,8 +155,8 @@ function AdminResumeBundles() {
                         </div>
                       )}
                       <div>
-                        <Link to="/admin/resume-bundles/$id" params={{ id: b.id }} className="font-medium leading-none hover:text-brand hover:underline">{b.title}</Link>
-                        <p className="mt-0.5 text-xs text-muted-foreground">{b.category ?? "Bundle"}</p>
+                        <Link to="/admin/resume-packs/$id" params={{ id: b.id }} className="font-medium leading-none hover:text-brand hover:underline">{b.title}</Link>
+                        <p className="mt-0.5 text-xs text-muted-foreground">{b.category ?? "Pack"}</p>
                       </div>
                     </div>
                   </td>
@@ -191,7 +191,7 @@ function AdminResumeBundles() {
                     <div className="flex items-center gap-1">
                       {b.status === "published" && (
                         <Link
-                          to="/admin/resume-bundles/$id"
+                          to="/admin/resume-packs/$id"
                           params={{ id: b.id }}
                           className="rounded-full p-1.5 hover:bg-accent"
                           title="View Admin Overview"
@@ -200,10 +200,10 @@ function AdminResumeBundles() {
                         </Link>
                       )}
                       <Link
-                        to="/admin/resume-bundles/$id/edit"
+                        to="/admin/resume-packs/$id/edit"
                         params={{ id: b.id }}
                         className="rounded-full p-1.5 hover:bg-accent"
-                        title="Edit Bundle"
+                        title="Edit Pack"
                       >
                         <Pencil className="h-4 w-4 text-muted-foreground" />
                       </Link>
@@ -244,7 +244,7 @@ function AdminResumeBundles() {
                         <button
                           onClick={() => setConfirmDeleteId(b.id)}
                           className="rounded-full p-1.5 hover:bg-red-50 dark:hover:bg-red-950/30"
-                          title="Delete Bundle"
+                          title="Delete Pack"
                         >
                           <Trash2 className="h-4 w-4 text-red-500" />
                         </button>

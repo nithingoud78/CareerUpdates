@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Package, Star, FileText, CheckCircle2 } from "lucide-react";
 import { resolvePreviewImageUrl } from "@/lib/image-utils";
 import { PriceDisplay } from "./price-display";
+import { PreviewImage } from "./preview-image";
 
 interface BundleCardProps {
   bundle: {
@@ -29,19 +30,18 @@ export function BundleCard({ bundle, resourceCount }: BundleCardProps) {
     >
       {/* Preview */}
       <div className="relative aspect-[3/2] w-full overflow-hidden bg-gradient-to-br from-brand/10 to-brand/5">
-        {bundle.preview_image_url ? (
-          <img
-            src={resolvePreviewImageUrl(bundle.preview_image_url) || ""}
-            alt={`${bundle.title} preview`}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
-          />
-        ) : (
-          <div className="flex h-full w-full flex-col items-center justify-center gap-2">
-            <Package className="h-10 w-10 text-brand/40" />
-            <p className="text-xs text-muted-foreground">Bundle</p>
-          </div>
-        )}
+        <PreviewImage
+          src={resolvePreviewImageUrl(bundle.preview_image_url) || ""}
+          alt={`${bundle.title} preview`}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+          fallback={
+            <div className="flex h-full w-full flex-col items-center justify-center gap-2">
+              <Package className="h-10 w-10 text-brand/40" />
+              <p className="text-xs text-muted-foreground">Bundle</p>
+            </div>
+          }
+        />
         {/* Badges */}
         <div className="absolute left-2 top-2 flex flex-wrap gap-1">
           {bundle.pinned && (
