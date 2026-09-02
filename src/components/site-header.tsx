@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
@@ -16,6 +16,8 @@ const nav = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const pathname = router.state.location.pathname;
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl">
@@ -28,15 +30,27 @@ export function SiteHeader() {
         </Link>
         <nav className="ml-auto hidden items-center gap-1 md:flex">
           {nav.map((n) => (
-            <Link
-              key={n.to}
-              to={n.to}
-              activeOptions={{ exact: n.to === "/" }}
-              activeProps={{ className: "text-brand bg-accent" }}
-              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            >
-              {n.label}
-            </Link>
+            n.to === "/ats-resumes-pack" ? (
+              <a
+                key={n.to}
+                href={n.to}
+                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-foreground ${
+                  pathname.startsWith(n.to) ? "text-brand bg-accent" : "text-muted-foreground"
+                }`}
+              >
+                {n.label}
+              </a>
+            ) : (
+              <Link
+                key={n.to}
+                to={n.to}
+                activeOptions={{ exact: n.to === "/" }}
+                activeProps={{ className: "text-brand bg-accent" }}
+                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              >
+                {n.label}
+              </Link>
+            )
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-2 md:ml-0">
@@ -54,16 +68,29 @@ export function SiteHeader() {
         <div className="border-t border-border bg-surface md:hidden">
           <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3">
             {nav.map((n) => (
-              <Link
-                key={n.to}
-                to={n.to}
-                onClick={() => setOpen(false)}
-                activeOptions={{ exact: n.to === "/" }}
-                activeProps={{ className: "text-brand bg-accent" }}
-                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
-              >
-                {n.label}
-              </Link>
+              n.to === "/ats-resumes-pack" ? (
+                <a
+                  key={n.to}
+                  href={n.to}
+                  onClick={() => setOpen(false)}
+                  className={`rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-foreground ${
+                    pathname.startsWith(n.to) ? "text-brand bg-accent" : "text-muted-foreground"
+                  }`}
+                >
+                  {n.label}
+                </a>
+              ) : (
+                <Link
+                  key={n.to}
+                  to={n.to}
+                  onClick={() => setOpen(false)}
+                  activeOptions={{ exact: n.to === "/" }}
+                  activeProps={{ className: "text-brand bg-accent" }}
+                  className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground"
+                >
+                  {n.label}
+                </Link>
+              )
             ))}
           </nav>
         </div>

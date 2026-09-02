@@ -35,7 +35,13 @@ export function AdProvider({ children }: { children: ReactNode }) {
     pathname === "/admin" ||
     pathname.startsWith("/admin/") ||
     pathname === "/auth" ||
-    pathname.startsWith("/auth/");
+    pathname.startsWith("/auth/") ||
+    pathname === "/ats-checker" ||
+    pathname.startsWith("/ats-checker/") ||
+    pathname === "/ats-friendly-resumes" ||
+    pathname.startsWith("/ats-friendly-resumes/") ||
+    pathname === "/ats-resumes-pack" ||
+    pathname.startsWith("/ats-resumes-pack/");
 
   // 2. Fetch the global ads ON/OFF state from the server.
   //    CRITICAL: While loading (isLoading=true), treat ads as OFF to prevent
