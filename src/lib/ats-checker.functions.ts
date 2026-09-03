@@ -380,7 +380,12 @@ export const extractResumeText = createServerFn({ method: "POST" })
     try {
       let text = "";
       if (name.endsWith(".pdf") || type === "application/pdf") {
-        const pdfModule: any = await import("pdf-parse");
+        // Use createRequire to bypass Vite/Rollup bundling so pdf-parse is loaded natively from node_modules,
+        // which preserves its access to pdf.worker.js on Vercel.
+        const { createRequire } = await import("module");
+        const require = createRequire(import.meta.url);
+        const pdfModule: any = require("pdf-parse");
+
         if (pdfModule.PDFParse) {
           // pdf-parse >= 2.x class API
           const parser = new pdfModule.PDFParse(new Uint8Array(buffer));
