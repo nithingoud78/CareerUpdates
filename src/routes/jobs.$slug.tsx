@@ -299,9 +299,21 @@ function JobDetails() {
             href={job.apply_url}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => {
+            onClick={(e) => {
+              const stateKey = `monetag_clicked_${job.id}`;
+              const hasClicked = sessionStorage.getItem(stateKey);
+              
               track({ event_type: "apply_click", path: `/jobs/${slug}`, job_id: job.id });
-              window.open("https://omg10.com/4/11702415", "_blank");
+              
+              if (!hasClicked) {
+                // First click: Prevent going to job.apply_url, open Monetag, set state
+                e.preventDefault();
+                sessionStorage.setItem(stateKey, "true");
+                window.open("https://omg10.com/4/11702415", "_blank");
+              } else {
+                // Second click: Clear state, let normal link behavior proceed to job.apply_url
+                sessionStorage.removeItem(stateKey);
+              }
             }}
             className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/20 transition-transform hover:scale-105"
           >
