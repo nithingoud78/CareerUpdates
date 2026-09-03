@@ -1,4 +1,4 @@
-import { MessageCircle, Send, Instagram } from "lucide-react";
+import { MessageCircle, Send, Instagram, Mail } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getSiteSettings } from "@/lib/site-settings.functions";
@@ -39,13 +39,15 @@ export function StickySocial() {
   const telegramUrl = settings?.telegram_url;
   const whatsappUrl = settings?.whatsapp_url;
   const instagramUrl = settings?.instagram_url;
+  const contactEmail = settings?.contact_email;
 
   const showTelegram = isValidSocialUrl(telegramUrl);
   const showWhatsapp = isValidSocialUrl(whatsappUrl);
   const showInstagram = isValidSocialUrl(instagramUrl);
+  const showContact = !!contactEmail?.trim();
 
-  // If no social links are configured, don't render the container at all
-  if (!showTelegram && !showWhatsapp && !showInstagram) {
+  // If no social links or email are configured, don't render the container at all
+  if (!showTelegram && !showWhatsapp && !showInstagram && !showContact) {
     return null;
   }
 
@@ -84,6 +86,16 @@ export function StickySocial() {
         >
           <Instagram className="h-4 w-4" />
           <span className="hidden sm:inline">Follow on Instagram</span>
+        </a>
+      )}
+
+      {showContact && (
+        <a
+          href={`mailto:${contactEmail}`}
+          className="group inline-flex items-center justify-center gap-2 rounded-full bg-slate-800 p-2.5 sm:px-4 sm:py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-800/30 transition-transform hover:scale-105"
+        >
+          <Mail className="h-4 w-4" />
+          <span className="hidden sm:inline">Contact</span>
         </a>
       )}
     </div>
