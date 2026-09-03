@@ -397,24 +397,10 @@ export const extractResumeText = createServerFn({ method: "POST" })
     try {
       let text = "";
       if (name.endsWith(".pdf") || type === "application/pdf") {
-        // Use createRequire to bypass Vite/Rollup bundling so pdf-parse is loaded natively from node_modules,
-        // which preserves its access to pdf.worker.js on Vercel.
-        const { createRequire } = await import("module");
-        const require = createRequire(import.meta.url);
-        const pdfModule: any = require("pdf-parse");
-
-        if (pdfModule.PDFParse) {
-          // pdf-parse >= 2.x class API
-          const parser = new pdfModule.PDFParse(new Uint8Array(buffer));
-          await parser.load();
-          const extracted = await parser.getText();
-          text = typeof extracted === "string" ? extracted : (extracted?.text || "");
-        } else {
-          // Legacy pdf-parse 1.x function API
-          const parser = pdfModule.default || pdfModule;
-          const data = await parser(buffer);
-          text = data.text;
-        }
+        const { extractText } = await import("unpdf");
+        const data = await extractText(new Uint8Array(buffer));
+        const rawText = data?.text;
+        text = Array.isArray(rawText) ? rawText.join("\n") : (typeof rawText === "string" ? rawText : "");
       } else if (name.endsWith(".docx") || type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
         const mammoth = await import("mammoth");
         const result = await mammoth.extractRawText({ buffer });
