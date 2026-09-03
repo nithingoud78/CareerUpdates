@@ -362,20 +362,37 @@ export const extractResumeText = createServerFn({ method: "POST" })
     return formData;
   })
   .handler(async ({ data }) => {
-    const file = data.get("file");
+    const file = data.get("file") as any;
     if (!file || typeof file === "string") {
       throw new Error("No valid file uploaded");
     }
     
     // Validate file size (2MB max for parsing)
-    if (file.size > 2 * 1024 * 1024) {
+    if (file.size && file.size > 2 * 1024 * 1024) {
       throw new Error("File is too large (max 2MB)");
     }
     
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const name = file.name.toLowerCase();
-    const type = file.type;
+    // Extract buffer defensively to handle Vercel/Nitro FormData polyfill differences
+    let buffer: Buffer;
+    try {
+      if (typeof file.arrayBuffer === "function") {
+        buffer = Buffer.from(await file.arrayBuffer());
+      } else if (typeof file.stream === "function") {
+        const stream = file.stream();
+        const chunks = [];
+        for await (const chunk of stream) chunks.push(chunk);
+        buffer = Buffer.concat(chunks);
+      } else {
+        // Fallback using Response constructor which handles Blobs/ReadableStreams
+        buffer = Buffer.from(await new Response(file).arrayBuffer());
+      }
+    } catch (err: any) {
+      console.error("[ATS Checker] Buffer extraction error:", err);
+      throw new Error("Could not process the uploaded file format.");
+    }
+
+    const name = (file.name || "").toLowerCase();
+    const type = file.type || "";
 
     try {
       let text = "";
@@ -403,7 +420,7 @@ export const extractResumeText = createServerFn({ method: "POST" })
         const result = await mammoth.extractRawText({ buffer });
         text = result.value;
       } else if (name.endsWith(".txt") || type === "text/plain") {
-        text = await file.text();
+        text = buffer.toString("utf-8");
       } else {
         throw new Error("Unsupported file type. Please upload a PDF, DOCX, or TXT file.");
       }
@@ -426,6 +443,6 @@ export const extractResumeText = createServerFn({ method: "POST" })
         throw new Error("This PDF appears to be password protected and could not be read.");
       }
       console.error("[ATS Checker] File extraction error:", err);
-      throw new Error("Could not extract text from this document. Please try another file.");
+      throw new Error("DEBUG: " + (err.stack || err.message || String(err)));
     }
   });

@@ -161,8 +161,11 @@ export const checkAtsHealth = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context);
+    return await runAtsHealthCheck(context.supabase);
+  });
 
-    const { data: settings } = await context.supabase
+export async function runAtsHealthCheck(supabaseClient: any) {
+    const { data: settings } = await supabaseClient
       .from("ats_settings")
       .select("id, provider, model, base_url, api_key")
       .eq("is_active", true)
@@ -248,7 +251,7 @@ export const checkAtsHealth = createServerFn({ method: "GET" })
       const statusValue = respOk ? "success" : "error";
 
       // Persist the real connection status
-      await context.supabase
+      await supabaseClient
         .from("ats_settings")
         .update({
           connection_status: statusValue,
@@ -271,7 +274,7 @@ export const checkAtsHealth = createServerFn({ method: "GET" })
       const errorMsg = err.name === "TimeoutError" ? "Connection timed out." : "Could not reach provider.";
       const currentIsoTime = new Date().toISOString();
 
-      await context.supabase
+      await supabaseClient
         .from("ats_settings")
         .update({
           connection_status: "error",
@@ -290,7 +293,7 @@ export const checkAtsHealth = createServerFn({ method: "GET" })
         timestamp: currentIsoTime
       };
     }
-  });
+}
 
 // ─── Internal: get ATS provider config (used by ats-checker.functions.ts) ─────
 // NOT exported as a server function — internal use only

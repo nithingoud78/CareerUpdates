@@ -11,5 +11,11 @@
       "destination": "https://careerupdates.co.in/$1",
       "permanent": true
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/ats-health",
+      "schedule": "0 */12 * * *"
+    }
   ]
 }
