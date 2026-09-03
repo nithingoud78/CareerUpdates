@@ -32,6 +32,7 @@ export interface ProductFormData {
   preview_image_url: string | null;
   original_price: number;
   current_price: number;
+  is_free: boolean;
   status: "draft" | "published" | "archived";
   pinned: boolean;
   sort_order: number;
@@ -63,6 +64,7 @@ export const defaultProductFormData: ProductFormData = {
   preview_image_url: null,
   original_price: 299,
   current_price: 29,
+  is_free: false,
   status: "draft",
   pinned: false,
   sort_order: 0,
@@ -376,6 +378,7 @@ export function AdminProductForm({
               value={form.original_price}
               onChange={(e) => set({ original_price: Number(e.target.value) })}
               className={inputCls}
+              disabled={form.is_free}
             />
           </Field>
           <Field label="Current Price (₹)" id="p-current-price">
@@ -387,6 +390,7 @@ export function AdminProductForm({
               value={form.current_price}
               onChange={(e) => set({ current_price: Number(e.target.value) })}
               className={inputCls}
+              disabled={form.is_free}
             />
           </Field>
           <Field label="Sort Order" id="p-sort-order">
@@ -399,6 +403,17 @@ export function AdminProductForm({
             />
           </Field>
         </div>
+        
+        <label className="flex items-center gap-2 cursor-pointer mt-2 mb-4">
+          <input
+            type="checkbox"
+            checked={form.is_free}
+            onChange={(e) => set({ is_free: e.target.checked })}
+            className="rounded border-input text-brand focus:ring-brand"
+          />
+          <span className="text-sm font-medium">Make {productType === 'bundle' ? 'Resume Pack' : 'Template'} Free</span>
+        </label>
+
         <div className="flex flex-wrap gap-6">
           <Field label="Status" id="p-status">
             <select

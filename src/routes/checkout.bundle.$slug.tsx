@@ -93,6 +93,11 @@ function BundleCheckoutPage() {
         }
       });
 
+      if (order.isFree) {
+        router.navigate({ to: `/payment/success/${order.orderId}` });
+        return;
+      }
+
       // 2. Setup Razorpay options
       const options = {
         key: order.keyId,
@@ -251,7 +256,7 @@ function BundleCheckoutPage() {
               disabled={isProcessing}
               className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-sm font-bold text-brand-foreground shadow-sm transition-transform hover:scale-[1.02] disabled:scale-100 disabled:opacity-70"
             >
-              {isProcessing ? "Processing..." : `PAY ₹${product.current_price} & GET ACCESS`}
+              {isProcessing ? "Processing..." : product.is_free ? "GET FREE ACCESS" : `PAY ₹${product.current_price} & GET ACCESS`}
             </button>
             
             <div className="mt-4 flex items-center justify-center gap-4 text-[11px] text-muted-foreground">
@@ -305,13 +310,13 @@ function BundleCheckoutPage() {
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Current Price</span>
-              <span className="font-medium">₹{product.current_price}</span>
+              <span className="font-medium">{product.is_free ? "Free" : `₹${product.current_price}`}</span>
             </div>
           </div>
 
           <div className="mt-6 flex justify-between border-t border-border pt-6">
             <span className="text-base font-bold text-foreground">TOTAL AMOUNT</span>
-            <span className="text-xl font-bold text-brand">₹{product.current_price}</span>
+            <span className="text-xl font-bold text-brand">{product.is_free ? "₹0" : `₹${product.current_price}`}</span>
           </div>
         </section>
       </div>

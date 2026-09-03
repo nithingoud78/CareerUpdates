@@ -290,6 +290,7 @@ export type Database = {
           category: string | null
           created_at: string | null
           current_price: number
+          is_free: boolean | null
           description: string | null
           download_file_name: string | null
           features: string[] | null
@@ -324,6 +325,7 @@ export type Database = {
           category?: string | null
           created_at?: string | null
           current_price?: number
+          is_free?: boolean | null
           description?: string | null
           download_file_name?: string | null
           features?: string[] | null
@@ -358,6 +360,7 @@ export type Database = {
           category?: string | null
           created_at?: string | null
           current_price?: number
+          is_free?: boolean | null
           description?: string | null
           download_file_name?: string | null
           features?: string[] | null

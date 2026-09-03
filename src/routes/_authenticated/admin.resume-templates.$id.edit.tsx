@@ -27,6 +27,7 @@ function EditResumeTemplate() {
         data: {
           ...formData,
           id,
+          is_free: formData.is_free,
           short_description: formData.short_description || null,
           description: formData.description || null,
           category: formData.category || null,
@@ -83,6 +84,7 @@ function EditResumeTemplate() {
     preview_image_url: p.preview_image_url,
     original_price: p.original_price,
     current_price: p.current_price,
+    is_free: p.is_free ?? false,
     status: p.status,
     pinned: p.pinned ?? false,
     sort_order: p.sort_order ?? 0,

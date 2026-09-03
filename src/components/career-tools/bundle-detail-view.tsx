@@ -155,7 +155,7 @@ export function BundleDetailView({
             <p className="text-sm text-muted-foreground">{product.short_description}</p>
           )}
 
-          <PriceDisplay original={product.original_price} current={product.current_price} size="lg" />
+          <PriceDisplay original={product.original_price} current={product.is_free ? 0 : product.current_price} size="lg" />
 
           {/* CTA */}
           <div className="space-y-2">
@@ -166,7 +166,7 @@ export function BundleDetailView({
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3 text-sm font-semibold text-brand-foreground transition-transform hover:scale-[1.02]"
               >
                 <Download className="h-4 w-4" />
-                Get Pack — ₹{product.current_price}
+                Get Pack — {product.is_free ? 'Free' : `₹${product.current_price}`}
               </Link>
             ) : (
               <div className="rounded-xl border border-border bg-muted/30 p-4 text-center">

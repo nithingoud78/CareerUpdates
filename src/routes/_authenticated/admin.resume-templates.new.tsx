@@ -20,6 +20,7 @@ function NewResumeTemplate() {
         data: {
           ...data,
           product_type: "single_template",
+          is_free: data.is_free,
           short_description: data.short_description || null,
           description: data.description || null,
           category: data.category || null,

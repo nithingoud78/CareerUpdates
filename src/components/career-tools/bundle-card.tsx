@@ -14,6 +14,7 @@ interface BundleCardProps {
     preview_image_url: string | null;
     original_price: number;
     current_price: number;
+    is_free?: boolean;
     pinned: boolean;
     suitable_for?: string[];
     tags?: string[];
@@ -80,7 +81,7 @@ export function BundleCard({ bundle, resourceCount }: BundleCardProps) {
           </div>
         )}
         <div className="mt-auto pt-2">
-          <PriceDisplay original={bundle.original_price} current={bundle.current_price} size="sm" />
+          <PriceDisplay original={bundle.original_price} current={bundle.is_free ? 0 : bundle.current_price} size="sm" />
         </div>
       </div>
     </Link>

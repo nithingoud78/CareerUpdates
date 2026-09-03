@@ -49,7 +49,7 @@ export const createCheckoutOrder = createServerFn({ method: "POST" })
     
     const { data: product, error } = await supabase
       .from("career_tool_products")
-      .select("id, title, current_price, status, file_url, product_type")
+      .select("id, title, current_price, is_free, status, file_url, product_type")
       .eq("slug", data.productSlug)
       .single();
 
@@ -68,6 +68,39 @@ export const createCheckoutOrder = createServerFn({ method: "POST" })
     if (!product.file_url && product.product_type !== 'bundle') {
         // Only reject if it's not a bundle. Bundles might have no primary file_url but rely on resources.
         throw new Error("Product file is missing. Please contact support.");
+    }
+
+    if (product.is_free) {
+      console.log(`[Checkout] Product is free. Bypassing Razorpay for: ${product.title}`);
+      
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: order, error: orderError } = await supabaseAdmin
+        .from("career_tool_orders")
+        .insert({
+          product_id: product.id,
+          buyer_email: data.customer.email,
+          buyer_name: data.customer.fullName,
+          country_code: data.customer.countryCode,
+          buyer_phone: data.customer.phone,
+          amount: 0,
+          currency: "INR",
+          status: "paid", // Instantly paid
+        })
+        .select("id")
+        .single();
+
+      if (orderError || !order) {
+        console.error("[Checkout] Failed to create free order record:", orderError);
+        throw new Error("Failed to process free order.");
+      }
+
+      return {
+        orderId: order.id,
+        isFree: true,
+        amount: 0,
+        currency: "INR",
+        productName: product.title,
+      };
     }
 
     // 2. Amount in paise

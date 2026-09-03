@@ -82,6 +82,7 @@ const CareerProductInput = z.object({
   preview_image_url: z.string().nullable().optional(),
   original_price: z.number().min(0).default(299),
   current_price: z.number().min(0).default(29),
+  is_free: z.boolean().default(false),
   status: z.enum(["draft", "published", "archived"]).default("draft"),
   pinned: z.boolean().default(false),
   sort_order: z.number().default(0),
@@ -100,7 +101,7 @@ const CareerProductInput = z.object({
 export const getPublishedTemplates = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await supabase
     .from("career_tool_products")
-    .select("id, slug, title, short_description, category, tags, suitable_for, ats_friendly, file_format, preview_image_url, original_price, current_price, pinned, sort_order, created_at")
+    .select("id, slug, title, short_description, category, tags, suitable_for, ats_friendly, file_format, preview_image_url, original_price, current_price, is_free, pinned, sort_order, created_at")
     .eq("status", "published")
     .eq("product_type", "single_template")
     .order("pinned", { ascending: false })
@@ -115,7 +116,7 @@ export const getPublishedTemplates = createServerFn({ method: "GET" }).handler(a
 export const getPublishedBundles = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await supabase
     .from("career_tool_products")
-    .select("id, slug, title, short_description, category, tags, suitable_for, preview_image_url, original_price, current_price, pinned, sort_order, created_at")
+    .select("id, slug, title, short_description, category, tags, suitable_for, preview_image_url, original_price, current_price, is_free, pinned, sort_order, created_at")
     .eq("status", "published")
     .eq("product_type", "bundle")
     .order("pinned", { ascending: false })
@@ -143,7 +144,7 @@ export const getTemplateBySlug = createServerFn({ method: "GET" })
     // Related templates
     const { data: related } = await supabase
       .from("career_tool_products")
-      .select("id, slug, title, short_description, preview_image_url, original_price, current_price, category, ats_friendly")
+      .select("id, slug, title, short_description, preview_image_url, original_price, current_price, is_free, category, ats_friendly")
       .eq("status", "published")
       .eq("product_type", "single_template")
       .neq("id", product.id)
@@ -160,7 +161,7 @@ export const getTemplateBySlug = createServerFn({ method: "GET" })
     if (bundleIds.length > 0) {
       const { data: bundles } = await supabase
         .from("career_tool_products")
-        .select("id, slug, title, short_description, preview_image_url, original_price, current_price")
+        .select("id, slug, title, short_description, preview_image_url, original_price, current_price, is_free")
         .eq("status", "published")
         .in("id", bundleIds)
         .limit(2);
@@ -210,7 +211,7 @@ export const getBundleBySlug = createServerFn({ method: "GET" })
     // Related bundles
     const { data: relatedBundles } = await supabase
       .from("career_tool_products")
-      .select("id, slug, title, short_description, preview_image_url, original_price, current_price")
+      .select("id, slug, title, short_description, preview_image_url, original_price, current_price, is_free")
       .eq("status", "published")
       .eq("product_type", "bundle")
       .neq("id", product.id)
@@ -227,7 +228,7 @@ export const listAllCareerProducts = createServerFn({ method: "GET" })
     await assertAdmin(context);
     const { data, error } = await context.supabase
       .from("career_tool_products")
-      .select("id, slug, title, short_description, product_type, resource_type, category, preview_image_url, original_price, current_price, status, pinned, sort_order, created_at, updated_at")
+      .select("id, slug, title, short_description, product_type, resource_type, category, preview_image_url, original_price, current_price, is_free, status, pinned, sort_order, created_at, updated_at")
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
     return data ?? [];
@@ -317,6 +318,7 @@ export const upsertCareerProduct = createServerFn({ method: "POST" })
           preview_image_url: data.preview_image_url,
           original_price: data.original_price,
           current_price: data.current_price,
+          is_free: data.is_free,
           status: data.status,
           pinned: data.pinned,
           sort_order: data.sort_order,
@@ -356,6 +358,7 @@ export const upsertCareerProduct = createServerFn({ method: "POST" })
           preview_image_url: data.preview_image_url,
           original_price: data.original_price,
           current_price: data.current_price,
+          is_free: data.is_free,
           status: data.status,
           pinned: data.pinned,
           sort_order: data.sort_order,

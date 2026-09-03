@@ -39,18 +39,20 @@ async function fetchHomeJobs() {
         .limit(4),
       supabase
         .from("career_tool_products")
-        .select("current_price")
+        .select("current_price, is_free")
         .eq("status", "published")
         .eq("product_type", "bundle")
         .not("current_price", "is", null)
+        .order("is_free", { ascending: false, nullsFirst: false })
         .order("current_price", { ascending: true })
         .limit(1),
       supabase
         .from("career_tool_products")
-        .select("current_price")
+        .select("current_price, is_free")
         .eq("status", "published")
         .eq("product_type", "single_template")
         .not("current_price", "is", null)
+        .order("is_free", { ascending: false, nullsFirst: false })
         .order("current_price", { ascending: true })
         .limit(1),
       supabase
@@ -65,8 +67,8 @@ async function fetchHomeJobs() {
       latest: latest.data ?? [],
       govt: govt.data ?? [],
       intern: intern.data ?? [],
-      minBundlePrice: bundlePrice.data?.[0]?.current_price ?? null,
-      minTemplatePrice: templatePrice.data?.[0]?.current_price ?? null,
+      minBundlePrice: bundlePrice.data?.[0] ? (bundlePrice.data[0].is_free ? 0 : bundlePrice.data[0].current_price) : null,
+      minTemplatePrice: templatePrice.data?.[0] ? (templatePrice.data[0].is_free ? 0 : templatePrice.data[0].current_price) : null,
       atsPrice: atsSettings.data?.current_price ?? null,
     };
   } catch (err: any) {

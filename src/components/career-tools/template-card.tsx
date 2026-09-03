@@ -14,6 +14,7 @@ interface TemplateCardProps {
     preview_image_url: string | null;
     original_price: number;
     current_price: number;
+    is_free?: boolean;
     ats_friendly: boolean;
     pinned: boolean;
     file_format: string | null;
@@ -81,7 +82,7 @@ export function TemplateCard({ template, compact }: TemplateCardProps) {
           <p className="text-[10px] text-muted-foreground">Format: {template.file_format}</p>
         )}
         <div className="mt-auto pt-2">
-          <PriceDisplay original={template.original_price} current={template.current_price} size="sm" />
+          <PriceDisplay original={template.original_price} current={template.is_free ? 0 : template.current_price} size="sm" />
         </div>
       </div>
     </Link>
