@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import JSZip from "jszip";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -335,6 +336,22 @@ export const upsertCareerProduct = createServerFn({ method: "POST" })
         .select()
         .single();
       if (error) throw new Error(error.message);
+
+      // Trigger ZIP regeneration for any bundles containing this updated product
+      const { data: relatedBundles } = await context.supabase
+        .from("bundle_resources")
+        .select("bundle_product_id")
+        .eq("resource_product_id", data.id);
+      
+      if (relatedBundles && relatedBundles.length > 0) {
+        // Await generation so the zip is guaranteed to exist
+        try {
+          await Promise.all(relatedBundles.map(b => generateBundleZip(b.bundle_product_id)));
+        } catch (err) {
+          console.error("Failed to regenerate zips after product update:", err);
+        }
+      }
+
       return row;
     } else {
       // Insert
@@ -427,6 +444,105 @@ export const togglePinCareerProduct = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// ─── Internal: Generate Bundle ZIP ─────────────────────────────────────────────
+
+export async function generateBundleZip(bundleId: string) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  // Fetch bundle details
+  const { data: bundle, error: bundleError } = await supabaseAdmin
+    .from("career_tool_products")
+    .select("title")
+    .eq("id", bundleId)
+    .single();
+
+  if (bundleError || !bundle) {
+    console.error(`[generateBundleZip] Failed to fetch bundle ${bundleId}:`, bundleError);
+    return;
+  }
+
+  // Fetch all resources for the bundle
+  const { data: resources, error: resourcesError } = await supabaseAdmin
+    .from("bundle_resources")
+    .select(`
+      resource_product_id,
+      career_tool_products!bundle_resources_resource_product_id_fkey (
+        file_url,
+        download_file_name,
+        title
+      )
+    `)
+    .eq("bundle_product_id", bundleId)
+    .order("sort_order", { ascending: true });
+
+  if (resourcesError || !resources) {
+    console.error(`[generateBundleZip] Failed to fetch resources for bundle ${bundleId}:`, resourcesError);
+    return;
+  }
+
+  const zip = new JSZip();
+  const usedNames = new Set<string>();
+
+  for (const resource of resources) {
+    const product = resource.career_tool_products;
+    if (!product || !product.file_url) continue;
+
+    try {
+      const { data, error } = await supabaseAdmin.storage
+        .from("career-tools")
+        .download(product.file_url);
+
+      if (error || !data) {
+        console.error(`[generateBundleZip] Failed to download resource ${product.file_url}:`, error);
+        continue;
+      }
+
+      const buffer = await data.arrayBuffer();
+      const origExt = product.file_url.split('.').pop() || '';
+      
+      let baseName = product.download_file_name || product.title || 'resource';
+      if (origExt && !baseName.endsWith(`.${origExt}`)) {
+        baseName = `${baseName}.${origExt}`;
+      }
+
+      // Handle filename collisions safely
+      let finalName = baseName;
+      let counter = 1;
+      while (usedNames.has(finalName)) {
+        const nameWithoutExt = baseName.substring(0, baseName.lastIndexOf('.')) || baseName;
+        const ext = baseName.substring(baseName.lastIndexOf('.')) || '';
+        finalName = `${nameWithoutExt} (${counter})${ext}`;
+        counter++;
+      }
+      
+      usedNames.add(finalName);
+      zip.file(finalName, buffer);
+    } catch (err) {
+      console.error(`[generateBundleZip] Exception processing resource ${product.file_url}:`, err);
+    }
+  }
+
+  try {
+    const zipBuffer = await zip.generateAsync({ type: "nodebuffer" });
+    const zipPath = `packs/${bundleId}/pack.zip`;
+
+    const { error: uploadError } = await supabaseAdmin.storage
+      .from("career-tools")
+      .upload(zipPath, zipBuffer, {
+        upsert: true,
+        contentType: "application/zip",
+      });
+
+    if (uploadError) {
+      console.error(`[generateBundleZip] Failed to upload ZIP for bundle ${bundleId}:`, uploadError);
+    } else {
+      console.log(`[generateBundleZip] Successfully generated and uploaded ZIP for bundle ${bundleId} to ${zipPath}`);
+    }
+  } catch (err) {
+    console.error(`[generateBundleZip] Exception generating/uploading ZIP for bundle ${bundleId}:`, err);
+  }
+}
+
 // ─── Admin: upsert bundle resources ──────────────────────────────────────────
 
 export const upsertBundleResources = createServerFn({ method: "POST" })
@@ -458,6 +574,14 @@ export const upsertBundleResources = createServerFn({ method: "POST" })
 
     const { error } = await context.supabase.from("bundle_resources").insert(inserts);
     if (error) throw new Error(error.message);
+    
+    // Regenerate bundle ZIP synchronously to guarantee it exists
+    try {
+      await generateBundleZip(data.bundle_id);
+    } catch (err) {
+      console.error("Failed to regenerate zip after resource upsert:", err);
+    }
+    
     return { ok: true };
   });
 

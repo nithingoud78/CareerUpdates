@@ -199,7 +199,9 @@ VALUES (
     'application/pdf',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'application/msword',
-    'text/plain'
+    'text/plain',
+    'application/zip',
+    'application/x-zip-compressed'
   ]
 )
 ON CONFLICT (id) DO NOTHING;

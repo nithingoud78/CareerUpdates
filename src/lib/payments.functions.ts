@@ -370,6 +370,7 @@ export const getPaidOrderDownloadUrl = createServerFn({ method: "POST" })
         status, 
         product_id,
         career_tool_products (
+          product_type,
           file_url,
           download_file_name,
           title
@@ -387,38 +388,50 @@ export const getPaidOrderDownloadUrl = createServerFn({ method: "POST" })
     }
 
     const product = order.career_tool_products;
-    if (!product || !product.file_url) {
-      throw new Error("No downloadable file associated with this product.");
+    if (!product) {
+      throw new Error("No product associated with this order.");
+    }
+    
+    let targetFileUrl = product.file_url;
+    let downloadName: string | boolean = true;
+    
+    if (product.product_type === "bundle") {
+      targetFileUrl = `packs/${order.product_id}/pack.zip`;
+      downloadName = `${product.title}.zip`;
+    } else {
+      if (!targetFileUrl) {
+        throw new Error("No downloadable file associated with this product.");
+      }
+      if (product.download_file_name) {
+        const origExt = targetFileUrl.split('.').pop() || '';
+        if (origExt && !product.download_file_name.endsWith(`.${origExt}`)) {
+          downloadName = `${product.download_file_name}.${origExt}`;
+        } else {
+          downloadName = product.download_file_name;
+        }
+      }
     }
 
-    // Determine download filename
-    let downloadName: string | boolean = true;
-    if (product.download_file_name) {
-      // Append original extension if not present in download_file_name
-      const origExt = product.file_url.split('.').pop() || '';
-      if (origExt && !product.download_file_name.endsWith(`.${origExt}`)) {
-        downloadName = `${product.download_file_name}.${origExt}`;
-      } else {
-        downloadName = product.download_file_name;
-      }
+    if (!targetFileUrl) {
+      throw new Error("No downloadable file associated with this product.");
     }
 
     // 2. Generate signed URLs (bucket is 'career-tools')
     // View URL (no download parameter)
     const { data: viewUrlData, error: viewUrlError } = await supabase.storage
       .from("career-tools")
-      .createSignedUrl(product.file_url, 60);
+      .createSignedUrl(targetFileUrl, 60);
 
     // Download URL (with download parameter)
     const { data: downloadUrlData, error: downloadUrlError } = await supabase.storage
       .from("career-tools")
-      .createSignedUrl(product.file_url, 60, {
+      .createSignedUrl(targetFileUrl, 60, {
         download: downloadName,
       });
 
     if (viewUrlError || downloadUrlError || !viewUrlData?.signedUrl || !downloadUrlData?.signedUrl) {
       console.error("[Storage] Failed to generate signed URLs:", { viewUrlError, downloadUrlError });
-      throw new Error(`Download access failed (Code: STORAGE_OBJECT_NOT_FOUND, Bucket: career-tools, Path: ${product.file_url})`);
+      throw new Error(`Download access failed (Code: STORAGE_OBJECT_NOT_FOUND, Bucket: career-tools, Path: ${targetFileUrl})`);
     }
 
     // 3. Log the download event
