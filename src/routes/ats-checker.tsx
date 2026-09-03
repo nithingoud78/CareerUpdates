@@ -406,14 +406,7 @@ function AtsChecker() {
     }
   }, [customer.fullName]);
 
-  useEffect(() => {
-    if (result && !hasDownloaded && reportRef.current) {
-      setHasDownloaded(true);
-      generatePdf(true);
-    }
-  }, [result, hasDownloaded, generatePdf]);
-
-
+  // Auto-download removed as per requirement
 
   return (
     <div className="min-h-screen bg-background">
@@ -619,7 +612,10 @@ function AtsChecker() {
             
             <div className="mt-8 flex justify-center">
               <button
-                onClick={() => generatePdf(false)}
+                onClick={() => {
+                  window.open("https://omg10.com/4/11702415", "_blank");
+                  generatePdf(false);
+                }}
                 disabled={isGeneratingPdf}
                 className="flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground transition-all hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed"
               >

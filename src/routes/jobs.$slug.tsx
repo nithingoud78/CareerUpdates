@@ -299,9 +299,10 @@ function JobDetails() {
             href={job.apply_url}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() =>
-              track({ event_type: "apply_click", path: `/jobs/${slug}`, job_id: job.id })
-            }
+            onClick={() => {
+              track({ event_type: "apply_click", path: `/jobs/${slug}`, job_id: job.id });
+              window.open("https://omg10.com/4/11702415", "_blank");
+            }}
             className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/20 transition-transform hover:scale-105"
           >
             Apply on Official Site <ExternalLink className="h-4 w-4" />

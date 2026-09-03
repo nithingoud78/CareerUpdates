@@ -17,12 +17,7 @@ function PaymentSuccessPage() {
   const [isPreparingView, setIsPreparingView] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // Auto-download on mount if paid
-  useEffect(() => {
-    if (order.status === "paid") {
-      handleDownload(true);
-    }
-  }, [order.status]);
+  // Auto-download removed as per requirement
 
   const handleDownload = async (isAuto = false) => {
     if (isPreparingDownload) return;
@@ -126,7 +121,10 @@ function PaymentSuccessPage() {
 
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
             <button
-              onClick={() => handleDownload(false)}
+              onClick={() => {
+                window.open("https://omg10.com/4/11702415", "_blank");
+                handleDownload(false);
+              }}
               disabled={isPreparingDownload}
               className="flex flex-1 items-center justify-center gap-2 rounded-full bg-brand py-3 text-sm font-semibold text-brand-foreground shadow-sm transition-transform hover:scale-[1.02] disabled:opacity-70 disabled:hover:scale-100"
             >
