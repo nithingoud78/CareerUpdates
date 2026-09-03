@@ -18,6 +18,7 @@ import { resolvePreviewImageUrl } from "@/lib/image-utils";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { ShareButton } from "@/components/career-tools/share-button";
 import { PreviewImage } from "@/components/career-tools/preview-image";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 const SITE_URL = "https://careerupdates.co.in";
 
@@ -99,7 +100,8 @@ export function TemplateDetailView({
       }) }} />
 
       {/* Main grid */}
-      <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
+      <ScrollReveal>
+        <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
         {/* Preview */}
         <div className="order-2 lg:order-1">
           <div className="glass overflow-hidden rounded-2xl">
@@ -197,103 +199,114 @@ export function TemplateDetailView({
           )}
         </div>
       </div>
+      </ScrollReveal>
 
       {/* Full description */}
       {!adminActions && <AdSlot placement="homeMiddle" className="mt-12" />}
 
       {product.description && (
-        <section className="mt-10 space-y-3">
-          <h2 className="text-xl font-bold">About This Template</h2>
-          <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground">
-            {product.description.split("\n").map((p: string, i: number) => p.trim() && <p key={i}>{p}</p>)}
-          </div>
-        </section>
+        <ScrollReveal>
+          <section className="mt-10 space-y-3">
+            <h2 className="text-xl font-bold">About This Template</h2>
+            <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground">
+              {product.description.split("\n").map((p: string, i: number) => p.trim() && <p key={i}>{p}</p>)}
+            </div>
+          </section>
+        </ScrollReveal>
       )}
 
       {/* Suitable for */}
       {product.suitable_for?.length > 0 && (
-        <section className="mt-8 space-y-3">
-          <h2 className="flex items-center gap-2 text-xl font-bold">
-            <Users className="h-5 w-5 text-brand" /> Who Is This For?
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {product.suitable_for.map((s: string) => (
-              <span key={s} className="rounded-full border border-border bg-surface px-3 py-1.5 text-sm font-medium">
-                {s}
-              </span>
-            ))}
-          </div>
-        </section>
+        <ScrollReveal>
+          <section className="mt-8 space-y-3">
+            <h2 className="flex items-center gap-2 text-xl font-bold">
+              <Users className="h-5 w-5 text-brand" /> Who Is This For?
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {product.suitable_for.map((s: string) => (
+                <span key={s} className="rounded-full border border-border bg-surface px-3 py-1.5 text-sm font-medium">
+                  {s}
+                </span>
+              ))}
+            </div>
+          </section>
+        </ScrollReveal>
       )}
 
       {/* Features */}
       {product.features?.length > 0 && (
-        <section className="mt-8 space-y-3">
-          <h2 className="flex items-center gap-2 text-xl font-bold">
-            <Layers className="h-5 w-5 text-brand" /> Key Features
-          </h2>
-          <ul className="grid gap-2 sm:grid-cols-2">
-            {product.features.map((f: string) => (
-              <li key={f} className="flex items-start gap-2 text-sm">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />
-                {f}
-              </li>
-            ))}
-          </ul>
-        </section>
+        <ScrollReveal>
+          <section className="mt-8 space-y-3">
+            <h2 className="flex items-center gap-2 text-xl font-bold">
+              <Layers className="h-5 w-5 text-brand" /> Key Features
+            </h2>
+            <ul className="grid gap-2 sm:grid-cols-2">
+              {product.features.map((f: string) => (
+                <li key={f} className="flex items-start gap-2 text-sm">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </section>
+        </ScrollReveal>
       )}
 
       {/* Related bundles */}
       {relatedBundles && relatedBundles.length > 0 && (
-        <section className="mt-12 space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-xl font-bold">
-              <Package className="h-5 w-5 text-brand" /> Available in Bundles
-            </h2>
-            <Link to="/ats-resumes-pack" className="text-sm font-medium text-brand hover:underline">View all →</Link>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {relatedBundles.map((b: any) => (
-              <Link
-                key={b.id}
-                to="/ats-resumes-pack/$slug"
-                params={{ slug: b.slug }}
-                className="glass flex items-center gap-4 rounded-2xl p-4 hover:shadow-sm hover:shadow-brand/10 transition-all"
-              >
-                {b.preview_image_url ? (
-                  <PreviewImage 
-                    src={resolvePreviewImageUrl(b.preview_image_url) || ""} 
-                    alt={b.title} 
-                    className="h-12 w-12 rounded-lg object-cover" 
-                    fallback={<Package className="h-10 w-10 shrink-0 text-brand/30" />}
-                  />
-                ) : (
-                  <Package className="h-10 w-10 shrink-0 text-brand/30" />
-                )}
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium">{b.title}</p>
-                  <PriceDisplay original={b.original_price} current={b.current_price} size="sm" />
-                </div>
-                <ExternalLink className="h-4 w-4 shrink-0 text-muted-foreground" />
-              </Link>
-            ))}
-          </div>
-        </section>
+        <ScrollReveal delay={0.1}>
+          <section className="mt-12 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="flex items-center gap-2 text-xl font-bold">
+                <Package className="h-5 w-5 text-brand" /> Available in Bundles
+              </h2>
+              <Link to="/ats-resumes-pack" className="text-sm font-medium text-brand hover:underline">View all →</Link>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {relatedBundles.map((b: any) => (
+                <Link
+                  key={b.id}
+                  to="/ats-resumes-pack/$slug"
+                  params={{ slug: b.slug }}
+                  className="glass flex items-center gap-4 rounded-2xl p-4 hover:shadow-sm hover:shadow-brand/10 transition-all"
+                >
+                  {b.preview_image_url ? (
+                    <PreviewImage 
+                      src={resolvePreviewImageUrl(b.preview_image_url) || ""} 
+                      alt={b.title} 
+                      className="h-12 w-12 rounded-lg object-cover" 
+                      fallback={<Package className="h-10 w-10 shrink-0 text-brand/30" />}
+                    />
+                  ) : (
+                    <Package className="h-10 w-10 shrink-0 text-brand/30" />
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium">{b.title}</p>
+                    <PriceDisplay original={b.original_price} current={b.current_price} size="sm" />
+                  </div>
+                  <ExternalLink className="h-4 w-4 shrink-0 text-muted-foreground" />
+                </Link>
+              ))}
+            </div>
+          </section>
+        </ScrollReveal>
       )}
 
       {/* Related templates */}
       {related && related.length > 0 && (
-        <section className="mt-12 space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold">Related Templates</h2>
-            <Link to="/ats-friendly-resumes" className="text-sm font-medium text-brand hover:underline">View all →</Link>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {related.map((t: any) => (
-              <TemplateCard key={t.id} template={t as any} compact />
-            ))}
-          </div>
-        </section>
+        <ScrollReveal delay={0.1}>
+          <section className="mt-12 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold">Related Templates</h2>
+              <Link to="/ats-friendly-resumes" className="text-sm font-medium text-brand hover:underline">View all →</Link>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((t: any) => (
+                <TemplateCard key={t.id} template={t as any} compact />
+              ))}
+            </div>
+          </section>
+        </ScrollReveal>
       )}
 
       {/* Admin Actions */}

@@ -16,9 +16,9 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { StickySocial } from "@/components/sticky-social";
 import { JobCard } from "@/components/job-card";
-import { CompanyLogo } from "@/components/company-logo";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { track } from "@/lib/analytics-tracking";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 async function fetchJob(slug: string) {
   const { data: job, error } = await supabase
@@ -219,142 +219,156 @@ function JobDetails() {
       <SiteHeader />
       <main className="mx-auto max-w-5xl space-y-8 px-4 py-10 sm:px-6 lg:px-8">
         {/* Header */}
-        <header className="glass rounded-2xl p-6">
-          <div className="flex items-start gap-4">
-            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-muted">
-              <CompanyLogo url={job.company_logo} name={job.company} priority />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-medium uppercase tracking-wider text-brand">{job.category ?? "Job"}</p>
-              <h1 className="mt-1 text-balance text-2xl font-bold tracking-tight sm:text-3xl">
-                {job.title}
-              </h1>
-              <p className="mt-1 text-sm text-muted-foreground">{job.company}</p>
-            </div>
-          </div>
-
-          <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {facts.map((f) => (
-              <div key={f.label} className="flex items-start gap-3 rounded-xl border border-border bg-surface/50 p-3">
-                <f.icon className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
-                <div className="min-w-0">
-                  <dt className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{f.label}</dt>
-                  <dd className="truncate text-sm font-medium text-foreground">{f.value}</dd>
-                </div>
+        <ScrollReveal>
+          <header className="glass rounded-2xl p-6">
+            <div className="flex items-start gap-4">
+              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-muted">
+                <CompanyLogo url={job.company_logo} name={job.company} priority />
               </div>
-            ))}
-          </dl>
-        </header>
+              <div className="min-w-0">
+                <p className="text-xs font-medium uppercase tracking-wider text-brand">{job.category ?? "Job"}</p>
+                <h1 className="mt-1 text-balance text-2xl font-bold tracking-tight sm:text-3xl">
+                  {job.title}
+                </h1>
+                <p className="mt-1 text-sm text-muted-foreground">{job.company}</p>
+              </div>
+            </div>
+
+            <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {facts.map((f) => (
+                <div key={f.label} className="flex items-start gap-3 rounded-xl border border-border bg-surface/50 p-3">
+                  <f.icon className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
+                  <div className="min-w-0">
+                    <dt className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{f.label}</dt>
+                    <dd className="truncate text-sm font-medium text-foreground">{f.value}</dd>
+                  </div>
+                </div>
+              ))}
+            </dl>
+          </header>
+        </ScrollReveal>
 
         {/* AI Summary */}
         {job.ai_summary && (
-          <section className="glass rounded-2xl p-6">
-            <h2 className="text-lg font-semibold">
-              Overview <span className="ml-2 align-middle rounded-full bg-brand/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-brand">AI Summary</span>
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{job.ai_summary}</p>
-          </section>
+          <ScrollReveal>
+            <section className="glass rounded-2xl p-6">
+              <h2 className="text-lg font-semibold">
+                Overview <span className="ml-2 align-middle rounded-full bg-brand/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-brand">AI Summary</span>
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{job.ai_summary}</p>
+            </section>
+          </ScrollReveal>
         )}
 
         {/* Description */}
         {job.description && (
-          <section className="glass rounded-2xl p-6">
-            <div
-              className="prose prose-sm sm:prose-base dark:prose-invert max-w-none
-                prose-headings:font-bold prose-headings:tracking-tight
-                prose-h2:text-xl prose-h2:mt-6 prose-h2:mb-3
-                prose-h3:text-lg prose-h3:mt-4 prose-h3:mb-2
-                prose-p:text-muted-foreground prose-p:leading-relaxed
-                prose-a:text-brand prose-a:no-underline hover:prose-a:underline
-                prose-ul:text-muted-foreground prose-ol:text-muted-foreground
-                prose-li:marker:text-brand
-                prose-strong:text-foreground"
-              dangerouslySetInnerHTML={{ __html: renderMarkdown(job.description) }}
-            />
-          </section>
+          <ScrollReveal>
+            <section className="glass rounded-2xl p-6">
+              <div
+                className="prose prose-sm sm:prose-base dark:prose-invert max-w-none
+                  prose-headings:font-bold prose-headings:tracking-tight
+                  prose-h2:text-xl prose-h2:mt-6 prose-h2:mb-3
+                  prose-h3:text-lg prose-h3:mt-4 prose-h3:mb-2
+                  prose-p:text-muted-foreground prose-p:leading-relaxed
+                  prose-a:text-brand prose-a:no-underline hover:prose-a:underline
+                  prose-ul:text-muted-foreground prose-ol:text-muted-foreground
+                  prose-li:marker:text-brand
+                  prose-strong:text-foreground"
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(job.description) }}
+              />
+            </section>
+          </ScrollReveal>
         )}
 
         {/* Key Skills */}
         {job.tags && job.tags.length > 0 && (
-          <section className="glass rounded-2xl p-6">
-            <h2 className="text-lg font-semibold">Key Skills</h2>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {job.tags.map((tag: string) => (
-                <span key={tag} className="rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-foreground">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </section>
+          <ScrollReveal>
+            <section className="glass rounded-2xl p-6">
+              <h2 className="text-lg font-semibold">Key Skills</h2>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {job.tags.map((tag: string) => (
+                  <span key={tag} className="rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-foreground">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </section>
+          </ScrollReveal>
         )}
 
 
         {/* Apply CTA */}
-        <section className="glass-strong flex flex-col items-center gap-3 rounded-2xl p-8 text-center">
-          <h2 className="text-lg font-semibold">Ready to apply?</h2>
-          <p className="text-sm text-muted-foreground">
-            You'll be redirected to the official career page of {job.company}.
-          </p>
-          <a
-            href={job.apply_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => {
-              const stateKey = `monetag_clicked_${job.id}`;
-              const hasClicked = sessionStorage.getItem(stateKey);
-              
-              track({ event_type: "apply_click", path: `/jobs/${slug}`, job_id: job.id });
-              
-              if (!hasClicked) {
-                // First click: Prevent going to job.apply_url, open Monetag, set state
-                e.preventDefault();
-                sessionStorage.setItem(stateKey, "true");
-                window.open("https://omg10.com/4/11702415", "_blank");
-              } else {
-                // Second click: Clear state, let normal link behavior proceed to job.apply_url
-                sessionStorage.removeItem(stateKey);
-              }
-            }}
-            className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/20 transition-transform hover:scale-105"
-          >
-            Apply on Official Site <ExternalLink className="h-4 w-4" />
-          </a>
-        </section>
+        <ScrollReveal>
+          <section className="glass-strong flex flex-col items-center gap-3 rounded-2xl p-8 text-center">
+            <h2 className="text-lg font-semibold">Ready to apply?</h2>
+            <p className="text-sm text-muted-foreground">
+              You'll be redirected to the official career page of {job.company}.
+            </p>
+            <a
+              href={job.apply_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                const stateKey = `monetag_clicked_${job.id}`;
+                const hasClicked = sessionStorage.getItem(stateKey);
+                
+                track({ event_type: "apply_click", path: `/jobs/${slug}`, job_id: job.id });
+                
+                if (!hasClicked) {
+                  // First click: Prevent going to job.apply_url, open Monetag, set state
+                  e.preventDefault();
+                  sessionStorage.setItem(stateKey, "true");
+                  window.open("https://omg10.com/4/11702415", "_blank");
+                } else {
+                  // Second click: Clear state, let normal link behavior proceed to job.apply_url
+                  sessionStorage.removeItem(stateKey);
+                }
+              }}
+              className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/20 transition-transform hover:scale-105"
+            >
+              Apply on Official Site <ExternalLink className="h-4 w-4" />
+            </a>
+          </section>
+        </ScrollReveal>
 
         <AdSlot placement="jobDetail" />
 
         {/* Related Blogs */}
         {data.relatedBlogs.length > 0 && (
-          <section className="glass rounded-2xl p-6">
-            <h2 className="mb-4 text-lg font-semibold">Career Guides & Tips</h2>
-            <div className="grid gap-4 sm:grid-cols-3">
-              {data.relatedBlogs.map((b: any) => (
-                <Link key={b.id} to="/blog/$slug" params={{ slug: b.slug }} className="group block overflow-hidden rounded-xl border border-border bg-background transition-colors hover:border-brand/50">
-                  <div className="aspect-video w-full overflow-hidden bg-muted">
-                    {b.cover_image && (
-                      <img src={b.cover_image} alt={b.title} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-brand">{b.category}</p>
-                    <h3 className="mt-1 line-clamp-2 text-sm font-medium leading-tight text-foreground">{b.title}</h3>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
+          <ScrollReveal>
+            <section className="glass rounded-2xl p-6">
+              <h2 className="mb-4 text-lg font-semibold">Career Guides & Tips</h2>
+              <div className="grid gap-4 sm:grid-cols-3">
+                {data.relatedBlogs.map((b: any) => (
+                  <Link key={b.id} to="/blog/$slug" params={{ slug: b.slug }} className="group block overflow-hidden rounded-xl border border-border bg-background transition-colors hover:border-brand/50">
+                    <div className="aspect-video w-full overflow-hidden bg-muted">
+                      {b.cover_image && (
+                        <img src={b.cover_image} alt={b.title} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-brand">{b.category}</p>
+                      <h3 className="mt-1 line-clamp-2 text-sm font-medium leading-tight text-foreground">{b.title}</h3>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          </ScrollReveal>
         )}
 
         {/* Related Jobs */}
         {data.related.length > 0 && (
-          <section>
-            <h2 className="mb-4 text-lg font-semibold">Similar Jobs</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {data.related.map((r: any) => (
-                <JobCard key={r.id} job={r} compact />
-              ))}
-            </div>
-          </section>
+          <ScrollReveal>
+            <section>
+              <h2 className="mb-4 text-lg font-semibold">Similar Jobs</h2>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {data.related.map((r: any) => (
+                  <JobCard key={r.id} job={r} compact />
+                ))}
+              </div>
+            </section>
+          </ScrollReveal>
         )}
       </main>
       <SiteFooter />

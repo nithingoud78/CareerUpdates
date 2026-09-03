@@ -11,6 +11,7 @@ import { JobCard } from "@/components/job-card";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { StickySocial } from "@/components/sticky-social";
 import { track } from "@/lib/analytics-tracking";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import React from "react";
 
 const searchSchema = z.object({
@@ -196,20 +197,21 @@ function SearchPage() {
         </div>
 
         {/* Desktop Filters */}
-        <aside className="glass hidden space-y-5 self-start rounded-2xl p-5 md:block">
-          <FiltersContent
-            search={search}
-            update={update}
-            reset={() => navigate({ search: {} })}
-            totalCount={allJobs.length}
-            categoryCounts={categoryCounts}
-            typeCounts={typeCounts}
-          />
-        </aside>
+        <ScrollReveal className="glass hidden space-y-5 self-start rounded-2xl p-5 md:block">
+          <aside>
+            <FiltersContent
+              search={search}
+              update={update}
+              reset={() => navigate({ search: {} })}
+              totalCount={allJobs.length}
+              categoryCounts={categoryCounts}
+              typeCounts={typeCounts}
+            />
+          </aside>
+        </ScrollReveal>
 
         {/* Results */}
-        <div className="space-y-5">
-
+        <ScrollReveal delay={0.1} className="space-y-5">
           {isFetching && !allJobs.length && (
             <p className="text-sm text-muted-foreground">Loading jobs…</p>
           )}
@@ -233,7 +235,7 @@ function SearchPage() {
               </React.Fragment>
             ))}
           </div>
-        </div>
+        </ScrollReveal>
       </main>
       <SiteFooter />
       <StickySocial />

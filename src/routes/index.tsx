@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { JobCard } from "@/components/job-card";
 import { AdSlot } from "@/components/ads/ad-slot";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 import { StickySocial } from "@/components/sticky-social";
 
@@ -113,7 +114,7 @@ function Home() {
         <div className="absolute inset-0 -z-10">
           <div className="absolute inset-x-0 top-0 h-[480px] bg-[radial-gradient(80%_60%_at_50%_0%,color-mix(in_oklab,var(--brand)_18%,transparent),transparent_70%)]" />
         </div>
-        <div className="mx-auto max-w-5xl px-4 pb-12 pt-2 text-center sm:px-6 lg:px-8 lg:pt-4">
+        <ScrollReveal className="mx-auto max-w-5xl px-4 pb-12 pt-2 text-center sm:px-6 lg:px-8 lg:pt-4">
           <p className="mb-3 inline-flex rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
             Curated official openings · Updated daily
           </p>
@@ -160,7 +161,7 @@ function Home() {
               </Link>
             ))}
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       <main className="mx-auto max-w-7xl space-y-12 px-4 pb-16 sm:px-6 lg:px-8">
@@ -168,81 +169,85 @@ function Home() {
 
         {/* RESUME TOOLS */}
         <section>
-          <div className="mb-4 flex items-end justify-between">
-            <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-              <span className="text-brand">Resume</span> Tools
-            </h2>
-            <Link to="/ats-resumes-pack" className="text-sm font-medium text-brand hover:underline">
-              View all →
-            </Link>
-          </div>
-          <div className="flex snap-x snap-mandatory overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0 gap-4 scrollbar-hide">
-            <Link
-              to="/ats-resumes-pack"
-              className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
-            >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
-                <Package className="h-5 w-5 text-brand" />
-              </span>
-              <div>
-                <p className="font-semibold text-foreground leading-tight">ATS Resumes Pack</p>
-                <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
-                  Resume + cover letter + referral message templates in one pack.
-                </p>
-                {data.minBundlePrice != null && (
-                  <p className="mt-1.5 text-[11px] font-semibold text-brand">From ₹{data.minBundlePrice} →</p>
-                )}
-              </div>
-            </Link>
-            <Link
-              to="/ats-checker"
-              className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
-            >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
-                <ShieldCheck className="h-5 w-5 text-brand" />
-              </span>
-              <div>
-                <p className="font-semibold text-foreground leading-tight">ATS Resume Checker</p>
-                <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
-                  Check how well your resume matches a job description.
-                </p>
-                {data.atsPrice != null && data.atsPrice > 0 ? (
-                  <p className="mt-1.5 text-[11px] font-semibold text-brand">
-                    From ₹{data.atsPrice} →
+          <ScrollReveal>
+            <div className="mb-4 flex items-end justify-between">
+              <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                <span className="text-brand">Resume</span> Tools
+              </h2>
+              <Link to="/ats-resumes-pack" className="text-sm font-medium text-brand hover:underline">
+                View all →
+              </Link>
+            </div>
+            <div className="flex snap-x snap-mandatory overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0 gap-4 scrollbar-hide">
+              <Link
+                to="/ats-resumes-pack"
+                className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
+              >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
+                  <Package className="h-5 w-5 text-brand" />
+                </span>
+                <div>
+                  <p className="font-semibold text-foreground leading-tight">ATS Resumes Pack</p>
+                  <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
+                    Resume + cover letter + referral message templates in one pack.
                   </p>
-                ) : (
-                  <p className="mt-1.5 text-[11px] font-semibold text-brand">Try for free →</p>
-                )}
-              </div>
-            </Link>
-            <Link
-              to="/ats-friendly-resumes"
-              className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
-            >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
-                <FileText className="h-5 w-5 text-brand" />
-              </span>
-              <div>
-                <p className="font-semibold text-foreground leading-tight">ATS Friendly Resumes (Individual)</p>
-                <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
-                  ATS-friendly templates for freshers and experienced professionals.
-                </p>
-                {data.minTemplatePrice != null && (
-                  <p className="mt-1.5 text-[11px] font-semibold text-brand">From ₹{data.minTemplatePrice} →</p>
-                )}
-              </div>
-            </Link>
-          </div>
+                  {data.minBundlePrice != null && (
+                    <p className="mt-1.5 text-[11px] font-semibold text-brand">From ₹{data.minBundlePrice} →</p>
+                  )}
+                </div>
+              </Link>
+              <Link
+                to="/ats-checker"
+                className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
+              >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
+                  <ShieldCheck className="h-5 w-5 text-brand" />
+                </span>
+                <div>
+                  <p className="font-semibold text-foreground leading-tight">ATS Resume Checker</p>
+                  <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
+                    Check how well your resume matches a job description.
+                  </p>
+                  {data.atsPrice != null && data.atsPrice > 0 ? (
+                    <p className="mt-1.5 text-[11px] font-semibold text-brand">
+                      From ₹{data.atsPrice} →
+                    </p>
+                  ) : (
+                    <p className="mt-1.5 text-[11px] font-semibold text-brand">Try for free →</p>
+                  )}
+                </div>
+              </Link>
+              <Link
+                to="/ats-friendly-resumes"
+                className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
+              >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
+                  <FileText className="h-5 w-5 text-brand" />
+                </span>
+                <div>
+                  <p className="font-semibold text-foreground leading-tight">ATS Friendly Resumes (Individual)</p>
+                  <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
+                    ATS-friendly templates for freshers and experienced professionals.
+                  </p>
+                  {data.minTemplatePrice != null && (
+                    <p className="mt-1.5 text-[11px] font-semibold text-brand">From ₹{data.minTemplatePrice} →</p>
+                  )}
+                </div>
+              </Link>
+            </div>
+          </ScrollReveal>
         </section>
         
         {/* LATEST */}
         <section>
-          <SectionHeading title="Latest Opportunities" link="/search" />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {data.latest.map((job) => (
-              <JobCard key={job.id} job={job} />
-            ))}
-          </div>
+          <ScrollReveal>
+            <SectionHeading title="Latest Opportunities" link="/search" />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {data.latest.map((job) => (
+                <JobCard key={job.id} job={job} />
+              ))}
+            </div>
+          </ScrollReveal>
         </section>
 
 
@@ -251,22 +256,26 @@ function Home() {
         <div className="grid gap-8 lg:grid-cols-2">
           {data.intern.length > 0 && (
             <section>
-              <SectionHeading title="Internships" link="/search" search={{ category: "Internship" }} />
-              <div className="grid gap-4 sm:grid-cols-2">
-                {data.intern.map((job) => (
-                  <JobCard key={job.id} job={job} compact />
-                ))}
-              </div>
+              <ScrollReveal>
+                <SectionHeading title="Internships" link="/search" search={{ category: "Internship" }} />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {data.intern.map((job) => (
+                    <JobCard key={job.id} job={job} compact />
+                  ))}
+                </div>
+              </ScrollReveal>
             </section>
           )}
           {data.govt.length > 0 && (
             <section>
-              <SectionHeading title="Government Jobs" link="/search" search={{ category: "Government" }} />
-              <div className="grid gap-4 sm:grid-cols-2">
-                {data.govt.map((job) => (
-                  <JobCard key={job.id} job={job} compact />
-                ))}
-              </div>
+              <ScrollReveal>
+                <SectionHeading title="Government Jobs" link="/search" search={{ category: "Government" }} />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {data.govt.map((job) => (
+                    <JobCard key={job.id} job={job} compact />
+                  ))}
+                </div>
+              </ScrollReveal>
             </section>
           )}
         </div>

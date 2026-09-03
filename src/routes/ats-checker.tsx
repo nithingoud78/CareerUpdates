@@ -23,6 +23,7 @@ import { StickySocial } from "@/components/sticky-social";
 import { AtsResultDisplay } from "@/components/career-tools/ats-result-display";
 import { analyzeResume, extractResumeText, getPublicAtsPricing } from "@/lib/ats-checker.functions";
 import { createAtsCheckoutOrder, verifyRazorpayPayment } from "@/lib/payments.functions";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import type { AtsResult } from "@/lib/ats-checker.functions";
 
 const SITE_URL = "https://careerupdates.co.in";
@@ -417,7 +418,7 @@ function AtsChecker() {
         <div className="absolute inset-0 -z-10">
           <div className="absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_50%_at_50%_0%,color-mix(in_oklab,var(--brand)_14%,transparent),transparent_70%)]" />
         </div>
-        <div className="mx-auto max-w-3xl px-4 pb-10 pt-12 text-center sm:px-6">
+        <ScrollReveal className="mx-auto max-w-3xl px-4 pb-10 pt-12 text-center sm:px-6">
           <p className="mb-3 inline-flex rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
             Career Tools
           </p>
@@ -427,17 +428,19 @@ function AtsChecker() {
           <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
             Paste your resume and a job description to get a detailed ATS compatibility report — keyword analysis, missing skills, formatting feedback, and actionable improvement suggestions.
           </p>
-        </div>
+        </ScrollReveal>
       </section>
 
       <main className="mx-auto max-w-4xl px-4 pb-16 sm:px-6 lg:px-8">
         {/* Privacy notice */}
-        <div className="mb-6 flex items-start gap-2 rounded-xl border border-border bg-muted/30 p-4 text-xs text-muted-foreground">
-          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
-          <p>
-            <strong>Privacy:</strong> Your resume text is sent to an AI analysis service to generate the compatibility report and is not permanently stored. Do not paste information you do not want processed by a third-party AI provider. No resume content is logged or shared publicly.
-          </p>
-        </div>
+        <ScrollReveal>
+          <div className="mb-6 flex items-start gap-2 rounded-xl border border-border bg-muted/30 p-4 text-xs text-muted-foreground">
+            <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
+            <p>
+              <strong>Privacy:</strong> Your resume text is sent to an AI analysis service to generate the compatibility report and is not permanently stored. Do not paste information you do not want processed by a third-party AI provider. No resume content is logged or shared publicly.
+            </p>
+          </div>
+        </ScrollReveal>
 
         {/* Input form */}
         <div className="space-y-6">
@@ -637,49 +640,53 @@ function AtsChecker() {
 
         {/* Promo — resume templates */}
         {!mutation.isPending && (
-          <div className="mt-12 grid gap-4 sm:grid-cols-2">
-            <Link
-              to="/ats-friendly-resumes"
-              className="glass flex items-center gap-4 rounded-2xl p-5 transition-all hover:shadow-sm hover:shadow-brand/10"
-            >
-              <FileText className="h-8 w-8 shrink-0 text-brand" />
-              <div>
-                <p className="font-semibold">ATS Friendly Resumes</p>
-                <p className="text-sm text-muted-foreground">ATS-friendly resumes for freshers & professionals</p>
-              </div>
-            </Link>
-            <Link
-              to="/ats-resumes-pack"
-              className="glass flex items-center gap-4 rounded-2xl p-5 transition-all hover:shadow-sm hover:shadow-brand/10"
-            >
-              <FileText className="h-8 w-8 shrink-0 text-brand" />
-              <div>
-                <p className="font-semibold">ATS Resumes Pack</p>
-                <p className="text-sm text-muted-foreground">Resume + cover letter + outreach templates</p>
-              </div>
-            </Link>
-          </div>
+          <ScrollReveal delay={0.1}>
+            <div className="mt-12 grid gap-4 sm:grid-cols-2">
+              <Link
+                to="/ats-friendly-resumes"
+                className="glass flex items-center gap-4 rounded-2xl p-5 transition-all hover:shadow-sm hover:shadow-brand/10"
+              >
+                <FileText className="h-8 w-8 shrink-0 text-brand" />
+                <div>
+                  <p className="font-semibold">ATS Friendly Resumes</p>
+                  <p className="text-sm text-muted-foreground">ATS-friendly resumes for freshers & professionals</p>
+                </div>
+              </Link>
+              <Link
+                to="/ats-resumes-pack"
+                className="glass flex items-center gap-4 rounded-2xl p-5 transition-all hover:shadow-sm hover:shadow-brand/10"
+              >
+                <FileText className="h-8 w-8 shrink-0 text-brand" />
+                <div>
+                  <p className="font-semibold">ATS Resumes Pack</p>
+                  <p className="text-sm text-muted-foreground">Resume + cover letter + outreach templates</p>
+                </div>
+              </Link>
+            </div>
+          </ScrollReveal>
         )}
 
         {/* How it works */}
-        <section className="mt-12 space-y-4">
-          <h2 className="text-xl font-bold">How the ATS Checker Works</h2>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {[
-              { step: "1", title: "Paste your resume", desc: "Copy and paste your resume text. You can also upload a .txt file." },
-              { step: "2", title: "Add the job description", desc: "Paste the full job description from the company's job posting." },
-              { step: "3", title: "Get your report", desc: "Receive a detailed compatibility analysis with keyword gaps and suggestions." },
-            ].map((item) => (
-              <div key={item.step} className="glass rounded-2xl p-4 space-y-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand/10 text-sm font-bold text-brand">
-                  {item.step}
-                </span>
-                <p className="font-semibold text-sm">{item.title}</p>
-                <p className="text-xs text-muted-foreground">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        <ScrollReveal>
+          <section className="mt-12 space-y-4">
+            <h2 className="text-xl font-bold">How the ATS Checker Works</h2>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
+                { step: "1", title: "Paste your resume", desc: "Copy and paste your resume text. You can also upload a .txt file." },
+                { step: "2", title: "Add the job description", desc: "Paste the full job description from the company's job posting." },
+                { step: "3", title: "Get your report", desc: "Receive a detailed compatibility analysis with keyword gaps and suggestions." },
+              ].map((item) => (
+                <div key={item.step} className="glass rounded-2xl p-4 space-y-2">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand/10 text-sm font-bold text-brand">
+                    {item.step}
+                  </span>
+                  <p className="font-semibold text-sm">{item.title}</p>
+                  <p className="text-xs text-muted-foreground">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </ScrollReveal>
 
         {/* Disclaimer */}
         <div className="mt-8 flex items-start gap-2 rounded-xl border border-border bg-muted/30 p-4 text-xs text-muted-foreground">

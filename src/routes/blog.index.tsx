@@ -8,6 +8,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { StickySocial } from "@/components/sticky-social";
 import { getPublishedBlogs, getFeaturedBlog, getBlogCategories } from "@/lib/blog.functions";
 import { AdSlot } from "@/components/ads/ad-slot";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import React from "react";
 
 export const Route = createFileRoute("/blog/")({
@@ -89,64 +90,66 @@ function BlogIndex() {
       <SiteHeader />
       <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Hero header */}
-        <div className="mb-10">
+        <ScrollReveal className="mb-10">
           <p className="text-xs font-medium uppercase tracking-wider text-brand">Blog</p>
           <h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">Career Insights</h1>
           <p className="mt-3 max-w-xl text-muted-foreground">
             Interview tips, industry news, and career guides curated for you.
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* Featured Post */}
         {featuredPost && (
-          <Link
-            to="/blog/$slug"
-            params={{ slug: (featuredPost as any).slug }}
-            className="group mb-12 block overflow-hidden rounded-2xl border border-border/50 bg-surface shadow-sm transition-shadow hover:shadow-md"
-          >
-            {(featuredPost as any).cover_image && (
-              <div className="h-56 w-full overflow-hidden sm:h-72">
-                <img
-                  src={(featuredPost as any).cover_image}
-                  alt={(featuredPost as any).title}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-            )}
-            <div className="p-6 sm:p-8">
-              <div className="mb-3 flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
-                  <Star className="h-3 w-3 fill-current" /> Featured
-                </span>
-                {(featuredPost as any).category && (
-                  <span className="rounded-full bg-brand/10 px-2.5 py-0.5 text-xs font-medium text-brand">
-                    {(featuredPost as any).category}
-                  </span>
-                )}
-              </div>
-              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl group-hover:text-brand transition-colors">
-                {(featuredPost as any).title}
-              </h2>
-              {(featuredPost as any).excerpt && (
-                <p className="mt-3 line-clamp-2 text-muted-foreground">{(featuredPost as any).excerpt}</p>
+          <ScrollReveal>
+            <Link
+              to="/blog/$slug"
+              params={{ slug: (featuredPost as any).slug }}
+              className="group mb-12 block overflow-hidden rounded-2xl border border-border/50 bg-surface shadow-sm transition-shadow hover:shadow-md"
+            >
+              {(featuredPost as any).cover_image && (
+                <div className="h-56 w-full overflow-hidden sm:h-72">
+                  <img
+                    src={(featuredPost as any).cover_image}
+                    alt={(featuredPost as any).title}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
               )}
-              <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Calendar className="h-3.5 w-3.5" />
-                  {formatDate((featuredPost as any).published_at ?? (featuredPost as any).created_at)}
-                </span>
-                <span>{(featuredPost as any).author}</span>
-                <span className="ml-auto flex items-center gap-1 text-brand font-medium">
-                  Read article <ArrowRight className="h-4 w-4" />
-                </span>
+              <div className="p-6 sm:p-8">
+                <div className="mb-3 flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
+                    <Star className="h-3 w-3 fill-current" /> Featured
+                  </span>
+                  {(featuredPost as any).category && (
+                    <span className="rounded-full bg-brand/10 px-2.5 py-0.5 text-xs font-medium text-brand">
+                      {(featuredPost as any).category}
+                    </span>
+                  )}
+                </div>
+                <h2 className="text-2xl font-bold tracking-tight sm:text-3xl group-hover:text-brand transition-colors">
+                  {(featuredPost as any).title}
+                </h2>
+                {(featuredPost as any).excerpt && (
+                  <p className="mt-3 line-clamp-2 text-muted-foreground">{(featuredPost as any).excerpt}</p>
+                )}
+                <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="h-3.5 w-3.5" />
+                    {formatDate((featuredPost as any).published_at ?? (featuredPost as any).created_at)}
+                  </span>
+                  <span>{(featuredPost as any).author}</span>
+                  <span className="ml-auto flex items-center gap-1 text-brand font-medium">
+                    Read article <ArrowRight className="h-4 w-4" />
+                  </span>
+                </div>
               </div>
-            </div>
-          </Link>
+            </Link>
+          </ScrollReveal>
         )}
 
         <div className="grid gap-8 lg:grid-cols-[1fr_260px]">
           {/* Main listing */}
-          <div>
+          <ScrollReveal>
             {/* Search */}
             <form onSubmit={handleSearch} className="mb-6 flex gap-2">
               <div className="relative flex-1">
@@ -214,10 +217,10 @@ function BlogIndex() {
                 </button>
               </div>
             )}
-          </div>
+          </ScrollReveal>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <ScrollReveal className="space-y-6">
             {/* Categories */}
             {((categoriesList as any[]) ?? []).length > 0 && (
               <div className="rounded-xl border border-border/50 bg-surface/50 p-5">
@@ -272,7 +275,7 @@ function BlogIndex() {
                 </a>
               </div>
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </main>
       <SiteFooter />

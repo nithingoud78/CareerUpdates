@@ -8,6 +8,7 @@ import { StickySocial } from "@/components/sticky-social";
 import { TemplateCard } from "@/components/career-tools/template-card";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { getPublishedTemplates } from "@/lib/career-tools.functions";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 const SITE_URL = "https://careerupdates.co.in";
 
@@ -63,7 +64,7 @@ function ResumeTemplates() {
         <div className="absolute inset-0 -z-10">
           <div className="absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_50%_at_50%_0%,color-mix(in_oklab,var(--brand)_14%,transparent),transparent_70%)]" />
         </div>
-        <div className="mx-auto max-w-4xl px-4 pb-10 pt-12 text-center sm:px-6">
+        <ScrollReveal className="mx-auto max-w-4xl px-4 pb-10 pt-12 text-center sm:px-6">
           <p className="mb-3 inline-flex rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
             Career Tools
           </p>
@@ -87,7 +88,7 @@ function ResumeTemplates() {
               Check My Resume →
             </Link>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       <main className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
@@ -126,7 +127,7 @@ function ResumeTemplates() {
 
         {/* Template grid */}
         {!isLoading && templates && templates.length > 0 && (
-          <>
+          <ScrollReveal delay={0.1}>
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-xl font-bold text-foreground">
                 <span className="text-brand">{templates.length}</span> Resume{templates.length !== 1 ? "s" : ""}
@@ -137,34 +138,36 @@ function ResumeTemplates() {
                 <TemplateCard key={t.id} template={t as any} />
               ))}
             </div>
-          </>
+          </ScrollReveal>
         )}
 
         <AdSlot placement="homeMiddle" className="mt-12" />
 
         {/* Cross-links */}
-        <div className="mt-12 grid gap-4 sm:grid-cols-2">
-          <Link
-            to="/ats-resumes-pack"
-            className="glass flex items-center gap-4 rounded-2xl p-5 transition-all hover:shadow-sm hover:shadow-brand/10"
-          >
-            <Package className="h-8 w-8 shrink-0 text-brand" />
-            <div>
-              <p className="font-semibold">ATS Resumes Pack</p>
-              <p className="text-sm text-muted-foreground">Get resume + cover letter + referral templates together</p>
-            </div>
-          </Link>
-          <Link
-            to="/ats-checker"
-            className="glass flex items-center gap-4 rounded-2xl p-5 transition-all hover:shadow-sm hover:shadow-brand/10"
-          >
-            <FileText className="h-8 w-8 shrink-0 text-brand" />
-            <div>
-              <p className="font-semibold">ATS Resume Checker</p>
-              <p className="text-sm text-muted-foreground">Check how well your resume matches a job description</p>
-            </div>
-          </Link>
-        </div>
+        <ScrollReveal>
+          <div className="mt-12 grid gap-4 sm:grid-cols-2">
+            <Link
+              to="/ats-resumes-pack"
+              className="glass flex items-center gap-4 rounded-2xl p-5 transition-all hover:shadow-sm hover:shadow-brand/10"
+            >
+              <Package className="h-8 w-8 shrink-0 text-brand" />
+              <div>
+                <p className="font-semibold">ATS Resumes Pack</p>
+                <p className="text-sm text-muted-foreground">Get resume + cover letter + referral templates together</p>
+              </div>
+            </Link>
+            <Link
+              to="/ats-checker"
+              className="glass flex items-center gap-4 rounded-2xl p-5 transition-all hover:shadow-sm hover:shadow-brand/10"
+            >
+              <FileText className="h-8 w-8 shrink-0 text-brand" />
+              <div>
+                <p className="font-semibold">ATS Resume Checker</p>
+                <p className="text-sm text-muted-foreground">Check how well your resume matches a job description</p>
+              </div>
+            </Link>
+          </div>
+        </ScrollReveal>
       </main>
 
       <SiteFooter />
