@@ -19,6 +19,7 @@ import { JobCard } from "@/components/job-card";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { track } from "@/lib/analytics-tracking";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { CompanyLogo } from "@/components/company-logo";
 
 async function fetchJob(slug: string) {
   const { data: job, error } = await supabase

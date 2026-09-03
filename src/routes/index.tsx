@@ -252,21 +252,23 @@ function Home() {
 
 
 
-        {/* GOV + INTERN */}
-        <div className="grid gap-8 lg:grid-cols-2">
-          {data.intern.length > 0 && (
-            <section>
-              <ScrollReveal>
-                <SectionHeading title="Internships" link="/search" search={{ category: "Internship" }} />
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {data.intern.map((job) => (
-                    <JobCard key={job.id} job={job} compact />
-                  ))}
-                </div>
-              </ScrollReveal>
-            </section>
-          )}
-          {data.govt.length > 0 && (
+        {/* INTERNSHIPS */}
+        {data.intern.length > 0 && (
+          <section>
+            <ScrollReveal>
+              <SectionHeading title="Internships" link="/search" search={{ category: "Internship" }} />
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {data.intern.map((job) => (
+                  <JobCard key={job.id} job={job} compact />
+                ))}
+              </div>
+            </ScrollReveal>
+          </section>
+        )}
+
+        {/* GOV ONLY */}
+        {data.govt.length > 0 && (
+          <div className="grid gap-8 lg:grid-cols-2">
             <section>
               <ScrollReveal>
                 <SectionHeading title="Government Jobs" link="/search" search={{ category: "Government" }} />
@@ -277,8 +279,8 @@ function Home() {
                 </div>
               </ScrollReveal>
             </section>
-          )}
-        </div>
+          </div>
+        )}
       </main>
 
       <SiteFooter />

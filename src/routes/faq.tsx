@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ChevronDown, MessageCircle } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 export const Route = createFileRoute("/faq")({
   head: () => ({
@@ -168,7 +169,7 @@ function FaqPage() {
       <SiteHeader />
       <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
         {/* Hero */}
-        <div className="text-center">
+        <ScrollReveal className="text-center">
           <p className="text-xs font-medium uppercase tracking-wider text-brand">Support</p>
           <h1 className="mt-2 text-balance text-4xl font-bold tracking-tight sm:text-5xl">
             Frequently Asked <span className="text-brand">Questions</span>
@@ -177,54 +178,58 @@ function FaqPage() {
             Everything you need to know about Career Updates, job applications, notifications and
             more.
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* FAQ Sections */}
         <div className="mt-14 space-y-10">
-          {FAQ_SECTIONS.map((section) => (
-            <section key={section.title}>
-              <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-brand">
-                {section.title}
-              </h2>
-              <div className="divide-y divide-border rounded-2xl border border-border bg-surface overflow-hidden">
-                {section.items.map((item) => (
-                  <AccordionItem key={item.q} question={item.q} answer={item.a} />
-                ))}
-              </div>
-            </section>
+          {FAQ_SECTIONS.map((section, index) => (
+            <ScrollReveal key={section.title} delay={index * 0.05}>
+              <section>
+                <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-brand">
+                  {section.title}
+                </h2>
+                <div className="divide-y divide-border rounded-2xl border border-border bg-surface overflow-hidden">
+                  {section.items.map((item) => (
+                    <AccordionItem key={item.q} question={item.q} answer={item.a} />
+                  ))}
+                </div>
+              </section>
+            </ScrollReveal>
           ))}
         </div>
 
         {/* CTA */}
-        <div className="mt-16 rounded-2xl border border-brand/20 bg-brand/5 p-8 text-center">
-          <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-brand/10 text-brand">
-            <MessageCircle className="h-6 w-6" />
+        <ScrollReveal>
+          <div className="mt-16 rounded-2xl border border-brand/20 bg-brand/5 p-8 text-center">
+            <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-brand/10 text-brand">
+              <MessageCircle className="h-6 w-6" />
+            </div>
+            <h2 className="text-lg font-bold">Still have a question?</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Can't find what you're looking for? Send us a message and we'll get back to you.
+            </p>
+            <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-brand-foreground shadow-sm transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
+              >
+                Contact Us
+              </Link>
+              <Link
+                to="/terms"
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-6 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
+              >
+                Terms
+              </Link>
+              <Link
+                to="/privacy"
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-6 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
+              >
+                Privacy
+              </Link>
+            </div>
           </div>
-          <h2 className="text-lg font-bold">Still have a question?</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Can't find what you're looking for? Send us a message and we'll get back to you.
-          </p>
-          <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-brand-foreground shadow-sm transition-transform hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
-            >
-              Contact Us
-            </Link>
-            <Link
-              to="/terms"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-6 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
-            >
-              Terms
-            </Link>
-            <Link
-              to="/privacy"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-6 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
-            >
-              Privacy
-            </Link>
-          </div>
-        </div>
+        </ScrollReveal>
       </main>
       <SiteFooter />
     </div>

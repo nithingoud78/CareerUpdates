@@ -1,6 +1,6 @@
 
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate, defer } from "@tanstack/react-router";
+import { useQuery, queryOptions } from "@tanstack/react-query";
 import { Search as SearchIcon, ChevronDown } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
@@ -21,8 +21,21 @@ const searchSchema = z.object({
   type: z.string().optional(),
 });
 
+const searchJobsQuery = queryOptions({
+  queryKey: ["search-all-jobs"],
+  queryFn: fetchAllPublishedJobs,
+  staleTime: 60_000,
+});
+
 export const Route = createFileRoute("/search")({
   validateSearch: searchSchema,
+  loader: ({ context }) => {
+    // We use defer() so TanStack Router officially tracks the background fetch
+    // without blocking the route transition, fixing the SPA navigation hang.
+    return {
+      prefetchPromise: defer(context.queryClient.prefetchQuery(searchJobsQuery)),
+    };
+  },
   head: () => ({
     meta: [
       { title: "Search Jobs — Career Updates" },
@@ -84,11 +97,7 @@ function SearchPage() {
 
   // Single query fetches all published jobs; stale time is generous so it doesn't
   // re-fetch on every filter click — counts always reflect the live published set.
-  const { data: allJobs = [], isFetching } = useQuery({
-    queryKey: ["search-all-jobs"],
-    queryFn: fetchAllPublishedJobs,
-    staleTime: 60_000, // 1 minute
-  });
+  const { data: allJobs = [], isFetching } = useQuery(searchJobsQuery);
 
   // Derive per-category and per-type counts from the full dataset.
   const categoryCounts = useMemo(() => {
@@ -149,29 +158,31 @@ function SearchPage() {
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
-      <div className="border-b border-border bg-surface">
-        <div className="mx-auto max-w-7xl px-3 py-6 sm:px-6 lg:px-8">
-          <form onSubmit={onSubmit} className="flex items-center gap-1 sm:gap-2 rounded-full border border-border bg-background p-1 sm:p-1.5">
-            <SearchIcon className="ml-2 sm:ml-3 h-4 w-4 shrink-0 text-muted-foreground" />
-            <input
-              aria-label="Search jobs, companies, keywords"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Search jobs, companies, keywords..."
-              className="min-w-0 flex-1 bg-transparent px-1 py-2 text-xs sm:text-sm outline-none"
-            />
-            <button className="shrink-0 rounded-full bg-brand px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-brand-foreground">
-              Search
-            </button>
-          </form>
-          <p className="mt-2 text-xs text-muted-foreground">
-            {isFetching && !allJobs.length
-              ? "Searching…"
-              : `${filteredJobs.length} Result${filteredJobs.length !== 1 ? "s" : ""}`}
-            {search.q && ` for "${search.q}"`}
-          </p>
+      <ScrollReveal>
+        <div className="border-b border-border bg-surface">
+          <div className="mx-auto max-w-7xl px-3 py-6 sm:px-6 lg:px-8">
+            <form onSubmit={onSubmit} className="flex items-center gap-1 sm:gap-2 rounded-full border border-border bg-background p-1 sm:p-1.5">
+              <SearchIcon className="ml-2 sm:ml-3 h-4 w-4 shrink-0 text-muted-foreground" />
+              <input
+                aria-label="Search jobs, companies, keywords"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Search jobs, companies, keywords..."
+                className="min-w-0 flex-1 bg-transparent px-1 py-2 text-xs sm:text-sm outline-none"
+              />
+              <button className="shrink-0 rounded-full bg-brand px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-brand-foreground">
+                Search
+              </button>
+            </form>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {isFetching && !allJobs.length
+                ? "Searching…"
+                : `${filteredJobs.length} Result${filteredJobs.length !== 1 ? "s" : ""}`}
+              {search.q && ` for "${search.q}"`}
+            </p>
+          </div>
         </div>
-      </div>
+      </ScrollReveal>
 
       <main className="mx-auto grid max-w-7xl gap-6 px-3 py-8 sm:px-6 md:grid-cols-[240px_1fr] lg:grid-cols-[260px_1fr] lg:px-8">
         {/* Mobile Filters */}
@@ -211,7 +222,7 @@ function SearchPage() {
         </ScrollReveal>
 
         {/* Results */}
-        <ScrollReveal delay={0.1} className="space-y-5">
+        <div className="space-y-5">
           {isFetching && !allJobs.length && (
             <p className="text-sm text-muted-foreground">Loading jobs…</p>
           )}
@@ -226,16 +237,18 @@ function SearchPage() {
           <div className="grid gap-4 sm:grid-cols-2">
             {filteredJobs.map((job, index) => (
               <React.Fragment key={job.id}>
-                <JobCard job={job} />
+                <ScrollReveal>
+                  <JobCard job={job} />
+                </ScrollReveal>
                 {index > 0 && index % 6 === 5 && (
-                  <div className="col-span-full">
+                  <ScrollReveal className="col-span-full">
                     <AdSlot placement="jobsList" />
-                  </div>
+                  </ScrollReveal>
                 )}
               </React.Fragment>
             ))}
           </div>
-        </ScrollReveal>
+        </div>
       </main>
       <SiteFooter />
       <StickySocial />

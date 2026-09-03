@@ -1,29 +1,44 @@
 import { chromium } from 'playwright';
 
-async function run() {
-  const browser = await chromium.launch();
+(async () => {
+  const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
   
-  await page.goto('http://localhost:4173/ats-checker');
+  const logs = [];
+  page.on('console', msg => logs.push(`[CONSOLE] ${msg.type()}: ${msg.text()}`));
   
-  // Create a proper txt file with >20 characters so it passes the length check
-  const fs = await import('fs');
-  fs.writeFileSync('test_long.txt', 'This is a long text file that has more than twenty characters in it so it passes the length check.');
+  const requests = [];
+  page.on('request', request => {
+    if (request.url().includes('supabase.co')) {
+      requests.push(`[REQUEST] ${request.method()} ${request.url()}`);
+    }
+  });
+
+  page.on('response', async response => {
+    if (response.url().includes('supabase.co')) {
+      requests.push(`[RESPONSE] ${response.status()} ${response.url()}`);
+    }
+  });
+
+  console.log('Navigating to Home...');
+  await page.goto('http://localhost:8080/');
+  await page.waitForTimeout(2000); // let things settle
   
-  // Set the file input
-  await page.setInputFiles('input[type="file"]', 'test_long.txt');
+  console.log('Clicking "Latest Jobs"...');
+  await page.click('text="Latest Jobs"');
   
-  // Wait for the text to appear or error to show
-  await page.waitForTimeout(2000);
+  console.log('Waiting up to 10s for jobs to load...');
+  await page.waitForTimeout(10000);
   
-  // Log the whole text content of the page
-  const bodyText = await page.innerText('body');
-  console.log("BODY TEXT AFTER UPLOAD:", bodyText);
+  const searchContent = await page.locator('main').innerText();
+  console.log('--- Search Page Content ---');
+  console.log(searchContent.slice(0, 500));
   
-  // Specifically look for toast error
-  const toasts = await page.$$eval('[role="status"]', els => els.map(e => e.textContent));
-  console.log("TOASTS:", toasts);
+  console.log('--- Logs ---');
+  console.log(logs.join('\n'));
+  
+  console.log('--- Requests ---');
+  console.log(requests.join('\n'));
   
   await browser.close();
-}
-run();
+})();
