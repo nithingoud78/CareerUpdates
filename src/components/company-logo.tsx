@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion, useReducedMotion } from "framer-motion";
 
 /**
  * Module-level maps persist for the page lifetime so we never re-request
@@ -78,6 +79,12 @@ export const CompanyLogo = React.memo(function CompanyLogo({
     return !primaryUrl || cached === "error";
   });
 
+  const [isLoaded, setIsLoaded] = useState<boolean>(() => {
+    return cached === "success";
+  });
+
+  const prefersReducedMotion = useReducedMotion();
+
   // Track whether the component is still mounted before applying state updates
   const mountedRef = useRef(true);
   useEffect(() => {
@@ -99,6 +106,7 @@ export const CompanyLogo = React.memo(function CompanyLogo({
     if (known === "success") {
       setImgSrc(primaryUrl);
       setFailed(false);
+      setIsLoaded(true);
       return;
     }
     if (known === "error") {
@@ -110,12 +118,14 @@ export const CompanyLogo = React.memo(function CompanyLogo({
     // First time we've seen this URL — show it and let onLoad/onError decide
     setImgSrc(primaryUrl);
     setFailed(false);
+    setIsLoaded(false);
   }, [primaryUrl]);
 
   const handleLoad = () => {
     if (!mountedRef.current || !primaryUrl) return;
     logoResultCache.set(primaryUrl, "success");
     setFailed(false);
+    setIsLoaded(true);
   };
 
   const handleError = () => {
@@ -130,6 +140,7 @@ export const CompanyLogo = React.memo(function CompanyLogo({
     if (fallbackSrc && imgSrc !== fallbackSrc) {
       // Attempt the Google favicon fallback — do NOT add to logoResultCache yet
       setImgSrc(fallbackSrc);
+      setIsLoaded(false);
       return;
     }
 
@@ -169,7 +180,22 @@ export const CompanyLogo = React.memo(function CompanyLogo({
   // ── Logo image ─────────────────────────────────────────────────────────────
   return (
     <div className={cn("relative h-full w-full overflow-hidden bg-white", className)}>
-      <img
+      <motion.div 
+        initial={false}
+        animate={{ opacity: isLoaded ? 0 : 1 }}
+        transition={{ duration: 0.15 }}
+        className="absolute inset-0 z-0 bg-slate-100 overflow-hidden pointer-events-none"
+      >
+        {!prefersReducedMotion && (
+          <motion.div
+            className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/60 to-transparent"
+            animate={{ translateX: ["-100%", "100%"] }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+          />
+        )}
+      </motion.div>
+
+      <motion.img
         key={imgSrc}
         src={imgSrc}
         alt={name ? `${name} logo` : "Company logo"}
@@ -183,7 +209,10 @@ export const CompanyLogo = React.memo(function CompanyLogo({
         // images to be blocked by the browser and incorrectly blacklisted.
         onLoad={handleLoad}
         onError={handleError}
-        className={cn("h-full w-full object-contain", className)}
+        className={cn("relative z-10 h-full w-full object-contain", className)}
+        initial={{ opacity: isLoaded ? 1 : 0 }}
+        animate={{ opacity: isLoaded ? 1 : 0 }}
+        transition={{ duration: 0.15 }}
       />
     </div>
   );
