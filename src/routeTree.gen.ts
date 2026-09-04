@@ -27,6 +27,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResumeTemplatesIndexRouteImport } from './routes/resume-templates.index'
 import { Route as ResumeBundlesIndexRouteImport } from './routes/resume-bundles.index'
+import { Route as DmatResourcesIndexRouteImport } from './routes/dmat-resources.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as AtsResumesPackIndexRouteImport } from './routes/ats-resumes-pack.index'
 import { Route as AtsFriendlyResumesIndexRouteImport } from './routes/ats-friendly-resumes.index'
@@ -42,8 +43,12 @@ import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AtsResumesPackSlugRouteImport } from './routes/ats-resumes-pack.$slug'
 import { Route as AtsFriendlyResumesSlugRouteImport } from './routes/ats-friendly-resumes.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as DmatResourcesPacksIndexRouteImport } from './routes/dmat-resources.packs.index'
+import { Route as DmatResourcesModulesIndexRouteImport } from './routes/dmat-resources.modules.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as PaymentSuccessOrderIdRouteImport } from './routes/payment.success.$orderId'
+import { Route as DmatResourcesPacksSlugRouteImport } from './routes/dmat-resources.packs.$slug'
+import { Route as DmatResourcesModulesSlugRouteImport } from './routes/dmat-resources.modules.$slug'
 import { Route as CheckoutBundleSlugRouteImport } from './routes/checkout.bundle.$slug'
 import { Route as AuthenticatedAdminSiteSettingsRouteImport } from './routes/_authenticated/admin.site-settings'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
@@ -54,18 +59,25 @@ import { Route as AuthenticatedAdminAtsSettingsRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
 import { Route as AuthenticatedAdminResumeTemplatesIndexRouteImport } from './routes/_authenticated/admin.resume-templates.index'
 import { Route as AuthenticatedAdminResumePacksIndexRouteImport } from './routes/_authenticated/admin.resume-packs.index'
+import { Route as AuthenticatedAdminDmatModuleIndexRouteImport } from './routes/_authenticated/admin.dmat-module.index'
+import { Route as AuthenticatedAdminDmatCompleteIndexRouteImport } from './routes/_authenticated/admin.dmat-complete.index'
 import { Route as AuthenticatedAdminBlogIndexRouteImport } from './routes/_authenticated/admin.blog.index'
 import { Route as AuthenticatedAdminResumeTemplatesNewRouteImport } from './routes/_authenticated/admin.resume-templates.new'
 import { Route as AuthenticatedAdminResumePacksNewRouteImport } from './routes/_authenticated/admin.resume-packs.new'
 import { Route as AuthenticatedAdminJobsNewRouteImport } from './routes/_authenticated/admin.jobs.new'
 import { Route as AuthenticatedAdminJobsBulkRouteImport } from './routes/_authenticated/admin.jobs.bulk'
 import { Route as AuthenticatedAdminJobsAuditRouteImport } from './routes/_authenticated/admin.jobs.audit'
+import { Route as AuthenticatedAdminDmatModuleNewRouteImport } from './routes/_authenticated/admin.dmat-module.new'
+import { Route as AuthenticatedAdminDmatCompleteNewRouteImport } from './routes/_authenticated/admin.dmat-complete.new'
 import { Route as AuthenticatedAdminBlogNewRouteImport } from './routes/_authenticated/admin.blog.new'
 import { Route as AuthenticatedAdminResumeTemplatesIdIndexRouteImport } from './routes/_authenticated/admin.resume-templates.$id.index'
 import { Route as AuthenticatedAdminResumePacksIdIndexRouteImport } from './routes/_authenticated/admin.resume-packs.$id.index'
+import { Route as AuthenticatedAdminDmatCompleteIdIndexRouteImport } from './routes/_authenticated/admin.dmat-complete.$id.index'
 import { Route as AuthenticatedAdminResumeTemplatesIdEditRouteImport } from './routes/_authenticated/admin.resume-templates.$id.edit'
 import { Route as AuthenticatedAdminResumePacksIdEditRouteImport } from './routes/_authenticated/admin.resume-packs.$id.edit'
 import { Route as AuthenticatedAdminJobsSlugEditRouteImport } from './routes/_authenticated/admin.jobs.$slug.edit'
+import { Route as AuthenticatedAdminDmatModuleIdEditRouteImport } from './routes/_authenticated/admin.dmat-module.$id.edit'
+import { Route as AuthenticatedAdminDmatCompleteIdEditRouteImport } from './routes/_authenticated/admin.dmat-complete.$id.edit'
 import { Route as AuthenticatedAdminBlogIdEditRouteImport } from './routes/_authenticated/admin.blog.$id.edit'
 
 const TermsRoute = TermsRouteImport.update({
@@ -157,6 +169,11 @@ const ResumeBundlesIndexRoute = ResumeBundlesIndexRouteImport.update({
   path: '/resume-bundles/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DmatResourcesIndexRoute = DmatResourcesIndexRouteImport.update({
+  id: '/dmat-resources/',
+  path: '/dmat-resources/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
@@ -232,6 +249,17 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const DmatResourcesPacksIndexRoute = DmatResourcesPacksIndexRouteImport.update({
+  id: '/dmat-resources/packs/',
+  path: '/dmat-resources/packs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DmatResourcesModulesIndexRoute =
+  DmatResourcesModulesIndexRouteImport.update({
+    id: '/dmat-resources/modules/',
+    path: '/dmat-resources/modules/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -242,6 +270,17 @@ const PaymentSuccessOrderIdRoute = PaymentSuccessOrderIdRouteImport.update({
   path: '/payment/success/$orderId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DmatResourcesPacksSlugRoute = DmatResourcesPacksSlugRouteImport.update({
+  id: '/dmat-resources/packs/$slug',
+  path: '/dmat-resources/packs/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DmatResourcesModulesSlugRoute =
+  DmatResourcesModulesSlugRouteImport.update({
+    id: '/dmat-resources/modules/$slug',
+    path: '/dmat-resources/modules/$slug',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const CheckoutBundleSlugRoute = CheckoutBundleSlugRouteImport.update({
   id: '/checkout/bundle/$slug',
   path: '/checkout/bundle/$slug',
@@ -301,6 +340,18 @@ const AuthenticatedAdminResumePacksIndexRoute =
     path: '/resume-packs/',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminDmatModuleIndexRoute =
+  AuthenticatedAdminDmatModuleIndexRouteImport.update({
+    id: '/dmat-module/',
+    path: '/dmat-module/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminDmatCompleteIndexRoute =
+  AuthenticatedAdminDmatCompleteIndexRouteImport.update({
+    id: '/dmat-complete/',
+    path: '/dmat-complete/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminBlogIndexRoute =
   AuthenticatedAdminBlogIndexRouteImport.update({
     id: '/blog/',
@@ -337,6 +388,18 @@ const AuthenticatedAdminJobsAuditRoute =
     path: '/jobs/audit',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminDmatModuleNewRoute =
+  AuthenticatedAdminDmatModuleNewRouteImport.update({
+    id: '/dmat-module/new',
+    path: '/dmat-module/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminDmatCompleteNewRoute =
+  AuthenticatedAdminDmatCompleteNewRouteImport.update({
+    id: '/dmat-complete/new',
+    path: '/dmat-complete/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminBlogNewRoute =
   AuthenticatedAdminBlogNewRouteImport.update({
     id: '/blog/new',
@@ -355,6 +418,12 @@ const AuthenticatedAdminResumePacksIdIndexRoute =
     path: '/resume-packs/$id/',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminDmatCompleteIdIndexRoute =
+  AuthenticatedAdminDmatCompleteIdIndexRouteImport.update({
+    id: '/dmat-complete/$id/',
+    path: '/dmat-complete/$id/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminResumeTemplatesIdEditRoute =
   AuthenticatedAdminResumeTemplatesIdEditRouteImport.update({
     id: '/resume-templates/$id/edit',
@@ -371,6 +440,18 @@ const AuthenticatedAdminJobsSlugEditRoute =
   AuthenticatedAdminJobsSlugEditRouteImport.update({
     id: '/jobs/$slug/edit',
     path: '/jobs/$slug/edit',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminDmatModuleIdEditRoute =
+  AuthenticatedAdminDmatModuleIdEditRouteImport.update({
+    id: '/dmat-module/$id/edit',
+    path: '/dmat-module/$id/edit',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminDmatCompleteIdEditRoute =
+  AuthenticatedAdminDmatCompleteIdEditRouteImport.update({
+    id: '/dmat-complete/$id/edit',
+    path: '/dmat-complete/$id/edit',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminBlogIdEditRoute =
@@ -411,6 +492,7 @@ export interface FileRoutesByFullPath {
   '/ats-friendly-resumes/': typeof AtsFriendlyResumesIndexRoute
   '/ats-resumes-pack/': typeof AtsResumesPackIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/dmat-resources/': typeof DmatResourcesIndexRoute
   '/resume-bundles/': typeof ResumeBundlesIndexRoute
   '/resume-templates/': typeof ResumeTemplatesIndexRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
@@ -421,21 +503,32 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
   '/checkout/bundle/$slug': typeof CheckoutBundleSlugRoute
+  '/dmat-resources/modules/$slug': typeof DmatResourcesModulesSlugRoute
+  '/dmat-resources/packs/$slug': typeof DmatResourcesPacksSlugRoute
   '/payment/success/$orderId': typeof PaymentSuccessOrderIdRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/dmat-resources/modules/': typeof DmatResourcesModulesIndexRoute
+  '/dmat-resources/packs/': typeof DmatResourcesPacksIndexRoute
   '/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
+  '/admin/dmat-complete/new': typeof AuthenticatedAdminDmatCompleteNewRoute
+  '/admin/dmat-module/new': typeof AuthenticatedAdminDmatModuleNewRoute
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
   '/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
   '/admin/resume-packs/new': typeof AuthenticatedAdminResumePacksNewRoute
   '/admin/resume-templates/new': typeof AuthenticatedAdminResumeTemplatesNewRoute
   '/admin/blog/': typeof AuthenticatedAdminBlogIndexRoute
+  '/admin/dmat-complete/': typeof AuthenticatedAdminDmatCompleteIndexRoute
+  '/admin/dmat-module/': typeof AuthenticatedAdminDmatModuleIndexRoute
   '/admin/resume-packs/': typeof AuthenticatedAdminResumePacksIndexRoute
   '/admin/resume-templates/': typeof AuthenticatedAdminResumeTemplatesIndexRoute
   '/admin/blog/$id/edit': typeof AuthenticatedAdminBlogIdEditRoute
+  '/admin/dmat-complete/$id/edit': typeof AuthenticatedAdminDmatCompleteIdEditRoute
+  '/admin/dmat-module/$id/edit': typeof AuthenticatedAdminDmatModuleIdEditRoute
   '/admin/jobs/$slug/edit': typeof AuthenticatedAdminJobsSlugEditRoute
   '/admin/resume-packs/$id/edit': typeof AuthenticatedAdminResumePacksIdEditRoute
   '/admin/resume-templates/$id/edit': typeof AuthenticatedAdminResumeTemplatesIdEditRoute
+  '/admin/dmat-complete/$id/': typeof AuthenticatedAdminDmatCompleteIdIndexRoute
   '/admin/resume-packs/$id/': typeof AuthenticatedAdminResumePacksIdIndexRoute
   '/admin/resume-templates/$id/': typeof AuthenticatedAdminResumeTemplatesIdIndexRoute
 }
@@ -469,6 +562,7 @@ export interface FileRoutesByTo {
   '/ats-friendly-resumes': typeof AtsFriendlyResumesIndexRoute
   '/ats-resumes-pack': typeof AtsResumesPackIndexRoute
   '/blog': typeof BlogIndexRoute
+  '/dmat-resources': typeof DmatResourcesIndexRoute
   '/resume-bundles': typeof ResumeBundlesIndexRoute
   '/resume-templates': typeof ResumeTemplatesIndexRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
@@ -479,21 +573,32 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
   '/checkout/bundle/$slug': typeof CheckoutBundleSlugRoute
+  '/dmat-resources/modules/$slug': typeof DmatResourcesModulesSlugRoute
+  '/dmat-resources/packs/$slug': typeof DmatResourcesPacksSlugRoute
   '/payment/success/$orderId': typeof PaymentSuccessOrderIdRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/dmat-resources/modules': typeof DmatResourcesModulesIndexRoute
+  '/dmat-resources/packs': typeof DmatResourcesPacksIndexRoute
   '/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
+  '/admin/dmat-complete/new': typeof AuthenticatedAdminDmatCompleteNewRoute
+  '/admin/dmat-module/new': typeof AuthenticatedAdminDmatModuleNewRoute
   '/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
   '/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
   '/admin/resume-packs/new': typeof AuthenticatedAdminResumePacksNewRoute
   '/admin/resume-templates/new': typeof AuthenticatedAdminResumeTemplatesNewRoute
   '/admin/blog': typeof AuthenticatedAdminBlogIndexRoute
+  '/admin/dmat-complete': typeof AuthenticatedAdminDmatCompleteIndexRoute
+  '/admin/dmat-module': typeof AuthenticatedAdminDmatModuleIndexRoute
   '/admin/resume-packs': typeof AuthenticatedAdminResumePacksIndexRoute
   '/admin/resume-templates': typeof AuthenticatedAdminResumeTemplatesIndexRoute
   '/admin/blog/$id/edit': typeof AuthenticatedAdminBlogIdEditRoute
+  '/admin/dmat-complete/$id/edit': typeof AuthenticatedAdminDmatCompleteIdEditRoute
+  '/admin/dmat-module/$id/edit': typeof AuthenticatedAdminDmatModuleIdEditRoute
   '/admin/jobs/$slug/edit': typeof AuthenticatedAdminJobsSlugEditRoute
   '/admin/resume-packs/$id/edit': typeof AuthenticatedAdminResumePacksIdEditRoute
   '/admin/resume-templates/$id/edit': typeof AuthenticatedAdminResumeTemplatesIdEditRoute
+  '/admin/dmat-complete/$id': typeof AuthenticatedAdminDmatCompleteIdIndexRoute
   '/admin/resume-packs/$id': typeof AuthenticatedAdminResumePacksIdIndexRoute
   '/admin/resume-templates/$id': typeof AuthenticatedAdminResumeTemplatesIdIndexRoute
 }
@@ -530,6 +635,7 @@ export interface FileRoutesById {
   '/ats-friendly-resumes/': typeof AtsFriendlyResumesIndexRoute
   '/ats-resumes-pack/': typeof AtsResumesPackIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/dmat-resources/': typeof DmatResourcesIndexRoute
   '/resume-bundles/': typeof ResumeBundlesIndexRoute
   '/resume-templates/': typeof ResumeTemplatesIndexRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
@@ -540,21 +646,32 @@ export interface FileRoutesById {
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/site-settings': typeof AuthenticatedAdminSiteSettingsRoute
   '/checkout/bundle/$slug': typeof CheckoutBundleSlugRoute
+  '/dmat-resources/modules/$slug': typeof DmatResourcesModulesSlugRoute
+  '/dmat-resources/packs/$slug': typeof DmatResourcesPacksSlugRoute
   '/payment/success/$orderId': typeof PaymentSuccessOrderIdRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/dmat-resources/modules/': typeof DmatResourcesModulesIndexRoute
+  '/dmat-resources/packs/': typeof DmatResourcesPacksIndexRoute
   '/_authenticated/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
+  '/_authenticated/admin/dmat-complete/new': typeof AuthenticatedAdminDmatCompleteNewRoute
+  '/_authenticated/admin/dmat-module/new': typeof AuthenticatedAdminDmatModuleNewRoute
   '/_authenticated/admin/jobs/audit': typeof AuthenticatedAdminJobsAuditRoute
   '/_authenticated/admin/jobs/bulk': typeof AuthenticatedAdminJobsBulkRoute
   '/_authenticated/admin/jobs/new': typeof AuthenticatedAdminJobsNewRoute
   '/_authenticated/admin/resume-packs/new': typeof AuthenticatedAdminResumePacksNewRoute
   '/_authenticated/admin/resume-templates/new': typeof AuthenticatedAdminResumeTemplatesNewRoute
   '/_authenticated/admin/blog/': typeof AuthenticatedAdminBlogIndexRoute
+  '/_authenticated/admin/dmat-complete/': typeof AuthenticatedAdminDmatCompleteIndexRoute
+  '/_authenticated/admin/dmat-module/': typeof AuthenticatedAdminDmatModuleIndexRoute
   '/_authenticated/admin/resume-packs/': typeof AuthenticatedAdminResumePacksIndexRoute
   '/_authenticated/admin/resume-templates/': typeof AuthenticatedAdminResumeTemplatesIndexRoute
   '/_authenticated/admin/blog/$id/edit': typeof AuthenticatedAdminBlogIdEditRoute
+  '/_authenticated/admin/dmat-complete/$id/edit': typeof AuthenticatedAdminDmatCompleteIdEditRoute
+  '/_authenticated/admin/dmat-module/$id/edit': typeof AuthenticatedAdminDmatModuleIdEditRoute
   '/_authenticated/admin/jobs/$slug/edit': typeof AuthenticatedAdminJobsSlugEditRoute
   '/_authenticated/admin/resume-packs/$id/edit': typeof AuthenticatedAdminResumePacksIdEditRoute
   '/_authenticated/admin/resume-templates/$id/edit': typeof AuthenticatedAdminResumeTemplatesIdEditRoute
+  '/_authenticated/admin/dmat-complete/$id/': typeof AuthenticatedAdminDmatCompleteIdIndexRoute
   '/_authenticated/admin/resume-packs/$id/': typeof AuthenticatedAdminResumePacksIdIndexRoute
   '/_authenticated/admin/resume-templates/$id/': typeof AuthenticatedAdminResumeTemplatesIdIndexRoute
 }
@@ -591,6 +708,7 @@ export interface FileRouteTypes {
     | '/ats-friendly-resumes/'
     | '/ats-resumes-pack/'
     | '/blog/'
+    | '/dmat-resources/'
     | '/resume-bundles/'
     | '/resume-templates/'
     | '/admin/analytics'
@@ -601,21 +719,32 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/site-settings'
     | '/checkout/bundle/$slug'
+    | '/dmat-resources/modules/$slug'
+    | '/dmat-resources/packs/$slug'
     | '/payment/success/$orderId'
     | '/admin/'
+    | '/dmat-resources/modules/'
+    | '/dmat-resources/packs/'
     | '/admin/blog/new'
+    | '/admin/dmat-complete/new'
+    | '/admin/dmat-module/new'
     | '/admin/jobs/audit'
     | '/admin/jobs/bulk'
     | '/admin/jobs/new'
     | '/admin/resume-packs/new'
     | '/admin/resume-templates/new'
     | '/admin/blog/'
+    | '/admin/dmat-complete/'
+    | '/admin/dmat-module/'
     | '/admin/resume-packs/'
     | '/admin/resume-templates/'
     | '/admin/blog/$id/edit'
+    | '/admin/dmat-complete/$id/edit'
+    | '/admin/dmat-module/$id/edit'
     | '/admin/jobs/$slug/edit'
     | '/admin/resume-packs/$id/edit'
     | '/admin/resume-templates/$id/edit'
+    | '/admin/dmat-complete/$id/'
     | '/admin/resume-packs/$id/'
     | '/admin/resume-templates/$id/'
   fileRoutesByTo: FileRoutesByTo
@@ -649,6 +778,7 @@ export interface FileRouteTypes {
     | '/ats-friendly-resumes'
     | '/ats-resumes-pack'
     | '/blog'
+    | '/dmat-resources'
     | '/resume-bundles'
     | '/resume-templates'
     | '/admin/analytics'
@@ -659,21 +789,32 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/site-settings'
     | '/checkout/bundle/$slug'
+    | '/dmat-resources/modules/$slug'
+    | '/dmat-resources/packs/$slug'
     | '/payment/success/$orderId'
     | '/admin'
+    | '/dmat-resources/modules'
+    | '/dmat-resources/packs'
     | '/admin/blog/new'
+    | '/admin/dmat-complete/new'
+    | '/admin/dmat-module/new'
     | '/admin/jobs/audit'
     | '/admin/jobs/bulk'
     | '/admin/jobs/new'
     | '/admin/resume-packs/new'
     | '/admin/resume-templates/new'
     | '/admin/blog'
+    | '/admin/dmat-complete'
+    | '/admin/dmat-module'
     | '/admin/resume-packs'
     | '/admin/resume-templates'
     | '/admin/blog/$id/edit'
+    | '/admin/dmat-complete/$id/edit'
+    | '/admin/dmat-module/$id/edit'
     | '/admin/jobs/$slug/edit'
     | '/admin/resume-packs/$id/edit'
     | '/admin/resume-templates/$id/edit'
+    | '/admin/dmat-complete/$id'
     | '/admin/resume-packs/$id'
     | '/admin/resume-templates/$id'
   id:
@@ -709,6 +850,7 @@ export interface FileRouteTypes {
     | '/ats-friendly-resumes/'
     | '/ats-resumes-pack/'
     | '/blog/'
+    | '/dmat-resources/'
     | '/resume-bundles/'
     | '/resume-templates/'
     | '/_authenticated/admin/analytics'
@@ -719,21 +861,32 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/site-settings'
     | '/checkout/bundle/$slug'
+    | '/dmat-resources/modules/$slug'
+    | '/dmat-resources/packs/$slug'
     | '/payment/success/$orderId'
     | '/_authenticated/admin/'
+    | '/dmat-resources/modules/'
+    | '/dmat-resources/packs/'
     | '/_authenticated/admin/blog/new'
+    | '/_authenticated/admin/dmat-complete/new'
+    | '/_authenticated/admin/dmat-module/new'
     | '/_authenticated/admin/jobs/audit'
     | '/_authenticated/admin/jobs/bulk'
     | '/_authenticated/admin/jobs/new'
     | '/_authenticated/admin/resume-packs/new'
     | '/_authenticated/admin/resume-templates/new'
     | '/_authenticated/admin/blog/'
+    | '/_authenticated/admin/dmat-complete/'
+    | '/_authenticated/admin/dmat-module/'
     | '/_authenticated/admin/resume-packs/'
     | '/_authenticated/admin/resume-templates/'
     | '/_authenticated/admin/blog/$id/edit'
+    | '/_authenticated/admin/dmat-complete/$id/edit'
+    | '/_authenticated/admin/dmat-module/$id/edit'
     | '/_authenticated/admin/jobs/$slug/edit'
     | '/_authenticated/admin/resume-packs/$id/edit'
     | '/_authenticated/admin/resume-templates/$id/edit'
+    | '/_authenticated/admin/dmat-complete/$id/'
     | '/_authenticated/admin/resume-packs/$id/'
     | '/_authenticated/admin/resume-templates/$id/'
   fileRoutesById: FileRoutesById
@@ -769,10 +922,15 @@ export interface RootRouteChildren {
   AtsFriendlyResumesIndexRoute: typeof AtsFriendlyResumesIndexRoute
   AtsResumesPackIndexRoute: typeof AtsResumesPackIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  DmatResourcesIndexRoute: typeof DmatResourcesIndexRoute
   ResumeBundlesIndexRoute: typeof ResumeBundlesIndexRoute
   ResumeTemplatesIndexRoute: typeof ResumeTemplatesIndexRoute
   CheckoutBundleSlugRoute: typeof CheckoutBundleSlugRoute
+  DmatResourcesModulesSlugRoute: typeof DmatResourcesModulesSlugRoute
+  DmatResourcesPacksSlugRoute: typeof DmatResourcesPacksSlugRoute
   PaymentSuccessOrderIdRoute: typeof PaymentSuccessOrderIdRoute
+  DmatResourcesModulesIndexRoute: typeof DmatResourcesModulesIndexRoute
+  DmatResourcesPacksIndexRoute: typeof DmatResourcesPacksIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -903,6 +1061,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResumeBundlesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dmat-resources/': {
+      id: '/dmat-resources/'
+      path: '/dmat-resources'
+      fullPath: '/dmat-resources/'
+      preLoaderRoute: typeof DmatResourcesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/': {
       id: '/blog/'
       path: '/blog'
@@ -1008,6 +1173,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/dmat-resources/packs/': {
+      id: '/dmat-resources/packs/'
+      path: '/dmat-resources/packs'
+      fullPath: '/dmat-resources/packs/'
+      preLoaderRoute: typeof DmatResourcesPacksIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dmat-resources/modules/': {
+      id: '/dmat-resources/modules/'
+      path: '/dmat-resources/modules'
+      fullPath: '/dmat-resources/modules/'
+      preLoaderRoute: typeof DmatResourcesModulesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
@@ -1020,6 +1199,20 @@ declare module '@tanstack/react-router' {
       path: '/payment/success/$orderId'
       fullPath: '/payment/success/$orderId'
       preLoaderRoute: typeof PaymentSuccessOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dmat-resources/packs/$slug': {
+      id: '/dmat-resources/packs/$slug'
+      path: '/dmat-resources/packs/$slug'
+      fullPath: '/dmat-resources/packs/$slug'
+      preLoaderRoute: typeof DmatResourcesPacksSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dmat-resources/modules/$slug': {
+      id: '/dmat-resources/modules/$slug'
+      path: '/dmat-resources/modules/$slug'
+      fullPath: '/dmat-resources/modules/$slug'
+      preLoaderRoute: typeof DmatResourcesModulesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout/bundle/$slug': {
@@ -1092,6 +1285,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminResumePacksIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/dmat-module/': {
+      id: '/_authenticated/admin/dmat-module/'
+      path: '/dmat-module'
+      fullPath: '/admin/dmat-module/'
+      preLoaderRoute: typeof AuthenticatedAdminDmatModuleIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/dmat-complete/': {
+      id: '/_authenticated/admin/dmat-complete/'
+      path: '/dmat-complete'
+      fullPath: '/admin/dmat-complete/'
+      preLoaderRoute: typeof AuthenticatedAdminDmatCompleteIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/blog/': {
       id: '/_authenticated/admin/blog/'
       path: '/blog'
@@ -1134,6 +1341,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminJobsAuditRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/dmat-module/new': {
+      id: '/_authenticated/admin/dmat-module/new'
+      path: '/dmat-module/new'
+      fullPath: '/admin/dmat-module/new'
+      preLoaderRoute: typeof AuthenticatedAdminDmatModuleNewRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/dmat-complete/new': {
+      id: '/_authenticated/admin/dmat-complete/new'
+      path: '/dmat-complete/new'
+      fullPath: '/admin/dmat-complete/new'
+      preLoaderRoute: typeof AuthenticatedAdminDmatCompleteNewRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/blog/new': {
       id: '/_authenticated/admin/blog/new'
       path: '/blog/new'
@@ -1153,6 +1374,13 @@ declare module '@tanstack/react-router' {
       path: '/resume-packs/$id'
       fullPath: '/admin/resume-packs/$id/'
       preLoaderRoute: typeof AuthenticatedAdminResumePacksIdIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/dmat-complete/$id/': {
+      id: '/_authenticated/admin/dmat-complete/$id/'
+      path: '/dmat-complete/$id'
+      fullPath: '/admin/dmat-complete/$id/'
+      preLoaderRoute: typeof AuthenticatedAdminDmatCompleteIdIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/resume-templates/$id/edit': {
@@ -1176,6 +1404,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminJobsSlugEditRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/dmat-module/$id/edit': {
+      id: '/_authenticated/admin/dmat-module/$id/edit'
+      path: '/dmat-module/$id/edit'
+      fullPath: '/admin/dmat-module/$id/edit'
+      preLoaderRoute: typeof AuthenticatedAdminDmatModuleIdEditRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/dmat-complete/$id/edit': {
+      id: '/_authenticated/admin/dmat-complete/$id/edit'
+      path: '/dmat-complete/$id/edit'
+      fullPath: '/admin/dmat-complete/$id/edit'
+      preLoaderRoute: typeof AuthenticatedAdminDmatCompleteIdEditRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/blog/$id/edit': {
       id: '/_authenticated/admin/blog/$id/edit'
       path: '/blog/$id/edit'
@@ -1196,18 +1438,25 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminSiteSettingsRoute: typeof AuthenticatedAdminSiteSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminBlogNewRoute: typeof AuthenticatedAdminBlogNewRoute
+  AuthenticatedAdminDmatCompleteNewRoute: typeof AuthenticatedAdminDmatCompleteNewRoute
+  AuthenticatedAdminDmatModuleNewRoute: typeof AuthenticatedAdminDmatModuleNewRoute
   AuthenticatedAdminJobsAuditRoute: typeof AuthenticatedAdminJobsAuditRoute
   AuthenticatedAdminJobsBulkRoute: typeof AuthenticatedAdminJobsBulkRoute
   AuthenticatedAdminJobsNewRoute: typeof AuthenticatedAdminJobsNewRoute
   AuthenticatedAdminResumePacksNewRoute: typeof AuthenticatedAdminResumePacksNewRoute
   AuthenticatedAdminResumeTemplatesNewRoute: typeof AuthenticatedAdminResumeTemplatesNewRoute
   AuthenticatedAdminBlogIndexRoute: typeof AuthenticatedAdminBlogIndexRoute
+  AuthenticatedAdminDmatCompleteIndexRoute: typeof AuthenticatedAdminDmatCompleteIndexRoute
+  AuthenticatedAdminDmatModuleIndexRoute: typeof AuthenticatedAdminDmatModuleIndexRoute
   AuthenticatedAdminResumePacksIndexRoute: typeof AuthenticatedAdminResumePacksIndexRoute
   AuthenticatedAdminResumeTemplatesIndexRoute: typeof AuthenticatedAdminResumeTemplatesIndexRoute
   AuthenticatedAdminBlogIdEditRoute: typeof AuthenticatedAdminBlogIdEditRoute
+  AuthenticatedAdminDmatCompleteIdEditRoute: typeof AuthenticatedAdminDmatCompleteIdEditRoute
+  AuthenticatedAdminDmatModuleIdEditRoute: typeof AuthenticatedAdminDmatModuleIdEditRoute
   AuthenticatedAdminJobsSlugEditRoute: typeof AuthenticatedAdminJobsSlugEditRoute
   AuthenticatedAdminResumePacksIdEditRoute: typeof AuthenticatedAdminResumePacksIdEditRoute
   AuthenticatedAdminResumeTemplatesIdEditRoute: typeof AuthenticatedAdminResumeTemplatesIdEditRoute
+  AuthenticatedAdminDmatCompleteIdIndexRoute: typeof AuthenticatedAdminDmatCompleteIdIndexRoute
   AuthenticatedAdminResumePacksIdIndexRoute: typeof AuthenticatedAdminResumePacksIdIndexRoute
   AuthenticatedAdminResumeTemplatesIdIndexRoute: typeof AuthenticatedAdminResumeTemplatesIdIndexRoute
 }
@@ -1222,6 +1471,9 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminSiteSettingsRoute: AuthenticatedAdminSiteSettingsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminBlogNewRoute: AuthenticatedAdminBlogNewRoute,
+  AuthenticatedAdminDmatCompleteNewRoute:
+    AuthenticatedAdminDmatCompleteNewRoute,
+  AuthenticatedAdminDmatModuleNewRoute: AuthenticatedAdminDmatModuleNewRoute,
   AuthenticatedAdminJobsAuditRoute: AuthenticatedAdminJobsAuditRoute,
   AuthenticatedAdminJobsBulkRoute: AuthenticatedAdminJobsBulkRoute,
   AuthenticatedAdminJobsNewRoute: AuthenticatedAdminJobsNewRoute,
@@ -1229,16 +1481,26 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminResumeTemplatesNewRoute:
     AuthenticatedAdminResumeTemplatesNewRoute,
   AuthenticatedAdminBlogIndexRoute: AuthenticatedAdminBlogIndexRoute,
+  AuthenticatedAdminDmatCompleteIndexRoute:
+    AuthenticatedAdminDmatCompleteIndexRoute,
+  AuthenticatedAdminDmatModuleIndexRoute:
+    AuthenticatedAdminDmatModuleIndexRoute,
   AuthenticatedAdminResumePacksIndexRoute:
     AuthenticatedAdminResumePacksIndexRoute,
   AuthenticatedAdminResumeTemplatesIndexRoute:
     AuthenticatedAdminResumeTemplatesIndexRoute,
   AuthenticatedAdminBlogIdEditRoute: AuthenticatedAdminBlogIdEditRoute,
+  AuthenticatedAdminDmatCompleteIdEditRoute:
+    AuthenticatedAdminDmatCompleteIdEditRoute,
+  AuthenticatedAdminDmatModuleIdEditRoute:
+    AuthenticatedAdminDmatModuleIdEditRoute,
   AuthenticatedAdminJobsSlugEditRoute: AuthenticatedAdminJobsSlugEditRoute,
   AuthenticatedAdminResumePacksIdEditRoute:
     AuthenticatedAdminResumePacksIdEditRoute,
   AuthenticatedAdminResumeTemplatesIdEditRoute:
     AuthenticatedAdminResumeTemplatesIdEditRoute,
+  AuthenticatedAdminDmatCompleteIdIndexRoute:
+    AuthenticatedAdminDmatCompleteIdIndexRoute,
   AuthenticatedAdminResumePacksIdIndexRoute:
     AuthenticatedAdminResumePacksIdIndexRoute,
   AuthenticatedAdminResumeTemplatesIdIndexRoute:
@@ -1291,10 +1553,15 @@ const rootRouteChildren: RootRouteChildren = {
   AtsFriendlyResumesIndexRoute: AtsFriendlyResumesIndexRoute,
   AtsResumesPackIndexRoute: AtsResumesPackIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
+  DmatResourcesIndexRoute: DmatResourcesIndexRoute,
   ResumeBundlesIndexRoute: ResumeBundlesIndexRoute,
   ResumeTemplatesIndexRoute: ResumeTemplatesIndexRoute,
   CheckoutBundleSlugRoute: CheckoutBundleSlugRoute,
+  DmatResourcesModulesSlugRoute: DmatResourcesModulesSlugRoute,
+  DmatResourcesPacksSlugRoute: DmatResourcesPacksSlugRoute,
   PaymentSuccessOrderIdRoute: PaymentSuccessOrderIdRoute,
+  DmatResourcesModulesIndexRoute: DmatResourcesModulesIndexRoute,
+  DmatResourcesPacksIndexRoute: DmatResourcesPacksIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

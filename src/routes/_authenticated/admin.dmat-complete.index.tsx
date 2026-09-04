@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { Plus, Trash2, Pencil, Eye, Star, StarOff, Package } from "lucide-react";
+import { Plus, Trash2, Pencil, Eye, Star, StarOff, Package, ExternalLink } from "lucide-react";
 import {
   listAllCareerProducts,
   deleteCareerProduct,
@@ -11,8 +11,8 @@ import {
 } from "@/lib/career-tools.functions";
 import { resolvePreviewImageUrl } from "@/lib/image-utils";
 
-export const Route = createFileRoute("/_authenticated/admin/resume-packs/")({
-  component: AdminResumePacks,
+export const Route = createFileRoute("/_authenticated/admin/dmat-complete/")({
+  component: AdminDmatCompletePacks,
 });
 
 const STATUS_COLORS: Record<string, string> = {
@@ -21,7 +21,7 @@ const STATUS_COLORS: Record<string, string> = {
   archived: "text-muted-foreground bg-muted",
 };
 
-function AdminResumePacks() {
+function AdminDmatCompletePacks() {
   const list = useServerFn(listAllCareerProducts);
   const del = useServerFn(deleteCareerProduct);
   const setStatus = useServerFn(updateCareerProductStatus);
@@ -37,7 +37,7 @@ function AdminResumePacks() {
     queryFn: () => list(),
   });
 
-  const allBundles = (allProducts ?? []).filter((p: any) => p.product_type === "bundle" && p.resource_type !== "all_modules");
+  const allBundles = (allProducts ?? []).filter((p: any) => p.product_type === "bundle" && p.resource_type === "all_modules");
   
   const bundles = allBundles
     .filter((p: any) => filter === "all" || p.status === filter)
@@ -64,11 +64,11 @@ function AdminResumePacks() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Resume Packs</h1>
-          <p className="text-sm text-muted-foreground">Manage pack products and their contents.</p>
+          <h1 className="text-2xl font-bold">dMAT Complete Packs</h1>
+          <p className="text-sm text-muted-foreground">Manage multi-file bundle packs for dMAT resources.</p>
         </div>
         <Link
-          to="/admin/resume-packs/new"
+          to="/admin/dmat-complete/new"
           className="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground"
         >
           <Plus className="h-4 w-4" /> New Pack
@@ -124,7 +124,7 @@ function AdminResumePacks() {
         <div className="flex flex-col items-center gap-3 py-20 text-center text-muted-foreground">
           <Package className="h-10 w-10 opacity-30" />
           <p className="font-medium">No packs yet</p>
-          <Link to="/admin/resume-packs/new" className="text-sm text-brand hover:underline">
+          <Link to="/admin/dmat-complete/new" className="text-sm text-brand hover:underline">
             Create the first pack →
           </Link>
         </div>
@@ -155,7 +155,7 @@ function AdminResumePacks() {
                         </div>
                       )}
                       <div>
-                        <Link to="/admin/resume-packs/$id" params={{ id: b.id }} className="font-medium leading-none hover:text-brand hover:underline">{b.title}</Link>
+                        <Link to="/admin/dmat-complete/$id" params={{ id: b.id }} className="font-medium leading-none hover:text-brand hover:underline">{b.title}</Link>
                         <p className="mt-0.5 text-xs text-muted-foreground">{b.category ?? "Pack"}</p>
                       </div>
                     </div>
@@ -190,17 +190,28 @@ function AdminResumePacks() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1">
                       {b.status === "published" && (
-                        <Link
-                          to="/admin/resume-packs/$id"
-                          params={{ id: b.id }}
-                          className="rounded-full p-1.5 hover:bg-accent"
-                          title="View Admin Overview"
-                        >
-                          <Eye className="h-4 w-4 text-muted-foreground" />
-                        </Link>
+                        <>
+                          <Link
+                            to="/admin/dmat-complete/$id"
+                            params={{ id: b.id }}
+                            className="rounded-full p-1.5 hover:bg-accent"
+                            title="View Admin Overview"
+                          >
+                            <Eye className="h-4 w-4 text-muted-foreground" />
+                          </Link>
+                          <a
+                            href={`/dmat-resources/packs/${b.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="rounded-full p-1.5 hover:bg-accent"
+                            title="View Public Page"
+                          >
+                            <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                          </a>
+                        </>
                       )}
                       <Link
-                        to="/admin/resume-packs/$id/edit"
+                        to="/admin/dmat-complete/$id/edit"
                         params={{ id: b.id }}
                         className="rounded-full p-1.5 hover:bg-accent"
                         title="Edit Pack"

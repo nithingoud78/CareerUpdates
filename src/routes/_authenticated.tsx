@@ -61,6 +61,8 @@ function AdminLayout() {
             <AdminLink to="/admin/analytics" icon={BarChart3} label="Analytics" />
             <AdminLink to="/admin/resume-templates" icon={FileText} label="Templates" />
             <AdminLink to="/admin/resume-packs" icon={Package} label="Packs" />
+            <AdminLink to="/admin/dmat-module" icon={FileText} label="dMAT Modules" />
+            <AdminLink to="/admin/dmat-complete" icon={Package} label="dMAT Complete" />
             <AdminLink to="/admin/orders" icon={CreditCard} label="Orders" />
             <AdminLink to="/admin/ats-settings" icon={ShieldCheck} label="ATS" />
           </nav>

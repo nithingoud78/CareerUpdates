@@ -1,6 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getSiteSettings } from "@/lib/site-settings.functions";
 import { ThemeToggle } from "./theme-toggle";
 import { Logo } from "./logo";
 
@@ -17,6 +20,19 @@ const nav = [
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
+  const fetchSettings = useServerFn(getSiteSettings);
+  const { data: settings } = useQuery({
+    queryKey: ["public-site-settings"],
+    queryFn: () => fetchSettings(),
+  });
+
+  const dmatVisible = settings?.dmat_resources_visible !== false;
+
+  const dynamicNav = [
+    ...nav,
+    ...(dmatVisible ? [{ to: "/dmat-resources", label: "dMAT Resources" } as const] : []),
+  ];
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-3 sm:gap-6 sm:px-6 lg:px-8">
@@ -27,7 +43,7 @@ export function SiteHeader() {
           </span>
         </Link>
         <nav className="ml-auto hidden items-center gap-1 md:flex">
-          {nav.map((n) => (
+          {dynamicNav.map((n) => (
             <Link
               key={n.to}
               to={n.to}
@@ -53,7 +69,7 @@ export function SiteHeader() {
       {open && (
         <div className="border-t border-border bg-surface md:hidden">
           <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3">
-            {nav.map((n) => (
+            {dynamicNav.map((n) => (
               <Link
                 key={n.to}
                 to={n.to}

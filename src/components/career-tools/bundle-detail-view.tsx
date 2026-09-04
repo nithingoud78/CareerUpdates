@@ -42,6 +42,12 @@ export function BundleDetailView({
   downloadSuccess,
   downloadError,
   adminActions,
+  parentBreadcrumbLabel,
+  parentBreadcrumbHref,
+  aboutLabel,
+  relatedLabel,
+  bundleTypeLabel,
+  relatedBundleBaseUrl,
 }: {
   product: any;
   resources: any[];
@@ -51,11 +57,17 @@ export function BundleDetailView({
   downloadSuccess?: boolean;
   downloadError?: string | null;
   adminActions?: React.ReactNode;
+  parentBreadcrumbLabel?: string;
+  parentBreadcrumbHref?: string;
+  aboutLabel?: string;
+  relatedLabel?: string;
+  bundleTypeLabel?: string;
+  relatedBundleBaseUrl?: string;
 }) {
   const breadcrumbs = [
     { name: "Home", href: "/" },
-    { name: "ATS Resumes Pack", href: "/ats-resumes-pack/" },
-    { name: product.title, href: `/ats-resumes-pack/${product.slug}` },
+    { name: parentBreadcrumbLabel || "ATS Resumes Pack", href: parentBreadcrumbHref || "/ats-resumes-pack/" },
+    { name: product.title, href: `${parentBreadcrumbHref?.replace(/\/$/, "") || "/ats-resumes-pack"}/${product.slug}` },
   ];
 
   // Group resources by type for module display
@@ -87,7 +99,7 @@ export function BundleDetailView({
         "@type": "Product",
         name: product.title,
         description: product.short_description ?? "",
-        url: `${SITE_URL}/ats-resumes-pack/${product.slug}`,
+        url: `${SITE_URL}${parentBreadcrumbHref?.replace(/\/$/, "") || "/ats-resumes-pack"}/${product.slug}`,
         offers: { "@type": "Offer", price: product.current_price.toFixed(2), priceCurrency: "INR", availability: "https://schema.org/InStock" },
       }) }} />
 
@@ -148,7 +160,7 @@ export function BundleDetailView({
         {/* Info panel */}
         <div className="order-1 space-y-5 lg:order-2">
           <span className="inline-block rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold text-brand">
-            Bundle · {resources.length} items
+            {bundleTypeLabel || "Bundle"} · {resources.length} items
           </span>
 
           <h1 className="text-2xl font-bold leading-tight text-foreground sm:text-3xl">{product.title}</h1>
@@ -168,7 +180,7 @@ export function BundleDetailView({
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3 text-sm font-semibold text-brand-foreground transition-transform hover:scale-[1.02]"
               >
                 <Download className="h-4 w-4" />
-                Get Pack — {product.is_free ? 'Free' : `₹${product.current_price}`}
+                Get {bundleTypeLabel || "Pack"} — {product.is_free ? 'Free' : `₹${product.current_price}`}
               </Link>
             ) : (
               <div className="rounded-xl border border-border bg-muted/30 p-4 text-center">
@@ -182,7 +194,7 @@ export function BundleDetailView({
             >
               <ShieldCheck className="h-4 w-4" /> Check My Resume Against a Job
             </Link>
-            <ShareButton url={`${SITE_URL}/ats-resumes-pack/${product.slug}`} />
+            <ShareButton url={`${SITE_URL}${parentBreadcrumbHref?.replace(/\/$/, "") || "/ats-resumes-pack"}/${product.slug}`} />
           </div>
 
           {/* Suitable for */}
@@ -208,7 +220,7 @@ export function BundleDetailView({
       {/* Full description */}
       {product.description && (
         <section className="mt-10 space-y-3">
-          <h2 className="text-xl font-bold">About This Bundle</h2>
+          <h2 className="text-xl font-bold">{aboutLabel || "About This Bundle"}</h2>
           <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground">
             {product.description.split("\n").map((p: string, i: number) => p.trim() && <p key={i}>{p}</p>)}
           </div>
@@ -278,12 +290,12 @@ export function BundleDetailView({
       {relatedBundles && relatedBundles.length > 0 && (
         <section className="mt-12 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold">More Bundles</h2>
-            <Link to="/ats-resumes-pack" className="text-sm font-medium text-brand hover:underline">View all →</Link>
+            <h2 className="text-xl font-bold">{relatedLabel || "More Bundles"}</h2>
+            <Link to={parentBreadcrumbHref || "/ats-resumes-pack"} className="text-sm font-medium text-brand hover:underline">View all →</Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {relatedBundles.map((b: any) => (
-              <BundleCard key={b.id} bundle={b as any} />
+              <BundleCard key={b.id} bundle={b as any} baseUrl={relatedBundleBaseUrl} />
             ))}
           </div>
         </section>

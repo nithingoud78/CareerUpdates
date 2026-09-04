@@ -16,7 +16,7 @@ const TRENDING = ["Infosys", "TCS", "Wipro", "Google", "Accenture", "Amazon"];
 async function fetchHomeJobs() {
   try {
     console.error("[DEBUG] Starting fetchHomeJobs");
-    const [latest, govt, intern, bundlePrice, templatePrice, atsSettings] = await Promise.all([
+    const [latest, govt, intern, bundlePrice, templatePrice, atsSettings, siteSettings, dmatBundlePrice, dmatTemplatePrice] = await Promise.all([
       supabase
         .from("jobs")
         .select("id, slug, title, company, company_logo, location, experience, salary, last_date, category")
@@ -61,6 +61,29 @@ async function fetchHomeJobs() {
         .eq("is_active", true)
         .limit(1)
         .maybeSingle(),
+      supabase
+        .from("site_settings")
+        .select("dmat_resources_visible")
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from("career_tool_products")
+        .select("current_price, is_free")
+        .eq("status", "published")
+        .eq("product_type", "bundle")
+        .eq("resource_type", "all_modules")
+        .order("is_free", { ascending: false, nullsFirst: false })
+        .order("current_price", { ascending: true })
+        .limit(1),
+      supabase
+        .from("career_tool_products")
+        .select("current_price, is_free")
+        .eq("status", "published")
+        .eq("product_type", "single_template")
+        .eq("resource_type", "single_module")
+        .order("is_free", { ascending: false, nullsFirst: false })
+        .order("current_price", { ascending: true })
+        .limit(1),
     ]);
     console.error("[DEBUG] fetchHomeJobs complete", { latestLen: latest.data?.length });
     return {
@@ -70,6 +93,9 @@ async function fetchHomeJobs() {
       minBundlePrice: bundlePrice.data?.[0] ? (bundlePrice.data[0].is_free ? 0 : bundlePrice.data[0].current_price) : null,
       minTemplatePrice: templatePrice.data?.[0] ? (templatePrice.data[0].is_free ? 0 : templatePrice.data[0].current_price) : null,
       atsPrice: atsSettings.data?.current_price ?? null,
+      dmatVisible: siteSettings.data?.dmat_resources_visible !== false,
+      minDmatBundlePrice: dmatBundlePrice?.data?.[0] ? (dmatBundlePrice.data[0].is_free ? 0 : dmatBundlePrice.data[0].current_price) : null,
+      minDmatTemplatePrice: dmatTemplatePrice?.data?.[0] ? (dmatTemplatePrice.data[0].is_free ? 0 : dmatTemplatePrice.data[0].current_price) : null,
     };
   } catch (err: any) {
     console.error("[DEBUG] SSR CRASH in fetchHomeJobs:", err.message);
@@ -263,6 +289,58 @@ function Home() {
                 {data.intern.map((job) => (
                   <JobCard key={job.id} job={job} compact />
                 ))}
+              </div>
+            </ScrollReveal>
+          </section>
+        )}
+
+        {/* dMAT RESOURCES */}
+        {data.dmatVisible && (
+          <section>
+            <ScrollReveal>
+              <div className="mb-4 flex items-end justify-between">
+                <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                  <span className="text-brand">dMAT</span> Resources
+                </h2>
+                <Link to="/dmat-resources" className="text-sm font-medium text-brand hover:underline">
+                  View all →
+                </Link>
+              </div>
+              <div className="flex snap-x snap-mandatory overflow-x-auto pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0 gap-4 scrollbar-hide">
+                <Link
+                  to="/dmat-resources/packs"
+                  className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
+                    <Package className="h-5 w-5 text-brand" />
+                  </span>
+                  <div>
+                    <p className="font-semibold text-foreground leading-tight">dMAT - Complete Pack</p>
+                    <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
+                      All dMAT modules and comprehensive resources in a single downloadable bundle.
+                    </p>
+                    {data.minDmatBundlePrice != null && (
+                      <p className="mt-1.5 text-[11px] font-semibold text-brand">From ₹{data.minDmatBundlePrice} →</p>
+                    )}
+                  </div>
+                </Link>
+                <Link
+                  to="/dmat-resources/modules"
+                  className="glass flex min-w-[260px] snap-center items-start gap-3 rounded-2xl p-4 transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5 sm:min-w-0"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/10">
+                    <FileText className="h-5 w-5 text-brand" />
+                  </span>
+                  <div>
+                    <p className="font-semibold text-foreground leading-tight">dMAT - Module wise Questions</p>
+                    <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-2">
+                      Individual module-specific question sets for focused preparation.
+                    </p>
+                    {data.minDmatTemplatePrice != null && (
+                      <p className="mt-1.5 text-[11px] font-semibold text-brand">From ₹{data.minDmatTemplatePrice} →</p>
+                    )}
+                  </div>
+                </Link>
               </div>
             </ScrollReveal>
           </section>

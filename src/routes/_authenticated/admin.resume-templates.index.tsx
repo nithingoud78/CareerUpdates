@@ -40,7 +40,7 @@ function AdminResumeTemplates() {
     queryFn: () => list(),
   });
 
-  const templates = (allProducts ?? []).filter((p: any) => p.product_type === "single_template");
+  const templates = (allProducts ?? []).filter((p: any) => p.product_type === "single_template" && p.resource_type !== "single_module");
 
   const filtered = templates
     .filter((p: any) => filter === "all" || p.status === filter)

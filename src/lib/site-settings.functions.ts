@@ -9,6 +9,7 @@ export const siteSettingsSchema = z.object({
   telegram_url: z.string().nullable().optional(),
   whatsapp_url: z.string().nullable().optional(),
   instagram_url: z.string().nullable().optional(),
+  dmat_resources_visible: z.boolean().default(true).optional(),
 });
 
 export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
@@ -22,6 +23,7 @@ export const getSiteSettings = createServerFn({ method: "GET" }).handler(async (
         telegram_url: "https://t.me/careerupdate_in",
         whatsapp_url: "https://whatsapp.com/channel/0029VbDWQziFi8xUacpWjx2K",
         instagram_url: "https://www.instagram.com/careerupdates_in?igsh=cXp1NTJ4cXZmMW92",
+        dmat_resources_visible: true,
       } as any;
     }
     throw new Error(error.message);

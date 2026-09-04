@@ -20,13 +20,14 @@ interface BundleCardProps {
     tags?: string[];
   };
   resourceCount?: number;
+  baseUrl?: "/ats-resumes-pack/$slug" | "/dmat-resources/packs/$slug" | string;
 }
 
-export function BundleCard({ bundle, resourceCount }: BundleCardProps) {
+export function BundleCard({ bundle, resourceCount, baseUrl = "/ats-resumes-pack/$slug" }: BundleCardProps) {
   return (
     <Link
-      to="/ats-resumes-pack/$slug"
-      params={{ slug: bundle.slug }}
+      to={baseUrl as any}
+      params={{ slug: bundle.slug } as any}
       className="group glass flex flex-col overflow-hidden rounded-2xl transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5"
     >
       {/* Preview */}

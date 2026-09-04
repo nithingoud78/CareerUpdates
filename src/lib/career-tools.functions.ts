@@ -105,6 +105,7 @@ export const getPublishedTemplates = createServerFn({ method: "GET" }).handler(a
     .select("id, slug, title, short_description, category, tags, suitable_for, ats_friendly, file_format, preview_image_url, original_price, current_price, is_free, pinned, sort_order, created_at")
     .eq("status", "published")
     .eq("product_type", "single_template")
+    .in("resource_type", ["resume", "cover_letter", "referral_message", "cold_email"])
     .order("pinned", { ascending: false })
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
@@ -120,6 +121,37 @@ export const getPublishedBundles = createServerFn({ method: "GET" }).handler(asy
     .select("id, slug, title, short_description, category, tags, suitable_for, preview_image_url, original_price, current_price, is_free, pinned, sort_order, created_at")
     .eq("status", "published")
     .eq("product_type", "bundle")
+    .neq("resource_type", "all_modules")
+    .order("pinned", { ascending: false })
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data ?? [];
+});
+
+// ─── Public: list dMAT Modules ────────────────────────────────────────────────
+export const getPublishedDmatModules = createServerFn({ method: "GET" }).handler(async () => {
+  const { data, error } = await supabase
+    .from("career_tool_products")
+    .select("id, slug, title, short_description, category, tags, suitable_for, preview_image_url, original_price, current_price, is_free, pinned, sort_order, created_at")
+    .eq("status", "published")
+    .eq("product_type", "single_template")
+    .eq("resource_type", "single_module")
+    .order("pinned", { ascending: false })
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data ?? [];
+});
+
+// ─── Public: list dMAT Complete Packs ─────────────────────────────────────────
+export const getPublishedDmatPacks = createServerFn({ method: "GET" }).handler(async () => {
+  const { data, error } = await supabase
+    .from("career_tool_products")
+    .select("id, slug, title, short_description, category, tags, suitable_for, preview_image_url, original_price, current_price, is_free, pinned, sort_order, created_at")
+    .eq("status", "published")
+    .eq("product_type", "bundle")
+    .eq("resource_type", "all_modules")
     .order("pinned", { ascending: false })
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
@@ -138,6 +170,8 @@ export const getTemplateBySlug = createServerFn({ method: "GET" })
       .eq("slug", data.slug)
       .eq("status", "published")
       .eq("product_type", "single_template")
+      .neq("resource_type", "single_module")
+      .neq("resource_type", "all_modules")
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!product) return null;
@@ -148,6 +182,8 @@ export const getTemplateBySlug = createServerFn({ method: "GET" })
       .select("id, slug, title, short_description, preview_image_url, original_price, current_price, is_free, category, ats_friendly")
       .eq("status", "published")
       .eq("product_type", "single_template")
+      .neq("resource_type", "single_module")
+      .neq("resource_type", "all_modules")
       .neq("id", product.id)
       .limit(3);
 
@@ -164,6 +200,7 @@ export const getTemplateBySlug = createServerFn({ method: "GET" })
         .from("career_tool_products")
         .select("id, slug, title, short_description, preview_image_url, original_price, current_price, is_free")
         .eq("status", "published")
+        .neq("resource_type", "all_modules")
         .in("id", bundleIds)
         .limit(2);
       relatedBundles = bundles ?? [];
@@ -183,6 +220,7 @@ export const getBundleBySlug = createServerFn({ method: "GET" })
       .eq("slug", data.slug)
       .eq("status", "published")
       .eq("product_type", "bundle")
+      .neq("resource_type", "all_modules")
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!product) return null;
@@ -215,6 +253,106 @@ export const getBundleBySlug = createServerFn({ method: "GET" })
       .select("id, slug, title, short_description, preview_image_url, original_price, current_price, is_free")
       .eq("status", "published")
       .eq("product_type", "bundle")
+      .neq("resource_type", "all_modules")
+      .neq("id", product.id)
+      .limit(2);
+
+    return { product, resources: resourceDetails, relatedBundles: relatedBundles ?? [] };
+  });
+
+// ─── Public: get dMAT module by slug ──────────────────────────────────────────
+
+export const getDmatModuleBySlug = createServerFn({ method: "GET" })
+  .validator((input: { slug: string }) => z.object({ slug: z.string().min(1) }).parse(input))
+  .handler(async ({ data }) => {
+    const { data: product, error } = await supabase
+      .from("career_tool_products")
+      .select("*")
+      .eq("slug", data.slug)
+      .eq("status", "published")
+      .eq("product_type", "single_template")
+      .eq("resource_type", "single_module")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!product) return null;
+
+    // Related dMAT modules
+    const { data: related } = await supabase
+      .from("career_tool_products")
+      .select("id, slug, title, short_description, preview_image_url, original_price, current_price, is_free, category, ats_friendly")
+      .eq("status", "published")
+      .eq("product_type", "single_template")
+      .eq("resource_type", "single_module")
+      .neq("id", product.id)
+      .limit(3);
+
+    // Related bundles that contain this module (only dMAT packs)
+    const { data: bundleLinks } = await supabase
+      .from("bundle_resources")
+      .select("bundle_product_id")
+      .eq("resource_product_id", product.id);
+
+    const bundleIds = bundleLinks?.map((b) => b.bundle_product_id) ?? [];
+    let relatedBundles: any[] = [];
+    if (bundleIds.length > 0) {
+      const { data: bundles } = await supabase
+        .from("career_tool_products")
+        .select("id, slug, title, short_description, preview_image_url, original_price, current_price, is_free")
+        .eq("status", "published")
+        .eq("resource_type", "all_modules")
+        .in("id", bundleIds)
+        .limit(2);
+      relatedBundles = bundles ?? [];
+    }
+
+    return { product, related: related ?? [], relatedBundles };
+  });
+
+// ─── Public: get dMAT bundle by slug ──────────────────────────────────────────
+
+export const getDmatBundleBySlug = createServerFn({ method: "GET" })
+  .validator((input: { slug: string }) => z.object({ slug: z.string().min(1) }).parse(input))
+  .handler(async ({ data }) => {
+    const { data: product, error } = await supabase
+      .from("career_tool_products")
+      .select("*")
+      .eq("slug", data.slug)
+      .eq("status", "published")
+      .eq("product_type", "bundle")
+      .eq("resource_type", "all_modules")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!product) return null;
+
+    // Bundle resources with full product data
+    const { data: resources } = await supabase
+      .from("bundle_resources")
+      .select("id, sort_order, resource_product_id")
+      .eq("bundle_product_id", product.id)
+      .order("sort_order", { ascending: true });
+
+    let resourceDetails: any[] = [];
+    if (resources && resources.length > 0) {
+      const resourceIds = resources.map((r) => r.resource_product_id);
+      const { data: products } = await supabase
+        .from("career_tool_products")
+        .select("id, slug, title, short_description, resource_type, preview_image_url, features, file_format, ats_friendly")
+        .in("id", resourceIds);
+      if (products) {
+        resourceDetails = resources.map((r) => ({
+          ...r,
+          resource: products.find((p) => p.id === r.resource_product_id),
+        }));
+      }
+    }
+
+    // Related bundles (only dMAT Complete Packs)
+    const { data: relatedBundles } = await supabase
+      .from("career_tool_products")
+      .select("id, slug, title, short_description, preview_image_url, original_price, current_price, is_free")
+      .eq("status", "published")
+      .eq("product_type", "bundle")
+      .eq("resource_type", "all_modules")
       .neq("id", product.id)
       .limit(2);
 
@@ -284,6 +422,23 @@ export const listSingleProducts = createServerFn({ method: "GET" })
       .from("career_tool_products")
       .select("id, slug, title, resource_type, preview_image_url, status")
       .eq("product_type", "single_template")
+      .in("resource_type", ["resume", "cover_letter", "referral_message", "cold_email"])
+      .order("title", { ascending: true });
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+// ─── Admin: list dMAT Modules (for dMAT pack resource picker) ─────────────────
+
+export const listDmatModulesAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { data, error } = await context.supabase
+      .from("career_tool_products")
+      .select("id, slug, title, resource_type, preview_image_url, status")
+      .eq("product_type", "single_template")
+      .eq("resource_type", "single_module")
       .order("title", { ascending: true });
     if (error) throw new Error(error.message);
     return data ?? [];

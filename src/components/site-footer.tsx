@@ -20,7 +20,7 @@ export function SiteFooter() {
   if (shouldReduceMotion) {
     return (
       <footer className="mt-20 border-t border-border bg-surface pb-24 sm:pb-0">
-        <div className="mx-auto flex flex-col gap-10 px-4 py-12 text-center sm:px-6 md:grid md:grid-cols-5 md:text-left lg:px-8">
+        <div className="mx-auto flex flex-col gap-10 px-4 py-12 text-center sm:px-6 md:grid md:grid-cols-6 md:text-left lg:px-8">
         <div className="flex flex-col items-center md:col-span-2 md:items-start">
           <div className="flex items-center gap-2 font-semibold">
             <Logo className="h-8 w-8 rounded-lg" iconClassName="h-7 w-7" />
@@ -50,6 +50,13 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
+          <h4 className="text-sm font-semibold">dMAT Resources</h4>
+          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+            <li><Link to="/dmat-resources/modules" className="hover:text-foreground">dMAT Modules</Link></li>
+            <li><Link to="/dmat-resources/packs" className="hover:text-foreground">dMAT Complete Pack</Link></li>
+          </ul>
+        </div>
+        <div>
           <h4 className="text-sm font-semibold">Legal</h4>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li><Link to="/contact" className="hover:text-foreground">Contact</Link></li>
@@ -76,7 +83,7 @@ export function SiteFooter() {
         style={{ opacity, scale, y }}
         className="border-t border-border bg-surface pb-24 sm:pb-0 origin-bottom"
       >
-        <div className="mx-auto flex flex-col gap-10 px-4 py-12 text-center sm:px-6 md:grid md:grid-cols-5 md:text-left lg:px-8">
+        <div className="mx-auto flex flex-col gap-10 px-4 py-12 text-center sm:px-6 md:grid md:grid-cols-6 md:text-left lg:px-8">
           <div className="flex flex-col items-center md:col-span-2 md:items-start">
             <div className="flex items-center gap-2 font-semibold">
               <Logo className="h-8 w-8 rounded-lg" iconClassName="h-7 w-7" />
@@ -103,6 +110,13 @@ export function SiteFooter() {
               <li><Link to="/ats-checker" className="hover:text-foreground">ATS Checker</Link></li>
               <li><Link to="/ats-friendly-resumes" className="hover:text-foreground">ATS Friendly Resumes</Link></li>
               <li><Link to="/ats-resumes-pack" className="hover:text-foreground">ATS Resumes Pack</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-sm font-semibold">dMAT Resources</h4>
+            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              <li><Link to="/dmat-resources/modules" className="hover:text-foreground">dMAT Modules</Link></li>
+              <li><Link to="/dmat-resources/packs" className="hover:text-foreground">dMAT Complete Pack</Link></li>
             </ul>
           </div>
           <div>

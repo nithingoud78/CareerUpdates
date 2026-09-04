@@ -21,6 +21,7 @@ interface TemplateCardProps {
     suitable_for?: string[];
   };
   compact?: boolean;
+  baseUrl?: "/ats-friendly-resumes/$slug" | "/dmat-resources/modules/$slug" | string;
 }
 
 const RESOURCE_TYPE_LABELS: Record<string, string> = {
@@ -32,11 +33,11 @@ const RESOURCE_TYPE_LABELS: Record<string, string> = {
   all_modules: "All Modules",
 };
 
-export function TemplateCard({ template, compact }: TemplateCardProps) {
+export function TemplateCard({ template, compact, baseUrl = "/ats-friendly-resumes/$slug" }: TemplateCardProps) {
   return (
     <Link
-      to="/ats-friendly-resumes/$slug"
-      params={{ slug: template.slug }}
+      to={baseUrl as any}
+      params={{ slug: template.slug } as any}
       className="group glass flex flex-col overflow-hidden rounded-2xl transition-all duration-200 hover:shadow-md hover:shadow-brand/10 hover:-translate-y-0.5"
     >
       {/* Preview image */}

@@ -2,10 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { Plus, Trash2, Archive, Activity, Inbox, Edit, Megaphone } from "lucide-react";
+import { Plus, Trash2, Archive, Activity, Inbox, Edit, Megaphone, Eye, EyeOff } from "lucide-react";
 import { listAllJobs, deleteJob, updateJobStatus, bulkUpdateJobStatus, bulkDeleteJobs } from "@/lib/admin-jobs.functions";
 import { getUnreadFeedbackCount } from "@/lib/feedback.functions";
 import { getAdsConfig, setAdsEnabled } from "@/lib/ads-config.functions";
+import { getSiteSettings, updateSiteSettings } from "@/lib/site-settings.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: Dashboard,
@@ -124,7 +125,10 @@ function Dashboard() {
       </div>
 
       {/* ── Ads Control ─────────────────────────────────────────────── */}
-      <AdsControl />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <AdsControl />
+        <DmatVisibilityControl />
+      </div>
 
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -518,6 +522,109 @@ function Stat({ label, value }: { label: string; value: number }) {
     <div className="glass rounded-2xl p-5">
       <p className="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
       <p className="mt-1 text-2xl font-bold">{value}</p>
+    </div>
+  );
+}
+
+// ─── dMAT Visibility Control ──────────────────────────────────────────────────
+
+function DmatVisibilityControl() {
+  const qc = useQueryClient();
+  const fetchSettings = useServerFn(getSiteSettings);
+  const updateSettings = useServerFn(updateSiteSettings);
+  const [mutationError, setMutationError] = useState<string | null>(null);
+
+  const { data: settings, isLoading } = useQuery({
+    queryKey: ["admin-site-settings"],
+    queryFn: () => fetchSettings(),
+  });
+
+  const toggleMutation = useMutation({
+    mutationFn: (visible: boolean) => {
+      if (!settings) throw new Error("Settings not loaded");
+      return updateSettings({
+        data: {
+          site_name: settings.site_name,
+          contact_email: settings.contact_email,
+          telegram_url: settings.telegram_url,
+          whatsapp_url: settings.whatsapp_url,
+          instagram_url: settings.instagram_url,
+          dmat_resources_visible: visible,
+        },
+      });
+    },
+    onSuccess: () => {
+      setMutationError(null);
+      qc.invalidateQueries({ queryKey: ["admin-site-settings"] });
+      qc.invalidateQueries({ queryKey: ["public-site-settings"] });
+    },
+    onError: (err: any) => {
+      setMutationError(err.message || "Unknown error");
+    },
+  });
+
+  const isVisible = settings?.dmat_resources_visible !== false;
+
+  return (
+    <div className="glass rounded-2xl p-5">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${isVisible ? "bg-brand/15" : "bg-muted"}`}>
+            {isVisible ? <Eye className="h-5 w-5 text-brand" /> : <EyeOff className="h-5 w-5 text-muted-foreground" />}
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">dMAT Resources Visibility</p>
+            {isLoading ? (
+              <p className="mt-0.5 text-sm font-medium text-muted-foreground">Loading…</p>
+            ) : (
+              <div className="mt-0.5 flex items-center gap-2">
+                <span
+                  className={`inline-block h-2 w-2 rounded-full ${isVisible ? "bg-brand" : "bg-muted-foreground"}`}
+                />
+                <span className={`text-sm font-bold ${isVisible ? "text-brand" : "text-muted-foreground"}`}>
+                  {isVisible ? "ON" : "OFF"}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {!isLoading && (
+          <div className="flex-shrink-0">
+            {isVisible ? (
+              <button
+                onClick={() => toggleMutation.mutate(false)}
+                disabled={toggleMutation.isPending}
+                className="rounded-full border border-border bg-background px-4 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:bg-accent disabled:opacity-50"
+              >
+                {toggleMutation.isPending ? "Hiding…" : "Hide from Homepage"}
+              </button>
+            ) : (
+              <button
+                onClick={() => toggleMutation.mutate(true)}
+                disabled={toggleMutation.isPending}
+                className="rounded-full border border-brand/20 bg-brand/5 px-4 py-1.5 text-xs font-semibold text-brand transition-colors hover:bg-brand/10 disabled:opacity-50"
+              >
+                {toggleMutation.isPending ? "Showing…" : "Show on Homepage"}
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+
+      {mutationError && (
+        <div className="mt-3 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-2 text-xs text-destructive">
+          <strong>Error:</strong> {mutationError}
+        </div>
+      )}
+
+      {!isLoading && (
+        <p className="mt-3 text-xs text-muted-foreground">
+          {isVisible
+            ? "dMAT Resources section is visible on the public homepage and topbar."
+            : "dMAT Resources is hidden from the public homepage and topbar. Direct links and admin access continue to work normally."}
+        </p>
+      )}
     </div>
   );
 }

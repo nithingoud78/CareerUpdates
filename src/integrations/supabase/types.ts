@@ -737,6 +737,7 @@ export type Database = {
           updated_at: string
           whatsapp_url: string | null
           x_twitter_url: string | null
+          dmat_resources_visible: boolean | null
         }
         Insert: {
           ads_auto_enable_at?: string | null
@@ -768,6 +769,7 @@ export type Database = {
           updated_at?: string
           whatsapp_url?: string | null
           x_twitter_url?: string | null
+          dmat_resources_visible?: boolean | null
         }
         Update: {
           ads_auto_enable_at?: string | null
@@ -799,6 +801,7 @@ export type Database = {
           updated_at?: string
           whatsapp_url?: string | null
           x_twitter_url?: string | null
+          dmat_resources_visible?: boolean | null
         }
         Relationships: []
       }

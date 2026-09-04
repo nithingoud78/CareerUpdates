@@ -49,6 +49,12 @@ export function TemplateDetailView({
   downloadSuccess,
   downloadError,
   adminActions,
+  parentBreadcrumbLabel,
+  parentBreadcrumbHref,
+  aboutLabel,
+  relatedLabel,
+  relatedBaseUrl,
+  relatedBundleBaseUrl,
 }: {
   product: any;
   related?: any[];
@@ -58,11 +64,17 @@ export function TemplateDetailView({
   downloadSuccess?: boolean;
   downloadError?: string | null;
   adminActions?: React.ReactNode;
+  parentBreadcrumbLabel?: string;
+  parentBreadcrumbHref?: string;
+  aboutLabel?: string;
+  relatedLabel?: string;
+  relatedBaseUrl?: string;
+  relatedBundleBaseUrl?: string;
 }) {
   const breadcrumbs = [
     { name: "Home", href: "/" },
-    { name: "ATS Friendly Resumes", href: "/ats-friendly-resumes/" },
-    { name: product.title, href: `/ats-friendly-resumes/${product.slug}` },
+    { name: parentBreadcrumbLabel || "ATS Friendly Resumes", href: parentBreadcrumbHref || "/ats-friendly-resumes/" },
+    { name: product.title, href: `${parentBreadcrumbHref?.replace(/\/$/, "") || "/ats-friendly-resumes"}/${product.slug}` },
   ];
 
   const structuredData = {
@@ -70,13 +82,13 @@ export function TemplateDetailView({
     "@type": "Product",
     name: product.title,
     description: product.short_description ?? product.description ?? "",
-    url: `${SITE_URL}/ats-friendly-resumes/${product.slug}`,
+    url: `${SITE_URL}${parentBreadcrumbHref?.replace(/\/$/, "") || "/ats-friendly-resumes"}/${product.slug}`,
     offers: {
       "@type": "Offer",
       price: product.current_price.toFixed(2),
       priceCurrency: "INR",
       availability: "https://schema.org/InStock",
-      url: `${SITE_URL}/ats-friendly-resumes/${product.slug}`,
+      url: `${SITE_URL}${parentBreadcrumbHref?.replace(/\/$/, "") || "/ats-friendly-resumes"}/${product.slug}`,
     },
   };
 
@@ -172,7 +184,7 @@ export function TemplateDetailView({
             >
               <ShieldCheck className="h-4 w-4" /> Check My Resume Against a Job
             </Link>
-            <ShareButton url={`${SITE_URL}/ats-friendly-resumes/${product.slug}`} />
+            <ShareButton url={`${SITE_URL}${parentBreadcrumbHref?.replace(/\/$/, "") || "/ats-friendly-resumes"}/${product.slug}`} />
           </div>
 
           {/* Quick facts */}
@@ -211,7 +223,7 @@ export function TemplateDetailView({
       {product.description && (
         <ScrollReveal>
           <section className="mt-10 space-y-3">
-            <h2 className="text-xl font-bold">About This Template</h2>
+            <h2 className="text-xl font-bold">{aboutLabel || "About This Template"}</h2>
             <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground">
               {product.description.split("\n").map((p: string, i: number) => p.trim() && <p key={i}>{p}</p>)}
             </div>
@@ -270,8 +282,8 @@ export function TemplateDetailView({
               {relatedBundles.map((b: any) => (
                 <Link
                   key={b.id}
-                  to="/ats-resumes-pack/$slug"
-                  params={{ slug: b.slug }}
+                  to={(relatedBundleBaseUrl as any) || "/ats-resumes-pack/$slug"}
+                  params={{ slug: b.slug } as any}
                   className="glass flex items-center gap-4 rounded-2xl p-4 hover:shadow-sm hover:shadow-brand/10 transition-all"
                 >
                   {b.preview_image_url ? (
@@ -301,12 +313,12 @@ export function TemplateDetailView({
         <ScrollReveal delay={0.1}>
           <section className="mt-12 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold">Related Templates</h2>
-              <Link to="/ats-friendly-resumes" className="text-sm font-medium text-brand hover:underline">View all →</Link>
+              <h2 className="text-xl font-bold">{relatedLabel || "Related Templates"}</h2>
+              <Link to={(parentBreadcrumbHref as any) || "/ats-friendly-resumes"} className="text-sm font-medium text-brand hover:underline">View all →</Link>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((t: any) => (
-                <TemplateCard key={t.id} template={t as any} compact />
+                <TemplateCard key={t.id} template={t as any} compact baseUrl={relatedBaseUrl} />
               ))}
             </div>
           </section>
