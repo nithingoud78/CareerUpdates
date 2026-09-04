@@ -215,15 +215,25 @@ function AdminDmatModules() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1">
                       {p.status === "published" && (
-                        <a
-                          href={`/dmat-resources/modules/${p.slug}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="rounded-full p-1.5 hover:bg-accent"
-                          title="View Public Page"
-                        >
-                          <Eye className="h-4 w-4 text-muted-foreground" />
-                        </a>
+                        <>
+                          <Link
+                            to="/admin/dmat-module/$id"
+                            params={{ id: p.id }}
+                            className="rounded-full p-1.5 hover:bg-accent"
+                            title="View Admin Overview"
+                          >
+                            <Eye className="h-4 w-4 text-muted-foreground" />
+                          </Link>
+                          <a
+                            href={`/dmat-resources/modules/${p.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="rounded-full p-1.5 hover:bg-accent"
+                            title="Open Public Link"
+                          >
+                            <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                          </a>
+                        </>
                       )}
                       <Link
                         to="/admin/dmat-module/$id/edit"

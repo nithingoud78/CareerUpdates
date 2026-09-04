@@ -136,6 +136,7 @@ function AdminDmatCompletePacks() {
             <thead>
               <tr className="border-b border-border bg-muted/30 text-xs text-muted-foreground">
                 <th className="px-4 py-3 text-left font-medium">Pack</th>
+                <th className="px-4 py-3 text-left font-medium">Type</th>
                 <th className="px-4 py-3 text-left font-medium">Price</th>
                 <th className="px-4 py-3 text-left font-medium">Status</th>
                 <th className="px-4 py-3 text-left font-medium">Pinned</th>
@@ -159,6 +160,11 @@ function AdminDmatCompletePacks() {
                         <p className="mt-0.5 text-xs text-muted-foreground">{b.category ?? "Pack"}</p>
                       </div>
                     </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="text-xs text-muted-foreground capitalize">
+                      {b.resource_type ? b.resource_type.replace("_", " ") : "All Modules"}
+                    </span>
                   </td>
                   <td className="px-4 py-3 text-xs">
                     <s className="text-muted-foreground">₹{b.original_price}</s>{" "}

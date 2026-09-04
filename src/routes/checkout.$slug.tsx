@@ -10,7 +10,15 @@ export const Route = createFileRoute("/checkout/$slug")({
   loader: async ({ params }) => {
     // Note: getPublishedTemplates only returns published templates.
     const products = await getPublishedTemplates();
-    const product = products.find((p) => p.slug === params.slug);
+    let product: any = products.find((p) => p.slug === params.slug);
+    
+    if (!product) {
+      // Fallback: check if it is a dMAT module (using dynamic import to avoid circular dependency if any, or just import it at top)
+      const { getPublishedDmatModules } = await import("@/lib/career-tools.functions");
+      const dmatModules = await getPublishedDmatModules();
+      product = dmatModules.find((p) => p.slug === params.slug);
+    }
+
     if (!product) {
       throw new Error("Product not found");
     }

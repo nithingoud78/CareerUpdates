@@ -8,7 +8,14 @@ import { createCheckoutOrder, verifyRazorpayPayment } from "@/lib/payments.funct
 export const Route = createFileRoute("/checkout/bundle/$slug")({
   component: BundleCheckoutPage,
   loader: async ({ params }) => {
-    const res = await getBundleBySlug({ data: { slug: params.slug } });
+    let res = await getBundleBySlug({ data: { slug: params.slug } });
+    
+    if (!res || !res.product) {
+      // Fallback: check if it is a dMAT complete pack
+      const { getDmatBundleBySlug } = await import("@/lib/career-tools.functions");
+      res = await getDmatBundleBySlug({ data: { slug: params.slug } });
+    }
+
     if (!res || !res.product) {
       throw new Error("Bundle not found");
     }

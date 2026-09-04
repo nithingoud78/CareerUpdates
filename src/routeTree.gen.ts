@@ -72,6 +72,7 @@ import { Route as AuthenticatedAdminDmatCompleteNewRouteImport } from './routes/
 import { Route as AuthenticatedAdminBlogNewRouteImport } from './routes/_authenticated/admin.blog.new'
 import { Route as AuthenticatedAdminResumeTemplatesIdIndexRouteImport } from './routes/_authenticated/admin.resume-templates.$id.index'
 import { Route as AuthenticatedAdminResumePacksIdIndexRouteImport } from './routes/_authenticated/admin.resume-packs.$id.index'
+import { Route as AuthenticatedAdminDmatModuleIdIndexRouteImport } from './routes/_authenticated/admin.dmat-module.$id.index'
 import { Route as AuthenticatedAdminDmatCompleteIdIndexRouteImport } from './routes/_authenticated/admin.dmat-complete.$id.index'
 import { Route as AuthenticatedAdminResumeTemplatesIdEditRouteImport } from './routes/_authenticated/admin.resume-templates.$id.edit'
 import { Route as AuthenticatedAdminResumePacksIdEditRouteImport } from './routes/_authenticated/admin.resume-packs.$id.edit'
@@ -418,6 +419,12 @@ const AuthenticatedAdminResumePacksIdIndexRoute =
     path: '/resume-packs/$id/',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminDmatModuleIdIndexRoute =
+  AuthenticatedAdminDmatModuleIdIndexRouteImport.update({
+    id: '/dmat-module/$id/',
+    path: '/dmat-module/$id/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminDmatCompleteIdIndexRoute =
   AuthenticatedAdminDmatCompleteIdIndexRouteImport.update({
     id: '/dmat-complete/$id/',
@@ -529,6 +536,7 @@ export interface FileRoutesByFullPath {
   '/admin/resume-packs/$id/edit': typeof AuthenticatedAdminResumePacksIdEditRoute
   '/admin/resume-templates/$id/edit': typeof AuthenticatedAdminResumeTemplatesIdEditRoute
   '/admin/dmat-complete/$id/': typeof AuthenticatedAdminDmatCompleteIdIndexRoute
+  '/admin/dmat-module/$id/': typeof AuthenticatedAdminDmatModuleIdIndexRoute
   '/admin/resume-packs/$id/': typeof AuthenticatedAdminResumePacksIdIndexRoute
   '/admin/resume-templates/$id/': typeof AuthenticatedAdminResumeTemplatesIdIndexRoute
 }
@@ -599,6 +607,7 @@ export interface FileRoutesByTo {
   '/admin/resume-packs/$id/edit': typeof AuthenticatedAdminResumePacksIdEditRoute
   '/admin/resume-templates/$id/edit': typeof AuthenticatedAdminResumeTemplatesIdEditRoute
   '/admin/dmat-complete/$id': typeof AuthenticatedAdminDmatCompleteIdIndexRoute
+  '/admin/dmat-module/$id': typeof AuthenticatedAdminDmatModuleIdIndexRoute
   '/admin/resume-packs/$id': typeof AuthenticatedAdminResumePacksIdIndexRoute
   '/admin/resume-templates/$id': typeof AuthenticatedAdminResumeTemplatesIdIndexRoute
 }
@@ -672,6 +681,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/resume-packs/$id/edit': typeof AuthenticatedAdminResumePacksIdEditRoute
   '/_authenticated/admin/resume-templates/$id/edit': typeof AuthenticatedAdminResumeTemplatesIdEditRoute
   '/_authenticated/admin/dmat-complete/$id/': typeof AuthenticatedAdminDmatCompleteIdIndexRoute
+  '/_authenticated/admin/dmat-module/$id/': typeof AuthenticatedAdminDmatModuleIdIndexRoute
   '/_authenticated/admin/resume-packs/$id/': typeof AuthenticatedAdminResumePacksIdIndexRoute
   '/_authenticated/admin/resume-templates/$id/': typeof AuthenticatedAdminResumeTemplatesIdIndexRoute
 }
@@ -745,6 +755,7 @@ export interface FileRouteTypes {
     | '/admin/resume-packs/$id/edit'
     | '/admin/resume-templates/$id/edit'
     | '/admin/dmat-complete/$id/'
+    | '/admin/dmat-module/$id/'
     | '/admin/resume-packs/$id/'
     | '/admin/resume-templates/$id/'
   fileRoutesByTo: FileRoutesByTo
@@ -815,6 +826,7 @@ export interface FileRouteTypes {
     | '/admin/resume-packs/$id/edit'
     | '/admin/resume-templates/$id/edit'
     | '/admin/dmat-complete/$id'
+    | '/admin/dmat-module/$id'
     | '/admin/resume-packs/$id'
     | '/admin/resume-templates/$id'
   id:
@@ -887,6 +899,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/resume-packs/$id/edit'
     | '/_authenticated/admin/resume-templates/$id/edit'
     | '/_authenticated/admin/dmat-complete/$id/'
+    | '/_authenticated/admin/dmat-module/$id/'
     | '/_authenticated/admin/resume-packs/$id/'
     | '/_authenticated/admin/resume-templates/$id/'
   fileRoutesById: FileRoutesById
@@ -1376,6 +1389,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminResumePacksIdIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/dmat-module/$id/': {
+      id: '/_authenticated/admin/dmat-module/$id/'
+      path: '/dmat-module/$id'
+      fullPath: '/admin/dmat-module/$id/'
+      preLoaderRoute: typeof AuthenticatedAdminDmatModuleIdIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/dmat-complete/$id/': {
       id: '/_authenticated/admin/dmat-complete/$id/'
       path: '/dmat-complete/$id'
@@ -1457,6 +1477,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminResumePacksIdEditRoute: typeof AuthenticatedAdminResumePacksIdEditRoute
   AuthenticatedAdminResumeTemplatesIdEditRoute: typeof AuthenticatedAdminResumeTemplatesIdEditRoute
   AuthenticatedAdminDmatCompleteIdIndexRoute: typeof AuthenticatedAdminDmatCompleteIdIndexRoute
+  AuthenticatedAdminDmatModuleIdIndexRoute: typeof AuthenticatedAdminDmatModuleIdIndexRoute
   AuthenticatedAdminResumePacksIdIndexRoute: typeof AuthenticatedAdminResumePacksIdIndexRoute
   AuthenticatedAdminResumeTemplatesIdIndexRoute: typeof AuthenticatedAdminResumeTemplatesIdIndexRoute
 }
@@ -1501,6 +1522,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
     AuthenticatedAdminResumeTemplatesIdEditRoute,
   AuthenticatedAdminDmatCompleteIdIndexRoute:
     AuthenticatedAdminDmatCompleteIdIndexRoute,
+  AuthenticatedAdminDmatModuleIdIndexRoute:
+    AuthenticatedAdminDmatModuleIdIndexRoute,
   AuthenticatedAdminResumePacksIdIndexRoute:
     AuthenticatedAdminResumePacksIdIndexRoute,
   AuthenticatedAdminResumeTemplatesIdIndexRoute:
