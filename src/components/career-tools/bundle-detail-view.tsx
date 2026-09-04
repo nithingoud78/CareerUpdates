@@ -29,6 +29,8 @@ const RESOURCE_TYPE_LABELS: Record<string, string> = {
   cover_letter: "Cover Letter Template",
   referral_message: "Referral Message Templates",
   cold_email: "Cold Email Templates",
+  single_module: "Single Module",
+  all_modules: "All Modules",
 };
 
 export function BundleDetailView({

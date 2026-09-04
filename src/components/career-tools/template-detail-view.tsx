@@ -27,6 +27,8 @@ const RESOURCE_TYPE_LABELS: Record<string, string> = {
   cover_letter: "Cover Letter Template",
   referral_message: "Referral Message Template",
   cold_email: "Cold Email Template",
+  single_module: "Single Module",
+  all_modules: "All Modules",
 };
 
 const CTA_LABELS: Record<string, string> = {
@@ -34,6 +36,8 @@ const CTA_LABELS: Record<string, string> = {
   cover_letter: "Cover",
   referral_message: "Referral",
   cold_email: "Cold Email",
+  single_module: "Module",
+  all_modules: "All Modules",
 };
 
 export function TemplateDetailView({

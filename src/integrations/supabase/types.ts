@@ -846,6 +846,8 @@ export type Database = {
         | "cover_letter"
         | "referral_message"
         | "cold_email"
+        | "single_module"
+        | "all_modules"
       job_status: "draft" | "published" | "archived"
     }
     CompositeTypes: {
@@ -985,6 +987,8 @@ export const Constants = {
         "cover_letter",
         "referral_message",
         "cold_email",
+        "single_module",
+        "all_modules",
       ],
       job_status: ["draft", "published", "archived"],
     },

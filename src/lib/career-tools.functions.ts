@@ -17,7 +17,7 @@ async function assertAdmin(ctx: { supabase: any; userId: string }) {
 // ─── Shared types ─────────────────────────────────────────────────────────────
 
 export type CareerProductType = "single_template" | "bundle";
-export type CareerResourceType = "resume" | "cover_letter" | "referral_message" | "cold_email";
+export type CareerResourceType = "resume" | "cover_letter" | "referral_message" | "cold_email" | "single_module" | "all_modules";
 export type CareerProductStatus = "draft" | "published" | "archived";
 
 export interface CareerProduct {
@@ -71,7 +71,7 @@ const CareerProductInput = z.object({
   short_description: z.string().nullable().optional(),
   description: z.string().nullable().optional(),
   product_type: z.enum(["single_template", "bundle"]).default("single_template"),
-  resource_type: z.enum(["resume", "cover_letter", "referral_message", "cold_email"]).default("resume"),
+  resource_type: z.enum(["resume", "cover_letter", "referral_message", "cold_email", "single_module", "all_modules"]).default("resume"),
   category: z.string().nullable().optional(),
   tags: z.array(z.string()).default([]),
   suitable_for: z.array(z.string()).default([]),

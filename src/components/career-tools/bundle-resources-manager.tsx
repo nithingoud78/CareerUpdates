@@ -14,6 +14,8 @@ const RESOURCE_TYPE_LABELS: Record<string, string> = {
   cover_letter: "Cover Letter",
   referral_message: "Referral Message",
   cold_email: "Cold Email",
+  single_module: "Single Module",
+  all_modules: "All Modules",
 };
 
 function FileUploadButton({
@@ -219,6 +221,8 @@ export function BundleResourcesManager({
                 <option value="cover_letter">Cover Letter</option>
                 <option value="referral_message">Referral Message</option>
                 <option value="cold_email">Cold Email</option>
+                <option value="single_module">Single Module</option>
+                <option value="all_modules">All Modules</option>
               </select>
             </div>
           </div>

@@ -329,6 +329,8 @@ export function AdminProductForm({
               <option value="cover_letter">Cover Letter</option>
               <option value="referral_message">Referral Message</option>
               <option value="cold_email">Cold Email</option>
+              <option value="single_module">Single Module</option>
+              <option value="all_modules">All Modules</option>
             </select>
           </Field>
 

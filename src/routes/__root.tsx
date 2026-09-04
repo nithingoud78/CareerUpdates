@@ -15,7 +15,6 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { GoogleAnalytics } from "../components/google-analytics";
 import { AnalyticsTracker } from "../components/analytics-tracker";
 import { AdProvider } from "../components/ads/ad-provider";
-import { AdBlockNotice } from "../components/ads/adblock-notice";
 
 function NotFoundComponent() {
   return (
@@ -209,27 +208,6 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-/**
- * When the AdBlock gate is active, the entire page outlet is marked `inert`.
- * `inert` makes all descendants non-interactive (pointer, keyboard, focus)
- * without touching overflow/scroll — the user can still scroll the page.
- * The AdBlockNotice sits OUTSIDE this wrapper so it remains fully interactive.
- *
- * TypeScript does not include `inert` in HTMLAttributes yet; cast to any.
- */
-function InertableOutlet() {
-  const { enabled, adBlockDetected } = useAdContext();
-  const isGateActive = enabled && adBlockDetected === true;
-  return (
-    <div
-      {...(isGateActive ? ({ inert: "" } as any) : {})}
-      style={isGateActive ? { userSelect: "none" } : undefined}
-    >
-      <Outlet />
-    </div>
-  );
-}
-
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
@@ -238,11 +216,7 @@ function RootComponent() {
       <AdProvider>
         {/* Global analytics page_view tracker — fires once per navigation */}
         <AnalyticsTracker />
-        {/* AdBlockNotice sits outside the inert wrapper so it stays interactive */}
-        <AdBlockNotice />
-        {/* Outlet is wrapped in an inert shield when the ad-block gate is active.
-            inert = non-interactive but still scrollable. */}
-        <InertableOutlet />
+        <Outlet />
       </AdProvider>
     </QueryClientProvider>
   );

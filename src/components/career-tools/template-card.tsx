@@ -28,6 +28,8 @@ const RESOURCE_TYPE_LABELS: Record<string, string> = {
   cover_letter: "Cover Letter",
   referral_message: "Referral Message",
   cold_email: "Cold Email",
+  single_module: "Single Module",
+  all_modules: "All Modules",
 };
 
 export function TemplateCard({ template, compact }: TemplateCardProps) {
