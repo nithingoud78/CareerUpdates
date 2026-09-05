@@ -395,9 +395,17 @@ export const getPaidOrderDownloadUrl = createServerFn({ method: "POST" })
     let targetFileUrl = product.file_url;
     let downloadName: string | boolean = true;
     
+    const sanitizeTitleForDownload = (title: string) => {
+      return (title || "download")
+        .normalize("NFKD")
+        .replace(/[^\w-]+/g, "_")
+        .replace(/_+/g, "_")
+        .replace(/^_+|_+$/g, "");
+    };
+
     if (product.product_type === "bundle") {
       targetFileUrl = `packs/${order.product_id}/pack.zip`;
-      downloadName = `${product.title}.zip`;
+      downloadName = `${sanitizeTitleForDownload(product.title)}.zip`;
     } else {
       if (!targetFileUrl) {
         throw new Error("No downloadable file associated with this product.");
@@ -409,6 +417,8 @@ export const getPaidOrderDownloadUrl = createServerFn({ method: "POST" })
         } else {
           downloadName = product.download_file_name;
         }
+      } else if (targetFileUrl.includes('packs/') && targetFileUrl.endsWith('pack.zip')) {
+        downloadName = `${sanitizeTitleForDownload(product.title)}.zip`;
       }
     }
 
