@@ -107,7 +107,7 @@ function Contact() {
         <p className="text-xs font-medium uppercase tracking-wider text-brand">Contact</p>
         <h1 className="mt-2 text-balance text-4xl font-bold tracking-tight sm:text-5xl">Get in touch</h1>
         <p className="mt-3 max-w-xl text-muted-foreground">
-          Questions, corrections, or partnership ideas? We typically respond within 1-2 business days.
+          Questions, digital product issues, download problems, payment/order queries, corrections, or partnership ideas? We typically respond within 1-2 business days.
         </p>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_320px]">

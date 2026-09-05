@@ -64,6 +64,7 @@ export function SiteFooter() {
             <li><Link to="/privacy" className="hover:text-foreground">Privacy Policy</Link></li>
             <li><Link to="/terms" className="hover:text-foreground">Terms &amp; Conditions</Link></li>
             <li><Link to="/disclaimer" className="hover:text-foreground">Disclaimer</Link></li>
+            <li><Link to="/refund-cancellation" className="hover:text-foreground">Refund Policy</Link></li>
           </ul>
         </div>
       </div>
@@ -127,6 +128,7 @@ export function SiteFooter() {
               <li><Link to="/privacy" className="hover:text-foreground">Privacy Policy</Link></li>
               <li><Link to="/terms" className="hover:text-foreground">Terms &amp; Conditions</Link></li>
               <li><Link to="/disclaimer" className="hover:text-foreground">Disclaimer</Link></li>
+              <li><Link to="/refund-cancellation" className="hover:text-foreground">Refund Policy</Link></li>
             </ul>
           </div>
         </div>

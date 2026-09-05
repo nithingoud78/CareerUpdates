@@ -30,12 +30,12 @@ function About() {
         <ScrollReveal>
           <p className="text-xs font-medium uppercase tracking-wider text-brand">About us</p>
           <h1 className="mt-2 text-balance text-4xl font-bold tracking-tight sm:text-5xl">
-            A simpler way to discover <span className="text-brand">official</span> career openings.
+            A simpler way to discover <span className="text-brand">official</span> opportunities &amp; resources.
           </h1>
           <p className="mt-4 max-w-2xl text-pretty text-base text-muted-foreground">
-            Career Updates is a curated discovery platform. We watch the official career pages of
-            companies, government bodies and universities so you can spend less time searching and
-            more time applying.
+            Career Updates is a career discovery and digital career-resource platform
+            helping users find verified opportunities while providing practical digital
+            resources for career preparation.
           </p>
         </ScrollReveal>
 
@@ -58,8 +58,9 @@ function About() {
             <h2 className="text-xl font-bold text-foreground">Our mission</h2>
             <p>
               We believe finding genuine career opportunities should be free and frictionless. We do not
-              charge candidates, sell resumes, or insert ourselves between you and the recruiter. The
-              Apply button always goes to the official company page.
+              charge candidates to browse or apply for jobs, and the Apply button always goes to the official
+              company page. In addition to opportunity discovery, we provide high-quality digital career
+              resources and educational preparation materials, such as ATS Resume Templates and dMAT resources.
             </p>
             <h2 className="pt-4 text-xl font-bold text-foreground">How we curate</h2>
             <p>

@@ -70,19 +70,32 @@ function Terms() {
           </section>
 
           <section className="glass rounded-2xl p-6">
-            <h2 className="mb-3 text-base font-semibold text-foreground">3. Job Listings</h2>
+            <h2 className="mb-3 text-base font-semibold text-foreground">3. Job Listings &amp; Digital Products</h2>
             <p>
-              Career Updates aggregates job listings sourced from official company career pages,
+              Career Updates provides a dual service: we aggregate job listings and we offer digital career and educational resources.
+            </p>
+            <p className="mt-3">
+              <strong>Job Opportunity Discovery:</strong> We aggregate job listings sourced from official company career pages,
               government portals, and publicly available institutional sources. We do not create,
               post, or own the jobs listed on this platform. We act solely as an informational
               intermediary. All job listings are provided "as is" and are subject to change at any
               time at the discretion of the hiring organisation. Career Updates does not guarantee
               the availability of any position, nor do we represent or act on behalf of any employer.
             </p>
+            <p className="mt-3">
+              <strong>Digital Products &amp; Educational Resources:</strong> Career Updates also offers digital products for sale, including ATS Resume Templates, ATS Resume Packs, dMAT preparation modules, dMAT complete packs, and other downloadable career/educational materials. These digital resources are provided for preparation and educational purposes only. They do not guarantee employment, exam results, or admission.
+            </p>
           </section>
 
           <section className="glass rounded-2xl p-6">
-            <h2 className="mb-3 text-base font-semibold text-foreground">4. External Links</h2>
+            <h2 className="mb-3 text-base font-semibold text-foreground">4. Purchases &amp; Digital Delivery</h2>
+            <p>
+              For digital resources and educational materials, access or download is provided electronically immediately after successful payment or valid free access. We encourage you to review the product descriptions carefully before making a purchase. Because these products are digitally delivered, they may be non-returnable once access or download has been provided, subject to our Refund &amp; Cancellation Policy and applicable law.
+            </p>
+          </section>
+
+          <section className="glass rounded-2xl p-6">
+            <h2 className="mb-3 text-base font-semibold text-foreground">5. External Links</h2>
             <p>
               Our website contains links to third-party websites, including employer career pages and
               application portals. These links are provided for your convenience. Career Updates has
@@ -94,7 +107,7 @@ function Terms() {
           </section>
 
           <section className="glass rounded-2xl p-6">
-            <h2 className="mb-3 text-base font-semibold text-foreground">5. Intellectual Property</h2>
+            <h2 className="mb-3 text-base font-semibold text-foreground">6. Intellectual Property</h2>
             <p>
               All original content on Career Updates — including but not limited to text, design,
               graphics, logos, AI-generated job summaries, and source code — is the intellectual
@@ -106,7 +119,7 @@ function Terms() {
           </section>
 
           <section className="glass rounded-2xl p-6">
-            <h2 className="mb-3 text-base font-semibold text-foreground">6. User Responsibilities</h2>
+            <h2 className="mb-3 text-base font-semibold text-foreground">7. User Responsibilities</h2>
             <p>
               As a user of Career Updates, you are solely responsible for:
             </p>
@@ -123,7 +136,7 @@ function Terms() {
           </section>
 
           <section className="glass rounded-2xl p-6">
-            <h2 className="mb-3 text-base font-semibold text-foreground">7. Accuracy of Information</h2>
+            <h2 className="mb-3 text-base font-semibold text-foreground">8. Accuracy of Information</h2>
             <p>
               While we make every reasonable effort to ensure that job listings are accurate,
               up-to-date, and sourced from verified origins, we cannot guarantee the completeness or
@@ -136,7 +149,7 @@ function Terms() {
           </section>
 
           <section className="glass rounded-2xl p-6">
-            <h2 className="mb-3 text-base font-semibold text-foreground">8. Third-Party Services</h2>
+            <h2 className="mb-3 text-base font-semibold text-foreground">9. Third-Party Services</h2>
             <p>
               Career Updates uses third-party services to operate and improve the platform, including
               but not limited to Google Analytics (web analytics), Google AdSense (advertising),
@@ -148,7 +161,7 @@ function Terms() {
           </section>
 
           <section className="glass rounded-2xl p-6">
-            <h2 className="mb-3 text-base font-semibold text-foreground">9. Limitation of Liability</h2>
+            <h2 className="mb-3 text-base font-semibold text-foreground">10. Limitation of Liability</h2>
             <p>
               To the fullest extent permitted by law, Career Updates and its operators shall not be
               liable for any indirect, incidental, special, consequential, or punitive damages arising
@@ -161,7 +174,7 @@ function Terms() {
           </section>
 
           <section className="glass rounded-2xl p-6">
-            <h2 className="mb-3 text-base font-semibold text-foreground">10. Changes to Terms</h2>
+            <h2 className="mb-3 text-base font-semibold text-foreground">11. Changes to Terms</h2>
             <p>
               Career Updates reserves the right to modify these Terms &amp; Conditions at any time.
               Changes will take effect immediately upon being posted to this page. The "Effective
@@ -172,7 +185,7 @@ function Terms() {
           </section>
 
           <section className="glass rounded-2xl p-6">
-            <h2 className="mb-3 text-base font-semibold text-foreground">11. Contact Information</h2>
+            <h2 className="mb-3 text-base font-semibold text-foreground">12. Contact Information</h2>
             <p>
               If you have any questions, concerns, or feedback regarding these Terms &amp; Conditions,
               please contact us at:
@@ -207,6 +220,9 @@ function Terms() {
           </Link>
           <Link to="/contact" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
             Contact Us
+          </Link>
+          <Link to="/refund-cancellation" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
+            Refund &amp; Cancellation Policy
           </Link>
         </div>
       </main>

@@ -59,6 +59,10 @@ const POINTS = [
     body: "Job seekers should exercise caution and stay vigilant against fraudulent job offers. Scammers sometimes impersonate legitimate job portals or companies to extract personal information or money from applicants. Always verify that the company and role are genuine through official channels before sharing sensitive personal information or making any payment. Career Updates will never contact you via unofficial channels to ask for money or personal data.",
   },
   {
+    title: "Digital Products & Educational Materials",
+    body: "Career Updates offers digital resources including ATS Resume Templates and dMAT preparation materials. Resume resources are for informational and career-preparation purposes. dMAT resources are for educational and exam-preparation purposes. These products do not guarantee employment, admission, examination results, immigration approval, university admission, or any other outcome. Examples, templates, and materials are provided for preparation and educational purposes only.",
+  },
+  {
     title: "External Links Disclaimer",
     body: "Our website contains links to third-party external websites, including employer career portals and application platforms. These links are provided solely as a convenience to users. Career Updates does not control, endorse, or take responsibility for the content, privacy practices, security, or accuracy of any external website. Accessing external links is done entirely at your own risk.",
   },
@@ -112,6 +116,9 @@ function Disclaimer() {
           </Link>
           <Link to="/contact" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
             Contact Us
+          </Link>
+          <Link to="/refund-cancellation" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
+            Refund &amp; Cancellation
           </Link>
         </div>
       </main>

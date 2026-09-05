@@ -144,7 +144,7 @@ function Home() {
         </div>
         <ScrollReveal className="mx-auto max-w-5xl px-4 pb-12 pt-2 text-center sm:px-6 lg:px-8 lg:pt-4">
           <p className="mb-3 inline-flex rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
-            Curated official openings · Updated daily
+            Jobs · Digital career resources · dMAT prep
           </p>
           <h1 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
             Find Your Next <span className="text-brand">Career Opportunity</span>

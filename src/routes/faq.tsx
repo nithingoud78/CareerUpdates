@@ -161,6 +161,35 @@ const FAQ_SECTIONS: FaqSection[] = [
       },
     ],
   },
+  {
+    title: "Digital Resources",
+    items: [
+      {
+        q: "What digital resources does Career Updates provide?",
+        a: "In addition to job discovery, Career Updates offers downloadable digital career resources and educational preparation materials. These include ATS Resume Templates, ATS Resume Packs, and dMAT (module-wise and complete pack) resources.",
+      },
+      {
+        q: "What are ATS Resume Templates & Packs?",
+        a: "These are digital templates designed to be Applicant Tracking System (ATS) friendly, helping your resume pass through automated screening software used by many employers. The packs may also include cover letter formats and referral templates.",
+      },
+      {
+        q: "What are dMAT Module resources and the Complete Pack?",
+        a: "These are digital educational and exam-preparation materials. Module-wise resources focus on specific topics, while the Complete Pack provides comprehensive preparation material.",
+      },
+      {
+        q: "How are digital products delivered?",
+        a: "All our digital products are delivered electronically. Once payment is successful (or valid free access is granted), you will immediately receive a download link or access to the digital file.",
+      },
+      {
+        q: "Who should I contact if a digital download fails?",
+        a: "If you experience any issues downloading your purchased resource, please contact our support team at careerupdates.in@gmail.com with your order details, and we will assist you promptly.",
+      },
+      {
+        q: "Does buying a resume template or dMAT material guarantee results?",
+        a: "No. These resources are provided for educational and preparation purposes only. They do not guarantee employment, interviews, admission, or any specific examination results.",
+      },
+    ],
+  },
 ];
 
 function FaqPage() {

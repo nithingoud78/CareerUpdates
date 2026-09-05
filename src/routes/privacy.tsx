@@ -34,18 +34,23 @@ function Privacy() {
           <section>
             <h2 className="text-lg font-semibold text-foreground">1. Overview</h2>
             <p>
-              Career Updates ("we", "us") is a job discovery platform. We do not collect resumes,
-              passwords or personal application data — every Apply button redirects to the official
-              employer's career page, where their privacy policy applies.
+              Career Updates ("we", "us") is a job discovery and digital career-resource platform. For our job discovery service, we do not collect resumes, passwords, or personal application data — every Apply button redirects to the official employer's career page, where their privacy policy applies. For our digital products, we collect minimal information necessary to process your purchase and deliver the digital resources to you.
             </p>
           </section>
 
           <section>
             <h2 className="text-lg font-semibold text-foreground">2. Information we collect</h2>
             <p>
-              We collect anonymous analytics (page views, search queries, referrer) to understand
-              which opportunities are most useful. Contact form submissions are used solely to reply
-              to you.
+              <strong>Job Browsing &amp; Analytics:</strong> We collect anonymous analytics (page views, search queries, referrer) to understand which opportunities are most useful.
+            </p>
+            <p className="mt-2">
+              <strong>Digital Product Purchases &amp; Downloads:</strong> When you purchase a digital product (such as a Resume Template or dMAT Pack), we collect your name and email address to deliver the product, manage your downloads, and provide support.
+            </p>
+            <p className="mt-2">
+              <strong>Payment Processing:</strong> We do not store your raw payment or credit card credentials. Payment processing is handled securely by our payment provider (e.g., Razorpay), which collects and processes your payment details according to their own privacy policies.
+            </p>
+            <p className="mt-2">
+              <strong>Support:</strong> Contact form submissions are used solely to reply to your queries.
             </p>
           </section>
 
@@ -93,6 +98,7 @@ function Privacy() {
         <div className="mt-10 flex flex-wrap gap-3">
           <a href="/terms" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">Terms &amp; Conditions</a>
           <a href="/disclaimer" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">Disclaimer</a>
+          <a href="/refund-cancellation" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">Refund &amp; Cancellation</a>
           <a href="/contact" className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">Contact Us</a>
         </div>
       </main>

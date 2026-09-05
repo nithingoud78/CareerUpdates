@@ -16,6 +16,7 @@ import { Route as SitemapHubsDotxmlRouteImport } from './routes/sitemap-hubs[.]x
 import { Route as SitemapCoreDotxmlRouteImport } from './routes/sitemap-core[.]xml'
 import { Route as SitemapBlogDotxmlRouteImport } from './routes/sitemap-blog[.]xml'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as RefundCancellationRouteImport } from './routes/refund-cancellation'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DisclaimerRouteImport } from './routes/disclaimer'
@@ -114,6 +115,11 @@ const SitemapBlogDotxmlRoute = SitemapBlogDotxmlRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundCancellationRoute = RefundCancellationRouteImport.update({
+  id: '/refund-cancellation',
+  path: '/refund-cancellation',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -477,6 +483,7 @@ export interface FileRoutesByFullPath {
   '/disclaimer': typeof DisclaimerRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
+  '/refund-cancellation': typeof RefundCancellationRoute
   '/search': typeof SearchRoute
   '/sitemap-blog.xml': typeof SitemapBlogDotxmlRoute
   '/sitemap-core.xml': typeof SitemapCoreDotxmlRoute
@@ -549,6 +556,7 @@ export interface FileRoutesByTo {
   '/disclaimer': typeof DisclaimerRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
+  '/refund-cancellation': typeof RefundCancellationRoute
   '/search': typeof SearchRoute
   '/sitemap-blog.xml': typeof SitemapBlogDotxmlRoute
   '/sitemap-core.xml': typeof SitemapCoreDotxmlRoute
@@ -622,6 +630,7 @@ export interface FileRoutesById {
   '/disclaimer': typeof DisclaimerRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
+  '/refund-cancellation': typeof RefundCancellationRoute
   '/search': typeof SearchRoute
   '/sitemap-blog.xml': typeof SitemapBlogDotxmlRoute
   '/sitemap-core.xml': typeof SitemapCoreDotxmlRoute
@@ -696,6 +705,7 @@ export interface FileRouteTypes {
     | '/disclaimer'
     | '/faq'
     | '/privacy'
+    | '/refund-cancellation'
     | '/search'
     | '/sitemap-blog.xml'
     | '/sitemap-core.xml'
@@ -768,6 +778,7 @@ export interface FileRouteTypes {
     | '/disclaimer'
     | '/faq'
     | '/privacy'
+    | '/refund-cancellation'
     | '/search'
     | '/sitemap-blog.xml'
     | '/sitemap-core.xml'
@@ -840,6 +851,7 @@ export interface FileRouteTypes {
     | '/disclaimer'
     | '/faq'
     | '/privacy'
+    | '/refund-cancellation'
     | '/search'
     | '/sitemap-blog.xml'
     | '/sitemap-core.xml'
@@ -914,6 +926,7 @@ export interface RootRouteChildren {
   DisclaimerRoute: typeof DisclaimerRoute
   FaqRoute: typeof FaqRoute
   PrivacyRoute: typeof PrivacyRoute
+  RefundCancellationRoute: typeof RefundCancellationRoute
   SearchRoute: typeof SearchRoute
   SitemapBlogDotxmlRoute: typeof SitemapBlogDotxmlRoute
   SitemapCoreDotxmlRoute: typeof SitemapCoreDotxmlRoute
@@ -995,6 +1008,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refund-cancellation': {
+      id: '/refund-cancellation'
+      path: '/refund-cancellation'
+      fullPath: '/refund-cancellation'
+      preLoaderRoute: typeof RefundCancellationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -1555,6 +1575,7 @@ const rootRouteChildren: RootRouteChildren = {
   DisclaimerRoute: DisclaimerRoute,
   FaqRoute: FaqRoute,
   PrivacyRoute: PrivacyRoute,
+  RefundCancellationRoute: RefundCancellationRoute,
   SearchRoute: SearchRoute,
   SitemapBlogDotxmlRoute: SitemapBlogDotxmlRoute,
   SitemapCoreDotxmlRoute: SitemapCoreDotxmlRoute,
